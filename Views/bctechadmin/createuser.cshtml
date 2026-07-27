@@ -1,0 +1,574 @@
+﻿
+@{
+    ViewBag.Title = "createuser";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="card bg-white border border-white rounded-10 mb-4">
+            <div class="card-body p-20">
+
+                <form class="row g-3 needs-validation" novalidate>
+                    <input type="hidden" id="hfUserID">
+
+                    <!-- User Category -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">User Category</label>
+                        <div class="position-relative">
+                            <select class="form-select h-55 ps-5" id="ddlUserCategory">
+                                <option value="">Select User Category</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Branch Head">Branch Head</option>
+                                <option value="Staff">Staff</option>
+                            </select>
+                            <div class="invalid-feedback">Please select User Category.</div>
+                            <i class="ri-user-settings-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- First Name -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">First Name</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtFirstName" required>
+                            <div class="invalid-feedback">Please enter First Name.</div>
+                            <i class="ri-user-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Middle Name -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Middle Name</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtMiddleName">
+                            <i class="ri-user-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Last Name</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtLastName" required>
+                            <div class="invalid-feedback">Please enter Last Name.</div>
+                            <i class="ri-user-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Gender</label>
+                        <div class="position-relative">
+                            <select class="form-select h-55 ps-5" id="ddlGender" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="invalid-feedback">Please select Gender.</div>
+                            <i class="ri-men-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- DOB -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Date Of Birth</label>
+                        <div class="position-relative">
+                            <input type="date" class="form-control h-55 ps-5" id="txtDateOfBirth">
+                            <i class="ri-calendar-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mobile -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Mobile No</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtMobileNo" maxlength="10" required>
+                            <div class="invalid-feedback">Please enter Mobile No.</div>
+                            <i class="ri-phone-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Alternate Mobile -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Alternate Mobile</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtAlternateMobileNo" maxlength="10">
+                            <i class="ri-smartphone-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Email Address</label>
+                        <div class="position-relative">
+                            <input type="email" class="form-control h-55 ps-5" id="txtEmailAddress">
+                            <i class="ri-mail-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Joining Date -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Joining Date</label>
+                        <div class="position-relative">
+                            <input type="date" class="form-control h-55 ps-5" id="txtJoiningDate">
+                            <i class="ri-calendar-check-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-md-12">
+                        <label class="form-label label fs-16">Address</label>
+                        <div class="position-relative">
+                            <textarea class="form-control ps-5 py-3" rows="3" id="txtAddress"></textarea>
+                            <i class="ri-map-pin-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:13px!important;"></i>
+                        </div>
+                    </div>
+                    <!-- State -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">State</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtState" disabled>
+                            <i class="ri-map-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+                    <!-- City -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">City</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtCity" disabled>
+                            <i class="ri-community-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+                    <!-- Pincode -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Pincode</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtPincode" maxlength="6">
+                            <i class="ri-mail-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Proof Type -->
+                    <div class="col-md-6">
+                        <label class="form-label label fs-16">Proof Of Identity Type</label>
+                        <div class="position-relative">
+                            <select class="form-select h-55 ps-5" id="ddlProofType">
+                                <option value="">Select Proof</option>
+                                <option value="Aadhar Card">Aadhaar Card</option>
+                                <option value="PAN Card">PAN Card</option>
+                                <option value="Driving License">Driving License</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Voter ID">Voter ID</option>
+                            </select>
+                            <i class="ri-shield-check-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Proof Number -->
+                    <div class="col-md-6">
+                        <label class="form-label label fs-16">Proof Of Identity</label>
+
+                        <input type="file"
+                               class="form-control h-55"
+                               id="fuProofIdentity"
+                               accept=".jpg,.jpeg,.png,.pdf">
+
+                        <input type="hidden" id="hfProofIdentity">
+
+                        <small class="text-muted">
+                            Allowed : JPG, JPEG, PNG, PDF (Max 2 MB)
+                        </small>
+                    </div>
+
+                    <!-- Username -->
+                    <div class="col-md-6">
+                        <label class="form-label label fs-16">Username</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtUsername" required>
+                            <div class="invalid-feedback">Please enter Username.</div>
+                            <i class="ri-user-3-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="col-md-6">
+                        <label class="form-label label fs-16">Password</label>
+                        <div class="position-relative">
+                            <input type="password" class="form-control h-55 ps-5" id="txtPassword" required>
+                            <div class="invalid-feedback">Please enter Password.</div>
+                            <i class="ri-lock-password-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Profile Photo -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Profile Photo</label>
+                        <input type="file" class="form-control h-55" id="fuProfilePhoto" accept="image/*">
+                        <input type="hidden" id="hfProfilePhoto">
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="col-md-2 text-center">
+                        <label class="form-label label fs-16">Preview</label>
+                        <img id="imgProfile"
+                             src="~/Content/Admin/assets/Images/no-image.png"
+                             class="img-thumbnail"
+                             style="width:110px;height:110px;object-fit:cover;">
+                    </div>
+
+                    <!-- Active -->
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="chkIsActive" checked>
+                            <label class="form-check-label fs-16" for="chkIsActive">
+                                Active User
+                            </label>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+        <div class="d-flex justify-content-end mt-4">
+
+            <a href="/bctechadmin/UserMaster"
+               class="btn btn-secondary fw-normal fs-16 me-2">
+                <i class="ri-arrow-left-line me-1"></i>
+                Back
+            </a>
+
+            <button type="button"
+                    id="btnSave"
+                    class="btn btn-primary fw-normal fs-16 text-white">
+
+                <span id="btnText">Save User</span>
+
+                <span id="btnLoader"
+                      class="spinner-border spinner-border-sm ms-2 d-none"
+                      role="status">
+                </span>
+            </button>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+    $(function () {
+        var userId = '@ViewBag.UserID';
+            var mode = '@ViewBag.Mode';
+
+            if (userId != "" && userId != "0") {
+                GetUser(userId);
+            }            
+            if (mode == "edit")
+                $("#btnText").text("Update User");
+            else
+            $("#btnText").text("Save User");
+
+            if (mode == "view") {
+
+                $("input,select,textarea").prop("disabled", true);
+                $("#btnSave").hide();
+
+            }    
+    });
+        $("#fuProofIdentity").change(function () {
+
+            var file = this.files[0];
+
+            if (!file)
+                return;
+
+            var ext = file.name.split('.').pop().toLowerCase();
+
+            if ($.inArray(ext, ['jpg', 'jpeg', 'png', 'pdf']) == -1) {
+
+                toastr.error("Only JPG, JPEG, PNG and PDF files are allowed.");
+                $(this).val("");
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+
+                toastr.error("Maximum file size is 2 MB.");
+                $(this).val("");
+                return;
+            }
+        });
+        function GetUser(id) {
+
+            $.ajax({
+                url: "/bctechadmin/GetUserByID",
+                type: "GET",
+                data: { UserID: id },
+
+                success: function (res) {
+
+                    if (res.Status == 1) {
+
+                        var item = res.Data;
+
+                        $("#hfUserID").val(item.UserID);
+
+                        $("#ddlUserCategory").val(item.UserCategory).trigger("change");
+                        $("#txtFirstName").val(item.FirstName);
+                        $("#txtMiddleName").val(item.MiddleName);
+                        $("#txtLastName").val(item.LastName);
+
+                        $("#ddlGender").val(item.Gender).trigger("change");
+                        $("#txtDateOfBirth").val(item.DateOfBirthText);
+                        $("#txtJoiningDate").val(item.JoiningDateText);
+
+                        $("#txtMobileNo").val(item.MobileNo);
+                        $("#txtAlternateMobileNo").val(item.AlternateMobileNo);
+
+                        $("#txtEmailAddress").val(item.EmailAddress);
+
+                        $("#txtAddress").val(item.Address);
+                        $("#txtCity").val(item.City);
+                        $("#txtState").val(item.State);
+                        $("#txtPincode").val(item.Pincode);
+
+                        $("#ddlProofType").val(item.ProofOfIdentityType);
+
+                        $("#txtUsername").val(item.Username);
+                        $("#txtPassword").val("");
+
+                        $("#chkIsActive").prop("checked", item.IsActive);
+
+                        // ===== OLD FILE NAMES SAVE =====
+                        $("#hfProfilePhoto").val(item.ProfilePhoto);
+                        $("#hfProofIdentity").val(item.ProofOfIdentity);
+
+                        // ===== PROFILE PHOTO PREVIEW =====
+                        if (item.ProfilePhoto != null && item.ProfilePhoto != "") {
+                            $("#imgProfile").attr("src",
+                                "/Content/Upload/UserProfilePhoto/" + item.ProfilePhoto);
+                        }
+                        else {
+                            $("#imgProfile").attr("src",
+                                "/Content/Admin/assets/Images/no-image.png");
+                        }
+
+                        // ===== OPTIONAL : SHOW PROOF FILE NAME =====
+                        if (item.ProofOfIdentity != null && item.ProofOfIdentity != "") {
+                            $("#proofFileName").text(item.ProofOfIdentity);
+                        }
+                        else {
+                            $("#proofFileName").text("");
+                        }
+
+                    }
+                    else {
+                        toastr.error(res.Message);
+                    }
+                },
+
+                error: function () {
+                    toastr.error("Unable to load user.");
+                }
+            });
+        }
+        $("#txtPincode").on("keyup", function () {
+            var pincode = $(this).val();
+            if (pincode.length == 6) {
+                $.ajax({
+                    url: "https://api.postalpincode.in/pincode/" + pincode,
+                    type: "GET",
+                    success: function (response) {
+                        if (response[0].Status == "Success") {
+                            var data = response[0].PostOffice[0];
+                            $("#txtCity").val(data.District);
+                            $("#txtState").val(data.State);
+                        }
+                        else {
+                            $("#txtCity").val("");
+                            $("#txtState").val("");
+                            toastr.error("Invalid Pincode.");
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Unable to fetch pincode details.");
+                    }
+                });
+            }
+            else {
+                $("#txtCity").val("");
+                $("#txtState").val("");
+            }
+        });
+        $("#fuProfilePhoto").change(function () {
+
+            var file = this.files[0];
+
+            if (!file)
+                return;
+
+            // Image validation
+            var ext = file.name.split('.').pop().toLowerCase();
+
+            if ($.inArray(ext, ['jpg', 'jpeg', 'png']) == -1) {
+                toastr.error("Only JPG, JPEG and PNG files are allowed.");
+                $(this).val("");
+                $("#imgProfile").attr("src", "/Content/Admin/assets/Images/no-image.png");
+                return;
+            }
+
+            // Max 2 MB
+            if (file.size > 2 * 1024 * 1024) {
+                toastr.error("Maximum file size is 2 MB.");
+                $(this).val("");
+                $("#imgProfile").attr("src", "/Content/Admin/assets/Images/no-image.png");
+                return;
+            }
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $("#imgProfile").attr("src", e.target.result);
+            };
+
+            reader.readAsDataURL(file);
+
+        });
+        $("#btnSave").click(function () {
+
+            var form = document.querySelector(".needs-validation");
+
+            // Password sirf New User ke liye required
+            if ($("#hfUserID").val() != "" && $("#hfUserID").val() != "0") {
+                $("#txtPassword").prop("required", false);
+            }
+            else {
+                $("#txtPassword").prop("required", true);
+            }
+
+            if (!form.checkValidity()) {
+                form.classList.add("was-validated");
+                return;
+            }
+
+            $("#btnSave").prop("disabled", true);
+            $("#btnText").text("Saving...");
+            $("#btnLoader").removeClass("d-none");
+
+            var formData = new FormData();
+
+            formData.append("UserID", $("#hfUserID").val() || 0);
+            formData.append("UserCategory", $("#ddlUserCategory").val());
+            formData.append("FirstName", $("#txtFirstName").val());
+            formData.append("MiddleName", $("#txtMiddleName").val());
+            formData.append("LastName", $("#txtLastName").val());
+            formData.append("Gender", $("#ddlGender").val());
+            formData.append("DateOfBirth", $("#txtDateOfBirth").val());
+            formData.append("MobileNo", $("#txtMobileNo").val());
+            formData.append("AlternateMobileNo", $("#txtAlternateMobileNo").val());
+            formData.append("EmailAddress", $("#txtEmailAddress").val());
+            formData.append("Address", $("#txtAddress").val());
+            formData.append("City", $("#txtCity").val());
+            formData.append("State", $("#txtState").val());
+            formData.append("Pincode", $("#txtPincode").val());
+            formData.append("ProofOfIdentityType", $("#ddlProofType").val());
+            formData.append("Username", $("#txtUsername").val());
+            formData.append("Password", $("#txtPassword").val());
+            formData.append("JoiningDate", $("#txtJoiningDate").val());
+            formData.append("IsActive", $("#chkIsActive").is(":checked"));
+            formData.append("OldProfilePhoto", $("#hfProfilePhoto").val());
+            formData.append("OldProofIdentity", $("#hfProofIdentity").val());
+
+            var profile = $("#fuProfilePhoto")[0].files[0];
+            if (profile)
+                formData.append("ProfilePhoto", profile);
+
+            var proof = $("#fuProofIdentity")[0].files[0];
+            if (proof)
+                formData.append("ProofOfIdentity", proof);
+
+            $.ajax({
+                url: "/bctechadmin/SaveUserMaster",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+
+                success: function (response) {
+
+                    $("#btnSave").prop("disabled", false);
+                    $("#btnText").text("Save User");
+                    $("#btnLoader").addClass("d-none");
+
+                    if (response.Status == 1) {
+
+                        $(".needs-validation").removeClass("was-validated");
+
+                        toastr.success(response.Message);
+
+                        setTimeout(function () {
+                            window.location.href = "/bctechadmin/UserMaster";
+                        }, 1000);
+                    }
+                    else {
+                        toastr.error(response.Message);
+                    }
+                },
+
+                error: function () {
+
+                    $("#btnSave").prop("disabled", false);
+                    $("#btnText").text("Save User");
+                    $("#btnLoader").addClass("d-none");
+
+                    toastr.error("Something went wrong.");
+                }
+            });
+
+        });
+        $(".form-control, .form-select, textarea").on("keyup change", function () {
+
+            $(this).removeClass("is-invalid");
+
+            if ($(this).val().trim() != "") {
+                $(this).addClass("is-valid");
+            }
+            else {
+                $(this).removeClass("is-valid");
+            }
+
+        });
+        $(function () {
+
+            // Required Fields
+            $("#ddlUserCategory").prop("required", true);
+            $("#txtFirstName").prop("required", true);
+            $("#txtLastName").prop("required", true);
+            $("#ddlGender").prop("required", true);
+            $("#txtMobileNo").prop("required", true);
+            $("#txtAddress").prop("required", true);
+            $("#txtCity").prop("required", true);
+            $("#txtState").prop("required", true);
+            $("#txtPincode").prop("required", true);
+            $("#txtUsername").prop("required", true);
+            $("#txtJoiningDate").prop("required", true);
+
+            // Password
+            if ($("#hfUserID").val() == "" || $("#hfUserID").val() == "0") {
+                // Add Mode
+                $("#txtPassword").prop("required", true);
+            }
+            else {
+                // Edit Mode
+                $("#txtPassword").prop("required", false);
+            }
+
+        });
+    </script>
+
+}

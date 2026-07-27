@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="zxx">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Links Of CSS File -->
+    <link rel="stylesheet" href="~/Content/Admin/assets/css/sidebar-menu.css">
+    <link rel="stylesheet" href="~/Content/Admin/assets/css/simplebar.css">
+    <link rel="stylesheet" href="~/Content/Admin/assets/css/prism.css">
+    <link rel="stylesheet" href="~/Content/Admin/assets/css/quill.snow.css">
+    <link rel="stylesheet" href="~/Content/Admin/assets/css/remixicon.css">
+    <link rel="stylesheet" href="~/Content/Admin/assets/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="~/Content/Admin/assets/css/jsvectormap.min.css">
+    <link rel="stylesheet" href="~/Content/Admin/assets/css/style.css">
+    <style>
+        .menu-sub .menu-item.active > .menu-link {
+            color: #2f80ed;
+            font-weight: 600;
+        }
+
+        .menu-sub .menu-item.active::before {
+            background: #2f80ed;
+        }
+    </style>
+    <!-- Favicon -->    
+    <link rel="icon" type="image/png" href="~/Content/Admin/assets/Images/BCTECHFavicon.png">
+    <!-- Title -->
+    <title>BC Tech Computer Education - Surat | Bharatiya Computer Technology</title>
+</head>
+<body class="bg-body-bg">
+
+    <!-- Start Preloader Area -->
+    <div class="preloader" id="preloader">
+        <div class="preloader">
+            <div class="waviy position-relative">
+                <span class="d-inline-block">B</span>
+                <span class="d-inline-block">.</span>
+                <span class="d-inline-block">C</span>
+                <span class="d-inline-block">.</span>
+                <span class="d-inline-block">T</span>
+                <span class="d-inline-block">E</span>
+                <span class="d-inline-block">C</span>
+                <span class="d-inline-block">H</span>
+            </div>
+        </div>
+    </div>
+    <!-- End Preloader Area -->
+    <!-- Start Sidebar Area -->
+    <div class="sidebar-area" id="sidebar-area">
+        <div class="logo position-relative d-flex align-items-center justify-content-between">
+            <a href="index.html" class="d-block text-decoration-none position-relative">
+                <img src="~/Content/Admin/assets/Images/BCTECHlogo-icon.png" width="55" height="32" alt="logo-icon">
+                <span class="logo-text text-secondary fw-semibold">B.C.Tech</span>
+            </a>
+            <button class="sidebar-burger-menu-close bg-transparent py-3 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y" id="sidebar-burger-menu-close">
+                <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px; transform: rotate(45deg);"></span>
+                <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px; transform: rotate(-45deg);"></span>
+            </button>
+            <button class="sidebar-burger-menu bg-transparent p-0 border-0" id="sidebar-burger-menu">
+                <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px;"></span>
+                <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px; margin: 6px 0;"></span>
+                <span class="border-1 d-block for-dark-burger" style="border-bottom: 1px solid #475569; height: 1px; width: 25px;"></span>
+            </button>
+        </div>
+        @{
+            var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+            var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+            bool isHome = action == "Index";
+            bool isUtility = new[]
+            {  "OrganizationMaster","BranchMaster","UserMaster","FinancialYearMaster","FeesTypeMaster","EnquirySourceMaster" }.Contains(action);
+            bool isCourse = new[]
+            { "Course","CourseMasterManage","CourseInquiries" }.Contains(action);
+        }
+
+        <aside id="layout-menu" class="layout-menu menu-vertical menu active" data-simplebar>
+
+            <ul class="menu-inner">
+
+                <!-- ================= HOME ================= -->
+                <li class="menu-item @(isHome ? "open" : "")">
+
+                    <a href="javascript:void(0);" class="menu-link menu-toggle @(isHome ? "active" : "")">
+                        <span class="material-symbols-outlined menu-icon">home</span>
+                        <span class="title">Home</span>
+                    </a>
+
+                    <ul class="menu-sub">
+                        <li class="menu-item @(action == "Index" ? "active" : "")">
+                            @Html.ActionLink(
+                                     "Dashboard",
+                                     "Index",
+                                     "bctechadmin",
+                                     null,
+                                     new { @class = "menu-link" })
+                        </li>
+                    </ul>
+
+                </li>
+
+                <!-- ================= UTILITY ================= -->
+                <li class="menu-item @(isUtility ? "open" : "")">
+
+                    <a href="javascript:void(0);" class="menu-link menu-toggle @(isUtility ? "active" : "")">
+                        <span class="material-symbols-outlined menu-icon">build</span>
+                        <span class="title">Utility</span>
+                    </a>
+
+                    <ul class="menu-sub">
+
+                        <li class="menu-item @(action == "OrganizationMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                     "Organization",
+                                     "OrganizationMaster",
+                                     "bctechadmin",
+                                     null,
+                                     new { @class = "menu-link" })
+                        </li>
+
+                        <li class="menu-item @(action == "BranchMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                     "Branch",
+                                     "BranchMaster",
+                                     "bctechadmin",
+                                     null,
+                                     new { @class = "menu-link" })
+                        </li>
+
+                        <li class="menu-item @(action == "UserMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                     "User",
+                                     "UserMaster",
+                                     "bctechadmin",
+                                     null,
+                                     new { @class = "menu-link" })
+                        </li>
+                        <li class="menu-item @(action == "FinancialYearMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                     "FinancialYear",
+                                     "FinancialYearMaster",
+                                     "bctechadmin",
+                                     null,
+                                     new { @class = "menu-link" })
+                        </li>
+                        <li class="menu-item @(action == "FeesTypeMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                     "FeesType",
+                                     "FeesTypeMaster",
+                                     "bctechadmin",
+                                     null,
+                                     new { @class = "menu-link" })
+                        </li>
+                        <li class="menu-item @(action == "EnquirySourceMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                     "EnquirySource",
+                                     "EnquirySourceMaster",
+                                     "bctechadmin",
+                                     null,
+                                     new { @class = "menu-link" })
+                        </li>
+                    </ul>
+
+                </li>
+                <li class="menu-item @(isCourse ? "open" : "")">
+
+                    <a href="javascript:void(0);" class="menu-link menu-toggle @(isCourse ? "active" : "")">
+                        <span class="material-symbols-outlined menu-icon">menu_book</span>
+                        <span class="title">Course</span>
+                    </a>
+
+                    <ul class="menu-sub">
+                        <li class="menu-item @(action == "CourseManage" ? "active" : "")">
+                            @Html.ActionLink(
+                                     "CourseManage",
+                                     "CourseManage",
+                                     "bctechadmin",
+                                     null,
+                                     new { @class = "menu-link" })
+                        </li>
+                    </ul>
+
+                </li>
+            </ul>
+
+        </aside>
+    </div>
+    <!-- End Sidebar Area -->
+
+    <div class="container-fluid">
+        <div class="main-content d-flex flex-column">
+            <!-- Start Header Area -->
+            <header class="header-area bg-white mb-4 rounded-10 border border-white" id="header-area">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="right-header-content mt-3 mt-md-0">
+                            <ul class="d-flex align-items-center justify-content-center justify-content-md-end ps-0 mb-0 list-unstyled">
+                                <li class="header-right-item light-dark-item">
+                                    <div class="light-dark">
+                                        <button class="switch-toggle dark-btn p-0 bg-transparent lh-0 border-0" id="switch-toggle">
+                                            <span class="dark"><i class="material-symbols-outlined">dark_mode</i></span>
+                                            <span class="light"><i class="material-symbols-outlined">light_mode</i></span>
+                                        </button>
+                                    </div>
+                                </li>
+                                <li class="header-right-item">
+                                    <div class="dropdown admin-profile">
+                                        <div class="d-xxl-flex align-items-center bg-transparent border-0 text-start p-0 cursor dropdown-toggle" data-bs-toggle="dropdown">
+                                            <div class="flex-shrink-0 position-relative">
+                                                <img class="rounded-circle admin-img-width-for-mobile" style="width: 40px; height: 40px;" src="~/Content/Admin/assets/images/admin.png" alt="admin">
+                                                <span class="d-block bg-success-60 border border-2 border-white rounded-circle position-absolute end-0 bottom-0" style="width: 11px; height: 11px;"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="dropdown-menu border-0 bg-white dropdown-menu-end">
+                                            <div class="d-flex align-items-center info">
+                                                <div class="flex-shrink-0">
+                                                    <img class="rounded-circle admin-img-width-for-mobile" style="width: 40px; height: 40px;" src="~/Content/Admin/assets/images/admin.png" alt="admin">
+                                                </div>
+                                                <div class="flex-grow-1 ms-10">
+                                                    <h3 class="fw-medium fs-17 mb-0">Mateo Luca</h3>
+                                                    <span class="fs-15 fw-medium">Admin</span>
+                                                </div>
+                                            </div>
+                                            <ul class="admin-link mb-0 list-unstyled">
+                                                <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="my-profile.html">
+                                                        <i class="material-symbols-outlined">person</i>
+                                                        <span class="ms-2">My Profile</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="settings.html">
+                                                        <i class="material-symbols-outlined">settings</i>
+                                                        <span class="ms-2">Settings</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="tickets.html">
+                                                        <i class="material-symbols-outlined">info</i>
+                                                        <span class="ms-2">Support</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="logout.html">
+                                                        <i class="material-symbols-outlined">logout</i>
+                                                        <span class="ms-2">Logout</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- End Header Area -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+                <h3 class="mb-0">@ViewData["PageTitle"]</h3>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb align-items-center mb-0 lh-1">
+
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Index","bctechadmin")" class="d-flex align-items-center text-decoration-none">
+                                <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                                <span class="text-body fs-14 hover">Dashboard</span>
+                            </a>
+                        </li>
+
+                        @if (ViewData["ParentMenu"] != null)
+                        {
+                            <li class="breadcrumb-item">
+                                @ViewData["ParentMenu"]
+                            </li>
+                        }
+
+                        @if (ViewData["SubMenu"] != null)
+                        {
+                            <li class="breadcrumb-item">
+                                <a href="@ViewData["SubMenuUrl"]" class="text-decoration-none">
+                                    @ViewData["SubMenu"]
+                                </a>
+                            </li>
+                        }
+
+                        @if (ViewData["PageTitle"] != null)
+                        {
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <span class="text-secondary">@ViewData["PageTitle"]</span>
+                            </li>
+                        }
+
+                    </ol>
+                </nav>
+            </div>
+            <div class="main-content-container overflow-hidden">
+                @RenderBody()
+            </div>
+            <!-- Start Footer Area -->
+            <footer class="footer-area bg-white text-center rounded-10 rounded-bottom-0">
+                <p class="fs-16 text-body">
+                    Copyright ©
+                    <span class="text-secondary">B.C.Tech <span id="currentYear"></span></span>
+                    All Rights Reserved. Made with ❤️ By
+                    <a href="https://tryoninfosoft.com/" target="_blank" class="text-decoration-none text-primary">
+                        TRYON INFOSOFT
+                    </a>
+                </p>
+            </footer>
+            <!-- End Footer Area -->
+        </div>
+    </div>
+    <!-- End Theme Setting Area -->
+    <!-- Link Of JS File -->
+
+
+    <script src="~/Content/Admin/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000"
+        };
+    </script>
+    <script src="~/Content/Admin/assets/js/sidebar-menu.js"></script>
+    <script src="~/Content/Admin/assets/js/quill.min.js"></script>
+    <script src="~/Content/Admin/assets/js/data-table.js"></script>
+    <script src="~/Content/Admin/assets/js/prism.js"></script>
+    <script src="~/Content/Admin/assets/js/clipboard.min.js"></script>
+    <script src="~/Content/Admin/assets/js/simplebar.min.js"></script>
+    <script src="~/Content/Admin/assets/js/apexcharts.min.js"></script>
+    <script src="~/Content/Admin/assets/js/echarts.min.js"></script>
+    <script src="~/Content/Admin/assets/js/swiper-bundle.min.js"></script>
+    <script src="~/Content/Admin/assets/js/fullcalendar.main.js"></script>
+    <script src="~/Content/Admin/assets/js/jsvectormap.min.js"></script>
+    <script src="~/Content/Admin/assets/js/world-merc.js"></script>
+    <script src="~/Content/Admin/assets/js/custom/apexcharts.js"></script>
+    <script src="~/Content/Admin/assets/js/custom/echarts.js"></script>
+    <script src="~/Content/Admin/assets/js/custom/maps.js"></script>
+    <script src="~/Content/Admin/assets/js/custom/custom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="~/Content/Admin/assets/js/bootstrap.bundle.min.js"></script>
+
+    <!-- DataTable -->
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- CKEditor -->    
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs5.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs5.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

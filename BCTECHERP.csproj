@@ -1,0 +1,484 @@
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2194B8D0-EA48-458A-9942-61449C9E4119}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BCTECHERP</RootNamespace>
+    <AssemblyName>BCTECHERP</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.7\lib\net45\System.Web.Webpages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages.Deployment">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.7\lib\net45\System.Web.Webpages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.7\lib\net45\System.Web.Webpages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Admin\assets\css\jsvectormap.min.css" />
+    <Content Include="Content\Admin\assets\css\prism.css" />
+    <Content Include="Content\Admin\assets\css\quill.snow.css" />
+    <Content Include="Content\Admin\assets\css\remixicon.css" />
+    <Content Include="Content\Admin\assets\css\sidebar-menu.css" />
+    <Content Include="Content\Admin\assets\css\simplebar.css" />
+    <Content Include="Content\Admin\assets\css\style.css" />
+    <Content Include="Content\Admin\assets\css\swiper-bundle.min.css" />
+    <Content Include="Content\Admin\assets\Images\active-learning.svg" />
+    <Content Include="Content\Admin\assets\Images\active-projects.svg" />
+    <Content Include="Content\Admin\assets\Images\admin.png" />
+    <Content Include="Content\Admin\assets\Images\asana.png" />
+    <Content Include="Content\Admin\assets\Images\australia.png" />
+    <Content Include="Content\Admin\assets\Images\bank.png" />
+    <Content Include="Content\Admin\assets\Images\Bannerpage.png" />
+    <Content Include="Content\Admin\assets\Images\BCTECHFavicon.png" />
+    <Content Include="Content\Admin\assets\Images\BCTECHlogo-icon.png" />
+    <Content Include="Content\Admin\assets\Images\BCTECHLogo.jpg" />
+    <Content Include="Content\Admin\assets\Images\BCTECHLogo1.png" />
+    <Content Include="Content\Admin\assets\Images\behance.png" />
+    <Content Include="Content\Admin\assets\Images\blue-man.jpg" />
+    <Content Include="Content\Admin\assets\Images\burn.png" />
+    <Content Include="Content\Admin\assets\Images\calendar-3d.png" />
+    <Content Include="Content\Admin\assets\Images\canada.png" />
+    <Content Include="Content\Admin\assets\Images\china.png" />
+    <Content Include="Content\Admin\assets\Images\coming-soon.png" />
+    <Content Include="Content\Admin\assets\Images\completed-projects.svg" />
+    <Content Include="Content\Admin\assets\Images\consultation.png" />
+    <Content Include="Content\Admin\assets\Images\course1.jpg" />
+    <Content Include="Content\Admin\assets\Images\course2.jpg" />
+    <Content Include="Content\Admin\assets\Images\course3.jpg" />
+    <Content Include="Content\Admin\assets\Images\course4.jpg" />
+    <Content Include="Content\Admin\assets\Images\course5.jpg" />
+    <Content Include="Content\Admin\assets\Images\course6.jpg" />
+    <Content Include="Content\Admin\assets\Images\course7.jpg" />
+    <Content Include="Content\Admin\assets\Images\course8.jpg" />
+    <Content Include="Content\Admin\assets\Images\course9.jpg" />
+    <Content Include="Content\Admin\assets\Images\doc.png" />
+    <Content Include="Content\Admin\assets\Images\doctor1.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor10.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor11.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor12.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor13.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor14.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor15.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor16.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor17.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor18.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor19.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor2.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor20.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor21.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor22.png" />
+    <Content Include="Content\Admin\assets\Images\doctor3.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor4.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor5.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor6.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor7.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor8.jpg" />
+    <Content Include="Content\Admin\assets\Images\doctor9.jpg" />
+    <Content Include="Content\Admin\assets\Images\dribbble.png" />
+    <Content Include="Content\Admin\assets\Images\email.png" />
+    <Content Include="Content\Admin\assets\Images\error.png" />
+    <Content Include="Content\Admin\assets\Images\event-details.jpg" />
+    <Content Include="Content\Admin\assets\Images\facebook.png" />
+    <Content Include="Content\Admin\assets\Images\france.png" />
+    <Content Include="Content\Admin\assets\Images\gallery1.jpg" />
+    <Content Include="Content\Admin\assets\Images\gallery2.jpg" />
+    <Content Include="Content\Admin\assets\Images\gallery3.jpg" />
+    <Content Include="Content\Admin\assets\Images\gallery4.jpg" />
+    <Content Include="Content\Admin\assets\Images\gallery5.jpg" />
+    <Content Include="Content\Admin\assets\Images\gallery6.jpg" />
+    <Content Include="Content\Admin\assets\Images\gallery7.jpg" />
+    <Content Include="Content\Admin\assets\Images\gallery8.jpg" />
+    <Content Include="Content\Admin\assets\Images\gallery9.jpg" />
+    <Content Include="Content\Admin\assets\Images\germany.png" />
+    <Content Include="Content\Admin\assets\Images\github.png" />
+    <Content Include="Content\Admin\assets\Images\google-chrome.png" />
+    <Content Include="Content\Admin\assets\Images\google.png" />
+    <Content Include="Content\Admin\assets\Images\instagram.png" />
+    <Content Include="Content\Admin\assets\Images\instructor.svg" />
+    <Content Include="Content\Admin\assets\Images\internal-error.png" />
+    <Content Include="Content\Admin\assets\Images\join-white.svg" />
+    <Content Include="Content\Admin\assets\Images\join.svg" />
+    <Content Include="Content\Admin\assets\Images\jpg.png" />
+    <Content Include="Content\Admin\assets\Images\logo-icon.png" />
+    <Content Include="Content\Admin\assets\Images\logo.svg" />
+    <Content Include="Content\Admin\assets\Images\mailchimp.png" />
+    <Content Include="Content\Admin\assets\Images\man.png" />
+    <Content Include="Content\Admin\assets\Images\maps.png" />
+    <Content Include="Content\Admin\assets\Images\master-card.png" />
+    <Content Include="Content\Admin\assets\Images\medibox.png" />
+    <Content Include="Content\Admin\assets\Images\microsoft-edge.png" />
+    <Content Include="Content\Admin\assets\Images\mozilla-firefox.png" />
+    <Content Include="Content\Admin\assets\Images\new-students.svg" />
+    <Content Include="Content\Admin\assets\Images\no-image.png" />
+    <Content Include="Content\Admin\assets\Images\opera-mini.png" />
+    <Content Include="Content\Admin\assets\Images\others.png" />
+    <Content Include="Content\Admin\assets\Images\patient.png" />
+    <Content Include="Content\Admin\assets\Images\paypal.png" />
+    <Content Include="Content\Admin\assets\Images\pdf.png" />
+    <Content Include="Content\Admin\assets\Images\phone.png" />
+    <Content Include="Content\Admin\assets\Images\photo1.jpg" />
+    <Content Include="Content\Admin\assets\Images\photo2.jpg" />
+    <Content Include="Content\Admin\assets\Images\photo3.jpg" />
+    <Content Include="Content\Admin\assets\Images\photo4.jpg" />
+    <Content Include="Content\Admin\assets\Images\photo5.jpg" />
+    <Content Include="Content\Admin\assets\Images\photo6.jpg" />
+    <Content Include="Content\Admin\assets\Images\photo7.jpg" />
+    <Content Include="Content\Admin\assets\Images\photo8.jpg" />
+    <Content Include="Content\Admin\assets\Images\photo9.jpg" />
+    <Content Include="Content\Admin\assets\Images\png.png" />
+    <Content Include="Content\Admin\assets\Images\product-details1.jpg" />
+    <Content Include="Content\Admin\assets\Images\product-details2.jpg" />
+    <Content Include="Content\Admin\assets\Images\product-details3.jpg" />
+    <Content Include="Content\Admin\assets\Images\product-details4.jpg" />
+    <Content Include="Content\Admin\assets\Images\product1.jpg" />
+    <Content Include="Content\Admin\assets\Images\product1.png" />
+    <Content Include="Content\Admin\assets\Images\product10.png" />
+    <Content Include="Content\Admin\assets\Images\product11.png" />
+    <Content Include="Content\Admin\assets\Images\product12.png" />
+    <Content Include="Content\Admin\assets\Images\product13.png" />
+    <Content Include="Content\Admin\assets\Images\product14.png" />
+    <Content Include="Content\Admin\assets\Images\product2.jpg" />
+    <Content Include="Content\Admin\assets\Images\product2.png" />
+    <Content Include="Content\Admin\assets\Images\product3.jpg" />
+    <Content Include="Content\Admin\assets\Images\product3.png" />
+    <Content Include="Content\Admin\assets\Images\product4.jpg" />
+    <Content Include="Content\Admin\assets\Images\product4.png" />
+    <Content Include="Content\Admin\assets\Images\product5.jpg" />
+    <Content Include="Content\Admin\assets\Images\product5.png" />
+    <Content Include="Content\Admin\assets\Images\product6.jpg" />
+    <Content Include="Content\Admin\assets\Images\product6.png" />
+    <Content Include="Content\Admin\assets\Images\product7.jpg" />
+    <Content Include="Content\Admin\assets\Images\product7.png" />
+    <Content Include="Content\Admin\assets\Images\product8.jpg" />
+    <Content Include="Content\Admin\assets\Images\product8.png" />
+    <Content Include="Content\Admin\assets\Images\product9.jpg" />
+    <Content Include="Content\Admin\assets\Images\product9.png" />
+    <Content Include="Content\Admin\assets\Images\profile-big-cover.jpg" />
+    <Content Include="Content\Admin\assets\Images\profile-cover.jpg" />
+    <Content Include="Content\Admin\assets\Images\profile.jpg" />
+    <Content Include="Content\Admin\assets\Images\project1.svg" />
+    <Content Include="Content\Admin\assets\Images\project2.svg" />
+    <Content Include="Content\Admin\assets\Images\qr-code.png" />
+    <Content Include="Content\Admin\assets\Images\safari.png" />
+    <Content Include="Content\Admin\assets\Images\school.png" />
+    <Content Include="Content\Admin\assets\Images\school.svg" />
+    <Content Include="Content\Admin\assets\Images\seller1.png" />
+    <Content Include="Content\Admin\assets\Images\seller10.png" />
+    <Content Include="Content\Admin\assets\Images\seller11.png" />
+    <Content Include="Content\Admin\assets\Images\seller12.png" />
+    <Content Include="Content\Admin\assets\Images\seller2.png" />
+    <Content Include="Content\Admin\assets\Images\seller3.png" />
+    <Content Include="Content\Admin\assets\Images\seller4.png" />
+    <Content Include="Content\Admin\assets\Images\seller5.png" />
+    <Content Include="Content\Admin\assets\Images\seller6.png" />
+    <Content Include="Content\Admin\assets\Images\seller7.png" />
+    <Content Include="Content\Admin\assets\Images\seller8.png" />
+    <Content Include="Content\Admin\assets\Images\seller9.png" />
+    <Content Include="Content\Admin\assets\Images\shape1.png" />
+    <Content Include="Content\Admin\assets\Images\shape2.png" />
+    <Content Include="Content\Admin\assets\Images\shape3.png" />
+    <Content Include="Content\Admin\assets\Images\shape4.png" />
+    <Content Include="Content\Admin\assets\Images\shape5.png" />
+    <Content Include="Content\Admin\assets\Images\shape6.png" />
+    <Content Include="Content\Admin\assets\Images\shape7.png" />
+    <Content Include="Content\Admin\assets\Images\skril.png" />
+    <Content Include="Content\Admin\assets\Images\slack.png" />
+    <Content Include="Content\Admin\assets\Images\spain.png" />
+    <Content Include="Content\Admin\assets\Images\staffs.svg" />
+    <Content Include="Content\Admin\assets\Images\starter.png" />
+    <Content Include="Content\Admin\assets\Images\total-projects.svg" />
+    <Content Include="Content\Admin\assets\Images\total-students.svg" />
+    <Content Include="Content\Admin\assets\Images\total-teachers.svg" />
+    <Content Include="Content\Admin\assets\Images\twitter.png" />
+    <Content Include="Content\Admin\assets\Images\txt.png" />
+    <Content Include="Content\Admin\assets\Images\upgrade.png" />
+    <Content Include="Content\Admin\assets\Images\upgrade2.png" />
+    <Content Include="Content\Admin\assets\Images\usa.png" />
+    <Content Include="Content\Admin\assets\Images\user1.jpg" />
+    <Content Include="Content\Admin\assets\Images\user10.jpg" />
+    <Content Include="Content\Admin\assets\Images\user11.jpg" />
+    <Content Include="Content\Admin\assets\Images\user12.jpg" />
+    <Content Include="Content\Admin\assets\Images\user13.jpg" />
+    <Content Include="Content\Admin\assets\Images\user14.jpg" />
+    <Content Include="Content\Admin\assets\Images\user15.jpg" />
+    <Content Include="Content\Admin\assets\Images\user16.jpg" />
+    <Content Include="Content\Admin\assets\Images\user17.jpg" />
+    <Content Include="Content\Admin\assets\Images\user18.jpg" />
+    <Content Include="Content\Admin\assets\Images\user19.jpg" />
+    <Content Include="Content\Admin\assets\Images\user2.jpg" />
+    <Content Include="Content\Admin\assets\Images\user20.jpg" />
+    <Content Include="Content\Admin\assets\Images\user21.jpg" />
+    <Content Include="Content\Admin\assets\Images\user22.jpg" />
+    <Content Include="Content\Admin\assets\Images\user23.jpg" />
+    <Content Include="Content\Admin\assets\Images\user24.jpg" />
+    <Content Include="Content\Admin\assets\Images\user25.jpg" />
+    <Content Include="Content\Admin\assets\Images\user26.jpg" />
+    <Content Include="Content\Admin\assets\Images\user27.jpg" />
+    <Content Include="Content\Admin\assets\Images\user28.jpg" />
+    <Content Include="Content\Admin\assets\Images\user29.jpg" />
+    <Content Include="Content\Admin\assets\Images\user3.jpg" />
+    <Content Include="Content\Admin\assets\Images\user30.jpg" />
+    <Content Include="Content\Admin\assets\Images\user31.jpg" />
+    <Content Include="Content\Admin\assets\Images\user32.jpg" />
+    <Content Include="Content\Admin\assets\Images\user33.jpg" />
+    <Content Include="Content\Admin\assets\Images\user34.jpg" />
+    <Content Include="Content\Admin\assets\Images\user35.jpg" />
+    <Content Include="Content\Admin\assets\Images\user36.jpg" />
+    <Content Include="Content\Admin\assets\Images\user37.jpg" />
+    <Content Include="Content\Admin\assets\Images\user38.jpg" />
+    <Content Include="Content\Admin\assets\Images\user39.jpg" />
+    <Content Include="Content\Admin\assets\Images\user4.jpg" />
+    <Content Include="Content\Admin\assets\Images\user40.jpg" />
+    <Content Include="Content\Admin\assets\Images\user41.jpg" />
+    <Content Include="Content\Admin\assets\Images\user42.jpg" />
+    <Content Include="Content\Admin\assets\Images\user43.jpg" />
+    <Content Include="Content\Admin\assets\Images\user44.jpg" />
+    <Content Include="Content\Admin\assets\Images\user45.jpg" />
+    <Content Include="Content\Admin\assets\Images\user46.jpg" />
+    <Content Include="Content\Admin\assets\Images\user47.jpg" />
+    <Content Include="Content\Admin\assets\Images\user48.jpg" />
+    <Content Include="Content\Admin\assets\Images\user49.jpg" />
+    <Content Include="Content\Admin\assets\Images\user5.jpg" />
+    <Content Include="Content\Admin\assets\Images\user50.jpg" />
+    <Content Include="Content\Admin\assets\Images\user51.jpg" />
+    <Content Include="Content\Admin\assets\Images\user52.jpg" />
+    <Content Include="Content\Admin\assets\Images\user53.jpg" />
+    <Content Include="Content\Admin\assets\Images\user54.jpg" />
+    <Content Include="Content\Admin\assets\Images\user55.jpg" />
+    <Content Include="Content\Admin\assets\Images\user56.jpg" />
+    <Content Include="Content\Admin\assets\Images\user57.jpg" />
+    <Content Include="Content\Admin\assets\Images\user58.jpg" />
+    <Content Include="Content\Admin\assets\Images\user59.jpg" />
+    <Content Include="Content\Admin\assets\Images\user6.jpg" />
+    <Content Include="Content\Admin\assets\Images\user60.jpg" />
+    <Content Include="Content\Admin\assets\Images\user61.jpg" />
+    <Content Include="Content\Admin\assets\Images\user62.jpg" />
+    <Content Include="Content\Admin\assets\Images\user63.jpg" />
+    <Content Include="Content\Admin\assets\Images\user64.jpg" />
+    <Content Include="Content\Admin\assets\Images\user65.jpg" />
+    <Content Include="Content\Admin\assets\Images\user7.jpg" />
+    <Content Include="Content\Admin\assets\Images\user8.jpg" />
+    <Content Include="Content\Admin\assets\Images\user9.jpg" />
+    <Content Include="Content\Admin\assets\Images\video-content.svg" />
+    <Content Include="Content\Admin\assets\Images\welcome-bg.png" />
+    <Content Include="Content\Admin\assets\Images\welcome.png" />
+    <Content Include="Content\Admin\assets\Images\welcome2.png" />
+    <Content Include="Content\Admin\assets\Images\wise.png" />
+    <Content Include="Content\Admin\assets\Images\xl4.png" />
+    <Content Include="Content\Admin\assets\js\apexcharts.min.js" />
+    <Content Include="Content\Admin\assets\js\bootstrap.bundle.min.js" />
+    <Content Include="Content\Admin\assets\js\clipboard.min.js" />
+    <Content Include="Content\Admin\assets\js\custom\apexcharts.js" />
+    <Content Include="Content\Admin\assets\js\custom\custom.js" />
+    <Content Include="Content\Admin\assets\js\custom\echarts.js" />
+    <Content Include="Content\Admin\assets\js\custom\maps.js" />
+    <Content Include="Content\Admin\assets\js\data-table.js" />
+    <Content Include="Content\Admin\assets\js\echarts.min.js" />
+    <Content Include="Content\Admin\assets\js\fullcalendar.main.js" />
+    <Content Include="Content\Admin\assets\js\jsvectormap.min.js" />
+    <Content Include="Content\Admin\assets\js\prism.js" />
+    <Content Include="Content\Admin\assets\js\quill.min.js" />
+    <Content Include="Content\Admin\assets\js\sidebar-menu.js" />
+    <Content Include="Content\Admin\assets\js\simplebar.min.js" />
+    <Content Include="Content\Admin\assets\js\swiper-bundle.min.js" />
+    <Content Include="Content\Admin\assets\js\world-merc.js" />
+    <Content Include="Content\Upload\CourseImage\125a40c6-71b6-4142-b55c-ee1081b76002.png" />
+    <Content Include="Content\Upload\CourseImage\19407019-1263-4bc9-8e94-64dc4178e43e.png" />
+    <Content Include="Content\Upload\CourseImage\373130b5-a69b-4d65-b562-6c4f9bfa40ba.png" />
+    <Content Include="Content\Upload\CourseImage\4cb9e634-0636-4942-b853-a097b8c8a372.png" />
+    <Content Include="Content\Upload\CourseImage\4e353f79-4231-4f23-92b9-7853de59c2f3.png" />
+    <Content Include="Content\Upload\CourseImage\509874da-a3f4-4757-91e2-748835278c24.png" />
+    <Content Include="Content\Upload\CourseImage\63f31550-a5b6-46bb-a486-b3d075ecb48a.png" />
+    <Content Include="Content\Upload\CourseImage\7f0e436a-3186-4575-a41c-6429fc05d273.png" />
+    <Content Include="Content\Upload\CourseImage\860e6116-a5c7-427f-8e37-fea94775197c.jpg" />
+    <Content Include="Content\Upload\CourseImage\87c3fb53-37cd-414c-8ced-cd617d2d953f.png" />
+    <Content Include="Content\Upload\CourseImage\9a3e2d04-bbcb-4d43-8263-3b111848adfd.jpg" />
+    <Content Include="Content\Upload\CourseImage\9e75163b-883f-46d2-9be6-b1c320dfabb0.png" />
+    <Content Include="Content\Upload\CourseImage\b305d7c3-17df-40c6-b041-bc4c382de900.png" />
+    <Content Include="Content\Upload\CourseImage\b5c074da-8a40-4e89-aff4-cb59ec51fbcc.png" />
+    <Content Include="Content\Upload\CourseImage\bce0778f-977b-4a4c-a1e2-f26f7174814f.png" />
+    <Content Include="Content\Upload\CourseImage\c09f8753-04d5-4374-b195-5cc79e149ab3.png" />
+    <Content Include="Content\Upload\CourseImage\eb2e92fa-1622-4fdf-b316-958238e6e41c.jpg" />
+    <Content Include="Content\Upload\CourseImage\f77046e7-0496-4180-bb3d-faac23059853.png" />
+    <Content Include="Content\Upload\UserProfilePhoto\no-image.png" />
+    <Content Include="Global.asax" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\bctechadminController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BranchMaster.cs" />
+    <Compile Include="Models\CourseModel.cs" />
+    <Compile Include="Models\EnquirySourceMaster.cs" />
+    <Compile Include="Models\FeesTypeMaster.cs" />
+    <Compile Include="Models\FinancialYearMaster.cs" />
+    <Compile Include="Models\OrganizationMasterModel.cs" />
+    <Compile Include="Models\UserMaster.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config" />
+    <Content Include="Content\Admin\assets\fonts\remixicon.woff2" />
+    <Content Include="Content\Admin\assets\scss\components\apexchart-custom.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_active-project.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_calendar.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_chat.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_default-table.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_footer-area.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_global.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_header-area.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_main-content.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_navbar.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_pagination.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_range-slide.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_sidebar-menu.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_social-profile.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_stats-card.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_theme-switch.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_timeline.scss" />
+    <Content Include="Content\Admin\assets\scss\components\_welcome.scss" />
+    <Content Include="Content\Admin\assets\scss\style.scss" />
+    <Content Include="Content\Admin\assets\scss\_variables.scss" />
+    <None Include="packages.config" />
+    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Views\bctechadmin\Index.cshtml" />
+    <Content Include="Views\bctechadmin\LayoutAdmin.cshtml" />
+    <Content Include="Views\bctechadmin\OrganizationMaster.cshtml" />
+    <Content Include="Views\bctechadmin\BranchMaster.cshtml" />
+    <Content Include="Views\bctechadmin\UserMaster.cshtml" />
+    <Content Include="Views\bctechadmin\createuser.cshtml" />
+    <Content Include="Views\bctechadmin\CreateBranchMaster.cshtml" />
+    <Content Include="Views\bctechadmin\FinancialYearMaster.cshtml" />
+    <Content Include="Views\bctechadmin\FeesTypeMaster.cshtml" />
+    <Content Include="Views\bctechadmin\EnquirySourceMaster.cshtml" />
+    <Content Include="Views\bctechadmin\CourseManage.cshtml" />
+    <Content Include="Views\bctechadmin\CreateCourse.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Content\Upload\CourseDescription\" />
+    <Folder Include="Content\Upload\UserProofOfIdentity\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>2831</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:2831/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
