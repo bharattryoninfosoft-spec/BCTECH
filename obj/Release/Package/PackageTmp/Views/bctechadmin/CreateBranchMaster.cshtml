@@ -1,0 +1,560 @@
+﻿
+@{
+    ViewBag.Title = "CreateBranchMaster";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="card bg-white border border-white rounded-10 mb-4">
+            <div class="card-body p-20">
+
+                <form class="row g-3 needs-validation" novalidate>
+
+                    <input type="hidden" id="hfBranchID">
+
+                    <!-- Organization -->
+                    <div class="col-md-6">
+                        <label class="form-label label fs-16">Organization</label>
+                        <div class="position-relative">
+                            <select class="form-select h-55 ps-5" id="ddlOrganization" disabled>
+                                <option value="">Select Organization</option>
+                            </select>
+                            <div class="invalid-feedback">Please select Organization.</div>
+                            <i class="ri-building-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Branch Code -->
+                    <div class="col-md-3">
+                        <label class="form-label label fs-16">Branch Code</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtBranchCode" required>
+                            <div class="invalid-feedback">Please enter Branch Code.</div>
+                            <i class="ri-barcode-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Branch Name -->
+                    <div class="col-md-3">
+                        <label class="form-label label fs-16">Branch Name</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtBranchName" required>
+                            <div class="invalid-feedback">Please enter Branch Name.</div>
+                            <i class="ri-store-2-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-md-12">
+                        <label class="form-label label fs-16">Address</label>
+                        <div class="position-relative">
+                            <textarea class="form-control ps-5 py-3" id="txtAddress" rows="3" required></textarea>
+                            <div class="invalid-feedback">Please enter Address.</div>
+                            <i class="ri-map-pin-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:13px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- State -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">State</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtState" required>
+                            <div class="invalid-feedback">Please enter State.</div>
+                            <i class="ri-map-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- City -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">City</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtCity" required>
+                            <div class="invalid-feedback">Please enter City.</div>
+                            <i class="ri-community-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Pincode -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Pincode</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtPincode" maxlength="6">
+                            <div class="invalid-feedback">Please enter Pincode.</div>
+                            <i class="ri-mail-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Latitude -->
+                    <div class="col-md-6">
+                        <label class="form-label label fs-16">Latitude</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtLatitude">
+                            <i class="ri-map-pin-2-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Longitude -->
+                    <div class="col-md-6">
+                        <label class="form-label label fs-16">Longitude</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtLongitude">
+                            <i class="ri-map-pin-2-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mobile -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Mobile No</label>
+                        <div class="position-relative">
+                            <input type="tel" class="form-control h-55 ps-5" id="txtMobileNo" maxlength="10" required>
+                            <div class="invalid-feedback">Please enter Mobile No.</div>
+                            <i class="ri-phone-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Alternate Mobile -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Alternate Mobile</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtAlternateMobileNo" maxlength="10">
+                            <i class="ri-smartphone-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-4">
+                        <label class="form-label label fs-16">Email Address</label>
+                        <div class="position-relative">
+                            <input type="email" class="form-control h-55 ps-5" id="txtEmailAddress">
+                            <i class="ri-mail-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Bank Name -->
+                    <div class="col-md-3">
+                        <label class="form-label label fs-16">Bank Name</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtBankName" disabled>
+                            <i class="ri-bank-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Account No -->
+                    <div class="col-md-3">
+                        <label class="form-label label fs-16">Account No</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtBankAccountNo">
+                            <i class="ri-bank-card-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- IFSC -->
+                    <div class="col-md-3">
+                        <label class="form-label label fs-16">IFSC Code</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtIFSCCode">
+                            <i class="ri-secure-payment-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- UPI -->
+                    <div class="col-md-3">
+                        <label class="form-label label fs-16">UPI ID</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control h-55 ps-5" id="txtUPIID">
+                            <i class="ri-wallet-3-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Branch Head -->
+                    <div class="col-md-6">
+                        <label class="form-label label fs-16">Branch Head</label>
+                        <div class="position-relative">
+                            <select class="form-select h-55 ps-5" id="ddlBranchHeadUser">
+                                <option value="">Select Branch Head</option>
+                            </select>
+                            <i class="ri-user-star-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                               style="top:2px!important;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Head Office -->
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="chkHeadOffice">
+                            <label class="form-check-label fs-16" for="chkHeadOffice">
+                                Head Office
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Active -->
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="chkActive" checked>
+                            <label class="form-check-label fs-16" for="chkActive">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Save -->
+                    <div class="col-12">
+                   
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+        <div class="d-flex justify-content-end mt-4">
+
+            <a href="/BCTECHAdmin/BranchMaster"
+               class="btn btn-secondary fw-normal fs-16 me-2">
+                <i class="ri-arrow-left-line me-1"></i>
+                Back
+            </a>
+
+            <button type="button"
+                    id="btnSave"
+                    class="btn btn-primary fw-normal fs-16 text-white">
+
+                <span id="btnText">Save Course</span>
+
+                <span id="btnLoader"
+                      class="spinner-border spinner-border-sm ms-2 d-none"
+                      role="status"></span>
+
+            </button>
+
+        </div>
+    </div>
+</div>
+@section Scripts{
+
+    <script>
+
+        $("#txtPincode").on("keyup", function () {
+            var pincode = $(this).val();
+            if (pincode.length == 6) {
+                $.ajax({
+                    url: "https://api.postalpincode.in/pincode/" + pincode,
+                    type: "GET",
+                    success: function (response) {
+                        if (response[0].Status == "Success") {
+                            var data = response[0].PostOffice[0];
+                            $("#txtCity").val(data.District);
+                            $("#txtState").val(data.State);
+                        }
+                        else {
+                            $("#txtCity").val("");
+                            $("#txtState").val("");
+                            toastr.error("Invalid Pincode.");
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Unable to fetch pincode details.");
+                    }
+                });
+            }
+            else {
+                $("#txtCity").val("");
+                $("#txtState").val("");
+            }
+        });
+        $(function () {
+        var BranchID = '@ViewBag.branchId';
+        var mode = '@ViewBag.Mode';
+            GetOrganizationList();
+            BindBranchHead();
+            if (BranchID != "" && BranchID != "0") {
+                GetBranchById(BranchID);
+        }
+            if (mode == "E")
+                $("#btnText").text(mode == "E" ? "Update Branch" : "Save Branch");
+
+            if (mode == "V") {
+            $("input,select,textarea").prop("disabled", true);
+            $("#btnSave").hide();
+
+        }
+});
+        function GetOrganizationList() {
+
+    $.ajax({
+        url: "/bctechadmin/GetOrganizationList",
+        type: "GET",
+        success: function (res) {
+
+            if (res.Status == 1) {
+
+                $("#ddlOrganization").empty();
+
+                $.each(res.Data, function (i, item) {
+
+                    $("#ddlOrganization").append(
+                        '<option value="' + item.OrganizationID + '">' +
+                        item.OrganizationName +
+                        '</option>'
+                    );
+
+                });
+
+                // Default select first organization
+                if (res.Data.length > 0) {
+                    $("#ddlOrganization").val(res.Data[0].OrganizationID);
+                }
+            }
+        }
+    });
+
+        }
+        function BindBranchHead() {
+
+            $.ajax({
+                url: '/bctechadmin/GetBranchHeadUsers',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+
+                    $("#ddlBranchHeadUser").empty();
+                    $("#ddlBranchHeadUser").append('<option value="">Select Branch Head</option>');
+
+                    $.each(response, function (i, item) {
+                        $("#ddlBranchHeadUser").append(
+                            '<option value="' + item.UserID + '">' + item.Username + '</option>'
+                        );
+                    });
+                },
+                error: function () {
+                    alert("Failed to load Branch Head list.");
+                }
+            });
+
+        }
+        $("#btnSave").click(function () {
+
+            SaveBranchMaster();
+        });
+        function SaveBranchMaster() {
+            var valid = true;
+            valid &= ValidateDropdown("#ddlOrganization");
+            valid &= ValidateControl("#txtBranchCode");
+            valid &= ValidateControl("#txtBranchName");
+            valid &= ValidateControl("#txtAddress");
+            valid &= ValidateControl("#txtState");
+            valid &= ValidateControl("#txtCity");
+            valid &= ValidateControl("#txtPincode");
+            valid &= ValidateControl("#txtMobileNo");
+            valid &= ValidateDropdown("#ddlBranchHeadUser");
+
+            if (!valid) {
+                toastr.warning("Please fill all required fields.");
+                return;
+            }
+            var obj = {
+                BranchID: $("#hfBranchID").val() == "" ? 0 : $("#hfBranchID").val(),
+                OrganizationID: $("#ddlOrganization").val(),
+                BranchCode: $("#txtBranchCode").val(),
+                BranchName: $("#txtBranchName").val(),
+                Address: $("#txtAddress").val(),
+                State: $("#txtState").val(),
+                City: $("#txtCity").val(),
+                Pincode: $("#txtPincode").val(),
+                Latitude: $("#txtLatitude").val(),
+                Longitude: $("#txtLongitude").val(),
+                MobileNo: $("#txtMobileNo").val(),
+                AlternateMobileNo: $("#txtAlternateMobileNo").val(),
+                EmailAddress: $("#txtEmailAddress").val(),
+                BankName: $("#txtBankName").val(),
+                BankAccountNo: $("#txtBankAccountNo").val(),
+                IFSCCode: $("#txtIFSCCode").val(),
+                UPIID: $("#txtUPIID").val(),
+                BranchHeadUserID: $("#ddlBranchHeadUser").val(),
+
+                IsHeadOffice: $("#chkHeadOffice").is(":checked"),
+                IsActive: $("#chkActive").is(":checked")
+            };
+
+            $("#btnSave").prop("disabled", true);
+            $("#btnLoader").removeClass("d-none");
+
+            $.ajax({
+                url: "/bctechadmin/SaveBranchMaster",
+                type: "POST",
+                data: obj,
+
+                success: function (res) {
+
+                    $("#btnSave").prop("disabled", false);
+                    $("#btnLoader").addClass("d-none");
+
+                    if (res.Status == 1) {
+
+                        toastr.success(res.Message);
+
+                        setTimeout(function () {
+
+                            window.location.href = "/bctechadmin/BranchMaster";
+
+                        }, 1000);
+
+                    }
+                    else {
+
+                        toastr.error(res.Message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    $("#btnSave").prop("disabled", false);
+                    $("#btnLoader").addClass("d-none");
+
+                    toastr.error("Something went wrong.");
+
+                }
+
+            });
+
+        }
+        function GetBranchById(id) {
+
+            $.ajax({
+
+                url: "/bctechadmin/GetBranchById",
+                type: "GET",
+                data: { id: id },
+
+                success: function (res) {
+
+                    if (res.Status == 1) {
+                        $("#hfBranchID").val(res.Data.BranchID);
+                        $("#ddlOrganization").val(res.Data.OrganizationID).trigger("change");
+                        $("#txtBranchCode").val(res.Data.BranchCode);
+                        $("#txtBranchName").val(res.Data.BranchName);
+                        $("#txtAddress").val(res.Data.Address);
+                        $("#txtState").val(res.Data.State);
+                        $("#txtCity").val(res.Data.City);
+                        $("#txtPincode").val(res.Data.Pincode);
+                        $("#txtLatitude").val(res.Data.Latitude);
+                        $("#txtLongitude").val(res.Data.Longitude);
+                        $("#txtMobileNo").val(res.Data.MobileNo);
+                        $("#txtAlternateMobileNo").val(res.Data.AlternateMobileNo);
+                        $("#txtEmailAddress").val(res.Data.EmailAddress);
+                        $("#txtBankName").val(res.Data.BankName);
+                        $("#txtBankAccountNo").val(res.Data.BankAccountNo);
+                        $("#txtIFSCCode").val(res.Data.IFSCCode);
+                        $("#txtUPIID").val(res.Data.UPIID);
+                        $("#ddlBranchHeadUser").val(res.Data.BranchHeadUserID).trigger("change");
+                        $("#chkHeadOffice").prop("checked", res.Data.IsHeadOffice);
+                        $("#chkActive").prop("checked", res.Data.IsActive);
+                    }
+                    else {
+                        toastr.error(res.Message);
+                    }
+                },
+
+                error: function () {
+
+                    toastr.error("Something went wrong.");
+
+                }
+
+            });
+
+        }
+        function ValidateControl(ctrl) {
+
+            if ($(ctrl).val().trim() == "") {
+                $(ctrl).addClass("is-invalid");
+                $(ctrl).removeClass("is-valid");
+                return false;
+            }
+
+            $(ctrl).removeClass("is-invalid");
+            $(ctrl).addClass("is-valid");
+            return true;
+        }
+        function ValidateDropdown(ctrl) {
+
+            if ($(ctrl).val() == "" || $(ctrl).val() == null) {
+                $(ctrl).addClass("is-invalid");
+                $(ctrl).removeClass("is-valid");
+                return false;
+            }
+
+            $(ctrl).removeClass("is-invalid");
+            $(ctrl).addClass("is-valid");
+            return true;
+        }
+        $("input,textarea").on("keyup blur", function () {
+            ValidateControl(this);
+        });
+        $("select").on("change", function () {
+            ValidateDropdown(this);
+        });
+        $("#txtIFSCCode").on("blur", function () {
+
+            var ifsc = $(this).val().trim().toUpperCase();
+
+            if (ifsc == "")
+                return;
+
+            $.ajax({
+                url: "https://ifsc.razorpay.com/" + ifsc,
+                type: "GET",
+                success: function (data) {
+
+                    $("#txtBankName").val(data.BANK);
+
+                    // Optional
+                    // $("#txtBranchName").val(data.BRANCH);
+                    // $("#txtAddress").val(data.ADDRESS);
+                    // $("#txtCity").val(data.CITY);
+                    // $("#txtState").val(data.STATE);
+
+                },
+                error: function () {
+
+                    $("#txtBankName").val("");
+
+                    toastr.error("Invalid IFSC Code.");
+                }
+            });
+
+        });
+         var upiRegex = /^[a-zA-Z0-9._-]{2,}@@[a-zA-Z]{2,}$/;
+        if ($("#txtUPIID").val().trim() != "" &&
+            !upiRegex.test($("#txtUPIID").val().trim())) {
+
+            toastr.warning("Please enter a valid UPI ID.");
+            $("#txtUPIID").focus();
+            return false;
+        }
+    </script>
+
+}
+
+

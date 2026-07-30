@@ -1,0 +1,418 @@
+﻿
+@{
+    ViewBag.Title = "Fees Type Master";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0">
+            <input type="text" id="txtSearch" class="form-control w-350" placeholder="Search Fees Type...">
+            <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                <span class="material-symbols-outlined">search</span>
+            </div>
+        </form>
+
+        <a href="javascript:void(0);" class="text-primary fs-16 text-decoration-none"
+           onclick="OpenFeesTypeModal()">
+            + Add Fees Type
+        </a>
+
+    </div>
+
+    <div class="default-table-area mx-minus-1 table-contact-list">
+
+        <div class="table-responsive">
+
+            <table class="table-common" id="tblFeesType">
+
+                <thead>
+
+                    <tr>
+                        <th>SR</th>
+                        <th>Fees Type</th>
+                        <th>Created Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+                <span class="fs-15" id="lblShowing"></span>
+
+                <nav class="custom-pagination" aria-label="Page navigation example">
+                    <ul class="pagination mb-0 justify-content-center" id="pagination"></ul>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
+<!-- Modal -->
+
+<div class="modal fade" id="FeesTypeModal">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">Fees Type</h5>
+
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="hfFeesTypeID" value="0" />
+
+                <div class="mb-3">
+
+                    <label class="form-label">Fees Type</label>
+
+                    <input type="text"
+                           id="txtFeesTypeTitle"
+                           class="form-control"
+                           maxlength="200"
+                           placeholder="Enter Fees Type" />
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
+
+                <button class="btn btn-primary text-white"
+                        onclick="SaveFeesType()">
+                    Save
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+
+        var feesTypes = [];
+        var filteredFeesTypes = [];
+        var currentPage = 1;
+        var pageSize = 10;
+
+        $(document).ready(function () {
+
+            GetFeesType();
+
+            $("#txtSearch").on("keyup", function () {
+
+                var search = $(this).val().toLowerCase().trim();
+
+                filteredFeesTypes = feesTypes.filter(function (x) {
+
+                    return x.FeesTypeTitle.toLowerCase().includes(search);
+
+                });
+
+                currentPage = 1;
+
+                BindGrid();
+
+            });
+
+        });
+
+        function GetFeesType() {
+
+            $.ajax({
+
+                url: "/BCTECHAdmin/GetFeesTypeList",
+
+                type: "GET",
+
+                dataType: "json",
+
+                success: function (data) {
+
+                    feesTypes = data;
+                    filteredFeesTypes = data;
+
+                    currentPage = 1;
+
+                    BindGrid();
+
+                }
+
+            });
+
+        }
+
+        function BindGrid() {
+
+            var html = "";
+
+            var start = (currentPage - 1) * pageSize;
+            var end = Math.min(start + pageSize, filteredFeesTypes.length);
+
+            for (var i = start; i < end; i++) {
+
+                var item = filteredFeesTypes[i];
+
+                html += `
+                <tr>
+
+                     <td>${i + 1}</td>
+                    <td hidden>${item.FeesTypeID}</td>
+
+                    <td>${item.FeesTypeTitle}</td>
+
+                    <td>${item.DateAndTime}</td>
+
+                    <td>
+
+                        <a href="javascript:void(0)"
+                           onclick="EditFeesType(${item.FeesTypeID})">
+
+                            <i class="ri-edit-line text-primary"></i>
+
+                        </a>
+
+                        &nbsp;&nbsp;
+
+                        <a href="javascript:void(0)"
+                           onclick="DeleteFeesType(${item.FeesTypeID})">
+
+                            <i class="ri-delete-bin-line text-danger"></i>
+
+                        </a>
+
+                    </td>
+
+                </tr>`;
+            }
+
+            $("#tblFeesType tbody").html(html);
+
+            $("#lblShowing").text(
+
+                `Showing ${filteredFeesTypes.length == 0 ? 0 : start + 1}
+                 to ${end}
+                 of ${filteredFeesTypes.length} entries`
+
+            );
+
+            CreatePagination();
+
+        }
+
+        function CreatePagination() {
+
+            var totalPages = Math.ceil(filteredFeesTypes.length / pageSize);
+
+            var html = "";
+
+            html += `
+            <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                <a class="page-link"
+                   href="javascript:void(0)"
+                   ${currentPage == 1 ? '' : `onclick="ChangePage(${currentPage - 1})"`}>
+                    <i class="material-symbols-outlined">west</i>
+                </a>
+            </li>`;
+
+            for (var i = 1; i <= totalPages; i++) {
+
+                html += `
+                <li class="page-item">
+
+                    <a class="page-link ${currentPage == i ? 'active' : ''}"
+                       href="javascript:void(0)"
+                       onclick="ChangePage(${i})">
+
+                        ${i}
+
+                    </a>
+
+                </li>`;
+
+            }
+
+            html += `
+            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                <a class="page-link"
+                   href="javascript:void(0)"
+                   ${currentPage == totalPages ? '' : `onclick="ChangePage(${currentPage + 1})"`}>
+                    <i class="material-symbols-outlined">east</i>
+                </a>
+            </li>`;
+
+            $("#pagination").html(html);
+
+        }
+
+        function ChangePage(page) {
+
+            var totalPages = Math.ceil(filteredFeesTypes.length / pageSize);
+
+            if (page < 1 || page > totalPages)
+                return;
+
+            currentPage = page;
+
+            BindGrid();
+
+        }
+
+        function OpenFeesTypeModal() {
+
+            $("#hfFeesTypeID").val(0);
+
+            $("#txtFeesTypeTitle").val("");
+
+            $("#FeesTypeModal").modal("show");
+
+        }
+
+        function SaveFeesType() {
+
+            if ($("#txtFeesTypeTitle").val().trim() == "") {
+
+                toastr.warning("Please Enter Fees Type.");
+
+                $("#txtFeesTypeTitle").focus();
+
+                return;
+
+            }
+
+            $.ajax({
+
+                url: "/BCTECHAdmin/SaveFeesType",
+
+                type: "POST",
+
+                data: {
+
+                    FeesTypeID: $("#hfFeesTypeID").val(),
+
+                    FeesTypeTitle: $("#txtFeesTypeTitle").val()
+
+                },
+
+                success: function (res) {
+
+                    if (res.Status) {
+                        toastr.success(res.Message);
+                        $("#FeesTypeModal").modal("hide");
+                        GetFeesType();
+                    }
+                    else {
+                        toastr.warning(res.Message);
+                    }
+                }
+
+            });
+
+        }
+
+        function EditFeesType(id) {
+
+            $.ajax({
+
+                url: "/BCTECHAdmin/GetFeesTypeByID",
+
+                type: "GET",
+
+                data: { id: id },
+
+                success: function (item) {
+
+                    $("#hfFeesTypeID").val(item.FeesTypeID);
+
+                    $("#txtFeesTypeTitle").val(item.FeesTypeTitle);
+
+                    $("#FeesTypeModal").modal("show");
+
+                }
+
+            });
+
+        }
+
+        function DeleteFeesType(id) {
+
+            Swal.fire({
+
+                title: "Are you sure?",
+
+                text: "You won't be able to recover this record!",
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonText: "Yes, Delete",
+
+                cancelButtonText: "Cancel"
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    $.ajax({
+
+                        url: "/BCTECHAdmin/DeleteFeesType",
+
+                        type: "POST",
+
+                        data: { id: id },
+
+                        success: function (response) {
+
+                            if (response == "Success") {
+
+                                Swal.fire({
+
+                                    icon: "success",
+
+                                    title: "Deleted",
+
+                                    text: "Fees Type Deleted Successfully",
+
+                                    timer: 1500,
+
+                                    showConfirmButton: false
+
+                                });
+
+                                GetFeesType();
+
+                            }
+
+                        }
+
+                    });
+
+                }
+
+            });
+
+        }
+
+    </script>
+}

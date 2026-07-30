@@ -2,6 +2,8 @@
 @{
     ViewBag.Title = "createuser";
     Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+    string loginUserCategory = Request.Cookies["UserCategory"]?.Value ?? "";
+
 }
 
 
@@ -12,7 +14,7 @@
 
                 <form class="row g-3 needs-validation" novalidate>
                     <input type="hidden" id="hfUserID">
-
+                    <input type="hidden" id="hfUserCategory" value="@loginUserCategory" />
                     <!-- User Category -->
                     <div class="col-md-4">
                         <label class="form-label label fs-16">User Category</label>
@@ -260,7 +262,38 @@
 
 @section Scripts{
     <script>
+        $(document).ready(function () {
 
+            var loginUserCategory = $("#hfUserCategory").val();
+
+            if (loginUserCategory === "Admin") {
+
+                $("#ddlUserCategory").html(`
+            <option value="">Select User Category</option>
+            <option value="Admin">Admin</option>
+            <option value="Branch Head">Branch Head</option>
+            <option value="Staff">Staff</option>
+        `);
+
+            }
+            else if (loginUserCategory === "Branch Head") {
+
+                $("#ddlUserCategory").html(`
+            <option value="">Select User Category</option>
+            <option value="Staff">Staff</option>
+        `);
+
+            }
+            else {
+
+                $("#ddlUserCategory").html(`
+            <option value="">No Permission</option>
+        `).prop("disabled", true);
+
+                $("#btnSave").hide();
+            }
+
+        });
     $(function () {
         var userId = '@ViewBag.UserID';
             var mode = '@ViewBag.Mode';

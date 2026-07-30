@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace BCTECHERP
@@ -18,20 +14,9 @@ namespace BCTECHERP
                 url: "{controller}/{action}/{id}",
                 defaults: new
                 {
-                    controller = "bctechadmin",
-                    action = "Index",
+                    controller = "bctechadmin",   // Your controller name
+                    action = "Index",             // Default action
                     id = UrlParameter.Optional
-                }
-            );
-            routes.MapRoute(
-                name: "UserEdit",
-                url: "bctechadmin/CreateUser/{id}/{mode}",
-                defaults: new
-                {
-                    controller = "bctechadmin",
-                    action = "CreateUser",
-                    id = UrlParameter.Optional,
-                    mode = UrlParameter.Optional
                 }
             );
         }

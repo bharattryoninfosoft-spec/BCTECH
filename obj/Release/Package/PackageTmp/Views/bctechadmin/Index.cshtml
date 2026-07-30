@@ -1,0 +1,392 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Links Of CSS File -->
+    <link rel="stylesheet" href="assets/css/sidebar-menu.css">
+    <link rel="stylesheet" href="assets/css/simplebar.css">
+    <link rel="stylesheet" href="assets/css/prism.css">
+    <link rel="stylesheet" href="assets/css/quill.snow.css">
+    <link rel="stylesheet" href="assets/css/remixicon.css">
+    <link rel="stylesheet" href="assets/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="assets/css/jsvectormap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Favicon -->    
+    <link rel="icon" type="image/png" href="~/Content/Admin/assets/Images/BCTECHFavicon.png" />
+    <!-- Title -->
+    <title>Fila - Multipurpose Bootstrap 5 Admin Dashboard Template</title>
+    <style>
+        @@media (min-width: 768px) {
+    .p-md-5 {
+        padding: 6rem !important;
+    }
+}
+    </style>
+</head>
+<body class="bg-body-bg">
+
+    <!-- Start Preloader Area -->
+    <div class="preloader" id="preloader">
+        <div class="preloader">
+            <div class="waviy position-relative">
+                <span class="d-inline-block">B</span>
+                <span class="d-inline-block">.</span>
+                <span class="d-inline-block">C</span>
+                <span class="d-inline-block">.</span>
+                <span class="d-inline-block">T</span>
+                <span class="d-inline-block">E</span>
+                <span class="d-inline-block">C</span>
+                <span class="d-inline-block">H</span>
+            </div>
+        </div>
+    </div>
+    <!-- End Preloader Area -->
+    <!-- Start Main Content Area -->
+    <div class="container-fluid p-0 overflow-hidden">
+        <div class="row g-0">
+            <div class="col-lg-5">
+                <div class="gradient-bg vh-100 position-relative coming-soon">
+                    <div class="main-content d-flex flex-column p-0">
+                        <div class="m-auto p-3 p-md-4">
+                            <img src="~/Content/Admin/assets/Images/coming-soon1.png" alt="coming-soon" />
+                            @*<img src="assets/images/coming-soon1.png" alt="coming-soon">*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card bg-white border-0 vh-100 position-relative coming-soon">
+                    <div class="main-content d-flex flex-column p-0">
+                        <div class="p-4 p-md-6">
+                            <div class="p-md-5 p-4 p-lg-0">
+                                <div class="text-center mb-4">
+                                    <h3 class="fs-26 fw-medium" style="margin-bottom: 6px;">Sign In</h3>
+                                    <div id="error-alert" class="alert alert-danger mt-2" style="display:none;"></div>
+                                </div>
+
+                                <form>
+                                    <div class="mb-20">
+                                        <label class="label fs-16 mb-2">Email Address</label>
+                                        <div class="form-floating">
+                                            <input type="email"
+                                                   class="form-control"
+                                                   id="emailaddress"
+                                                   placeholder="Enter Email, Mobile No or Username"
+                                                   onblur="validate(this)">
+                                            <label for="floatingInput1">Enter email address *</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-20">
+                                        <label class="label fs-16 mb-2">Your Password</label>
+                                        <div class="form-group" id="password-show-hide">
+                                            <div class="password-wrapper position-relative password-container">
+                                                <input type="password"
+                                                       class="form-control"
+                                                       id="password"
+                                                       placeholder="Enter Password">
+                                                <i style="color: #A9A9C8; font-size: 22px; right: 15px;" class="ri-eye-off-line password-toggle-icon translate-middle-y top-50 position-absolute cursor text-secondary" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-20">
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <label class="form-check-label fs-16" for="flexCheckDefault">
+                                                    Remember me
+                                                </label>
+                                            </div>
+                                            <a href="@Url.Action("ForgotPassword","bctechadmin")"
+                                               class="fs-16 text-primary fw-normal text-decoration-none">
+                                                Forgot Password?
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <button type="button"
+                                                class="btn btn-primary w-100 btn-login text-white"
+                                                onclick="checkLogin()">
+                                            Sign In
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <img src="assets/images/shape1.png" class="shape d-none d-xxl-block position-absolute top-0 start-0" style="margin-left: -1px;" alt="shape1">
+                    <img src="assets/images/shape2.png" class="shape d-none d-xxl-block position-absolute top-0 start-50" alt="shape2">
+                    <img src="assets/images/shape3.png" class="shape d-none d-xxl-block position-absolute top-0 end-0" alt="shape3">
+                    <img src="assets/images/shape4.png" class="shape d-none d-xxl-block position-absolute bottom-0 start-0" style="margin-left: -1px;" alt="shape4">
+                    <img src="assets/images/shape5.png" class="shape d-none d-xxl-block position-absolute" style="left: 38%; bottom: 1%;" alt="shape5">
+                    <img src="assets/images/shape6.png" class="shape d-none d-xxl-block position-absolute bottom-0 end-0" alt="shape6">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Of JS File -->
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sidebar-menu.js"></script>
+    <script src="assets/js/quill.min.js"></script>
+    <script src="assets/js/data-table.js"></script>
+    <script src="assets/js/prism.js"></script>
+    <script src="assets/js/clipboard.min.js"></script>
+    <script src="assets/js/simplebar.min.js"></script>
+    <script src="assets/js/apexcharts.min.js"></script>
+    <script src="assets/js/echarts.min.js"></script>
+    <script src="assets/js/swiper-bundle.min.js"></script>
+    <script src="assets/js/fullcalendar.main.js"></script>
+    <script src="assets/js/jsvectormap.min.js"></script>
+    <script src="assets/js/world-merc.js"></script>
+    <script src="assets/js/custom/apexcharts.js"></script>
+    <script src="assets/js/custom/echarts.js"></script>
+    <script src="assets/js/custom/maps.js"></script>
+    <script src="assets/js/custom/custom.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            logout();
+
+            if (localStorage.getItem("rememberMe") == "true") {
+
+                $("#flexCheckDefault").prop("checked", true);
+                $("#emailaddress").val(localStorage.getItem("username"));
+                $("#password").val(localStorage.getItem("password"));
+
+            }
+        });
+        function validate(control) {
+
+            var value = $.trim($(control).val());
+
+            $(control).removeClass("is-valid is-invalid");
+
+            if (value == "") {
+
+                $(control).addClass("is-invalid");
+                return false;
+            }
+
+            $.ajax({
+
+                type: "POST",
+                url: "/bctechadmin/CheckLoginUsername",
+
+                data: {
+                    username: value
+                },
+
+                success: function (result) {
+
+                    if (result == true) {
+
+                        $(control).removeClass("is-invalid")
+                            .addClass("is-valid");
+
+                    }
+                    else {
+
+                        $(control).removeClass("is-valid")
+                            .addClass("is-invalid");
+
+                    }
+
+                },
+
+                error: function () {
+
+                    $(control).removeClass("is-valid")
+                        .addClass("is-invalid");
+
+                }
+
+            });
+
+            return true;
+        }
+        function logout() {
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/Logout",
+
+                success: function () {
+
+                    console.log("Logout Success");
+
+                },
+
+                error: function () {
+
+                    console.log("Logout Error");
+
+                }
+
+            });
+
+        }
+        function checkLogin() {
+
+            var username = $("#emailaddress").val().trim();
+            var password = $("#password").val().trim();
+
+            $("#error-alert").hide();
+
+            $("#emailaddress").removeClass("is-invalid is-valid");
+            $("#password").removeClass("is-invalid is-valid");
+
+            if (username == "") {
+
+                $("#emailaddress").addClass("is-invalid");
+
+                $("#error-alert")
+                    .html("Please enter Email, Mobile No or Username.")
+                    .show();
+
+                return;
+            }
+
+            if (password == "") {
+
+                $("#password").addClass("is-invalid");
+
+                $("#error-alert")
+                    .html("Please enter Password.")
+                    .show();
+
+                return;
+            }
+
+            $("#emailaddress").addClass("is-valid");
+            $("#password").addClass("is-valid");
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/GetLoginDetails",
+
+                data: {
+
+                    username: username,
+                    password: password
+
+                },
+
+                beforeSend: function () {
+
+                    $(".btn-login").prop("disabled", true);
+
+                    Swal.fire({
+                        title: "Signing In...",
+                        text: "Please wait",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                },
+
+                success: function (result) {
+
+                    Swal.close();
+
+                    if (result == "done") {
+
+                        if ($("#flexCheckDefault").is(":checked")) {
+                            localStorage.setItem("rememberMe", "true");
+                            localStorage.setItem("username", username);
+                            localStorage.setItem("password", password);
+                        }
+                        else {
+                            localStorage.clear();
+                        }
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "Login Successful",
+                            text: "Welcome to BCTECH ERP",
+                            timer: 1200,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = "/bctechadmin/Dashboard";
+                        });
+
+                    }
+                    else if (result == "deactivate") {
+
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Account Deactivated",
+                            text: "Your account has been deactivated.",
+                            confirmButtonColor: "#f59e0b"
+                        });
+
+                    }
+                    else {
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Login Failed",
+                            text: "Invalid Username or Password.",
+                            confirmButtonColor: "#dc3545"
+                        });
+
+                    }
+
+                },
+
+                error: function () {
+
+                    Swal.close();
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Server Error",
+                        text: "Something went wrong. Please try again.",
+                        confirmButtonColor: "#dc3545"
+                    });
+
+                },
+
+                complete: function () {
+
+                    $(".btn-login")
+                        .prop("disabled", false)
+                        .html("Sign In");
+
+                },
+
+            });
+
+        }
+        history.pushState(null, null, location.href);
+
+        window.onpopstate = function () {
+            history.go(1);
+        };
+
+    </script>
+</body>
+</html>

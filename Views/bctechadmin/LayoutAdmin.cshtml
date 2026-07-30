@@ -72,8 +72,66 @@
             {  "OrganizationMaster","BranchMaster","UserMaster","FinancialYearMaster","FeesTypeMaster","EnquirySourceMaster" }.Contains(action);
             bool isCourse = new[]
             { "Course","CourseMasterManage","CourseInquiries" }.Contains(action);
-        }
+            bool isInventory = new[]
+            {
+                "MaterialCategoryMaster",
+                "MaterialMaster",
+                "UnitMaster",
+                "StockMaster",
+                "PurchaseMaster",
+                "SupplierMaster"
+            }.Contains(action);
 
+            string[] cookies =
+    {
+                     "UserID",
+                     "UserName",
+                     "UserCategory"
+                 };
+
+            string userName = "";
+
+            if (Request.Cookies["UserName"] != null)
+            {
+                userName = Request.Cookies["UserName"].Value;
+            }
+
+            string userCategory = "";
+
+            if (Request.Cookies["UserCategory"] != null)
+            {
+                userCategory = Request.Cookies["UserCategory"].Value;
+            }
+
+        }
+        @using System.Configuration
+        @using System.Data.SqlClient
+        @{
+            string profilePhoto = "~/Content/Admin/assets/images/admin.png";
+            if (Request.Cookies["UserID"] != null)
+            {
+                using (SqlConnection con = new SqlConnection(
+                    ConfigurationManager.ConnectionStrings["con"].ConnectionString))
+                {
+                    con.Open();
+
+                    SqlCommand cmd = new SqlCommand(
+                        "SELECT ProfilePhoto FROM UserMaster WHERE UserID=@UserID", con);
+
+                    cmd.Parameters.AddWithValue("@UserID",
+                        Convert.ToInt32(Request.Cookies["UserID"].Value));
+
+                    object obj = cmd.ExecuteScalar();
+
+                    if (obj != null &&
+                        obj != DBNull.Value &&
+                        !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        profilePhoto = "~/Content/Upload/UserProfilePhoto/" + obj.ToString();
+                    }
+                }
+            }
+        }
         <aside id="layout-menu" class="layout-menu menu-vertical menu active" data-simplebar>
 
             <ul class="menu-inner">
@@ -90,7 +148,7 @@
                         <li class="menu-item @(action == "Index" ? "active" : "")">
                             @Html.ActionLink(
                                      "Dashboard",
-                                     "Index",
+                                     "Dashboard",
                                      "bctechadmin",
                                      null,
                                      new { @class = "menu-link" })
@@ -162,6 +220,7 @@
                     </ul>
 
                 </li>
+                <!-- ================= Course ================= -->
                 <li class="menu-item @(isCourse ? "open" : "")">
 
                     <a href="javascript:void(0);" class="menu-link menu-toggle @(isCourse ? "active" : "")">
@@ -178,6 +237,73 @@
                                      null,
                                      new { @class = "menu-link" })
                         </li>
+                    </ul>
+
+                </li>
+                <!-- ================= INVENTORY ================= -->
+                <li class="menu-item @(isInventory ? "open" : "")">
+
+                    <a href="javascript:void(0);" class="menu-link menu-toggle @(isInventory ? "active" : "")">
+                        <span class="material-symbols-outlined menu-icon">inventory_2</span>
+                        <span class="title">Inventory</span>
+                    </a>
+
+                    <ul class="menu-sub">
+
+                        <li class="menu-item @(action == "MaterialCategoryMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                "Material Category",
+                                "MaterialCategoryMaster",
+                                "bctechadmin",
+                                null,
+                                new { @class = "menu-link" })
+                        </li>
+
+                        <li class="menu-item @(action == "MaterialMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                "Material",
+                                "MaterialMaster",
+                                "bctechadmin",
+                                null,
+                                new { @class = "menu-link" })
+                        </li>
+
+                        <li class="menu-item @(action == "UnitMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                "Unit",
+                                "UnitMaster",
+                                "bctechadmin",
+                                null,
+                                new { @class = "menu-link" })
+                        </li>
+
+                        <li class="menu-item @(action == "SupplierMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                "Supplier",
+                                "SupplierMaster",
+                                "bctechadmin",
+                                null,
+                                new { @class = "menu-link" })
+                        </li>
+
+                        <li class="menu-item @(action == "PurchaseMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                "Purchase",
+                                "PurchaseMaster",
+                                "bctechadmin",
+                                null,
+                                new { @class = "menu-link" })
+                        </li>
+
+                        <li class="menu-item @(action == "StockMaster" ? "active" : "")">
+                            @Html.ActionLink(
+                                "Stock",
+                                "StockMaster",
+                                "bctechadmin",
+                                null,
+                                new { @class = "menu-link" })
+                        </li>
+
                     </ul>
 
                 </li>
@@ -211,7 +337,10 @@
                                     <div class="dropdown admin-profile">
                                         <div class="d-xxl-flex align-items-center bg-transparent border-0 text-start p-0 cursor dropdown-toggle" data-bs-toggle="dropdown">
                                             <div class="flex-shrink-0 position-relative">
-                                                <img class="rounded-circle admin-img-width-for-mobile" style="width: 40px; height: 40px;" src="~/Content/Admin/assets/images/admin.png" alt="admin">
+                                                <img class="rounded-circle admin-img-width-for-mobile"
+                                                     style="width:40px;height:40px;object-fit:cover;"
+                                                     src="@Url.Content(profilePhoto)"
+                                                     alt="admin">
                                                 <span class="d-block bg-success-60 border border-2 border-white rounded-circle position-absolute end-0 bottom-0" style="width: 11px; height: 11px;"></span>
                                             </div>
                                         </div>
@@ -219,34 +348,28 @@
                                         <div class="dropdown-menu border-0 bg-white dropdown-menu-end">
                                             <div class="d-flex align-items-center info">
                                                 <div class="flex-shrink-0">
-                                                    <img class="rounded-circle admin-img-width-for-mobile" style="width: 40px; height: 40px;" src="~/Content/Admin/assets/images/admin.png" alt="admin">
+                                                    <img class="rounded-circle admin-img-width-for-mobile"
+                                                         style="width:40px;height:40px;object-fit:cover;"
+                                                         src="@Url.Content(profilePhoto)"
+                                                         alt="admin">
                                                 </div>
                                                 <div class="flex-grow-1 ms-10">
-                                                    <h3 class="fw-medium fs-17 mb-0">Mateo Luca</h3>
-                                                    <span class="fs-15 fw-medium">Admin</span>
+                                                    <h3 class="fw-medium fs-17 mb-0">@userName</h3>
+                                                    <span class="fs-15 fw-medium">@userCategory</span>
                                                 </div>
                                             </div>
                                             <ul class="admin-link mb-0 list-unstyled">
                                                 <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="my-profile.html">
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
+                                                       href="@Url.Action("Myprofile","bctechadmin")">
                                                         <i class="material-symbols-outlined">person</i>
                                                         <span class="ms-2">My Profile</span>
                                                     </a>
-                                                </li>
+                                                </li>                                            
                                                 <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="settings.html">
-                                                        <i class="material-symbols-outlined">settings</i>
-                                                        <span class="ms-2">Settings</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="tickets.html">
-                                                        <i class="material-symbols-outlined">info</i>
-                                                        <span class="ms-2">Support</span>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="logout.html">
+                                                    <a href="#"
+                                                       onclick="logout(); return false;"
+                                                       class="dropdown-item admin-item-link d-flex align-items-center text-body">
                                                         <i class="material-symbols-outlined">logout</i>
                                                         <span class="ms-2">Logout</span>
                                                     </a>
@@ -263,10 +386,8 @@
             <!-- End Header Area -->
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
                 <h3 class="mb-0">@ViewData["PageTitle"]</h3>
-
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb align-items-center mb-0 lh-1">
-
                         <li class="breadcrumb-item">
                             <a href="@Url.Action("Index","bctechadmin")" class="d-flex align-items-center text-decoration-none">
                                 <i class="ri-home-8-line fs-15 text-primary me-1"></i>
@@ -321,19 +442,7 @@
     <!-- Link Of JS File -->
 
 
-    <script src="~/Content/Admin/assets/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script>
-        document.getElementById("currentYear").textContent = new Date().getFullYear();
-        toastr.options = {
-            "closeButton": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "timeOut": "3000"
-        };
-    </script>
+
     <script src="~/Content/Admin/assets/js/sidebar-menu.js"></script>
     <script src="~/Content/Admin/assets/js/quill.min.js"></script>
     <script src="~/Content/Admin/assets/js/data-table.js"></script>
@@ -352,13 +461,10 @@
     <script src="~/Content/Admin/assets/js/custom/custom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
     <!-- Bootstrap -->
     <script src="~/Content/Admin/assets/js/bootstrap.bundle.min.js"></script>
-
     <!-- DataTable -->
     <link rel="stylesheet"
           href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
@@ -370,10 +476,40 @@
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <!-- CKEditor -->    
+    <!-- CKEditor -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs5.min.css" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-bs5.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>  
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000"
+        };
+
+        function logout() {
+
+            $.ajax({
+
+                type: "POST",
+                url: "/bctechadmin/Logout",
+                success: function () {
+                    console.log("Logout Success");
+                    window.location.href = "/bctechadmin/index";
+                },
+                error: function () {
+                    console.log("Logout Error");
+                }
+            });
+
+        }
+       
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

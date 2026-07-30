@@ -1,0 +1,363 @@
+﻿
+@{
+    ViewBag.Title = "OrganizationMaster";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="card bg-white border border-white rounded-10 mb-4">
+            <div class="card-body p-20">
+                @*<h4 class="fs-18 fw-medium mb-20">Organization Master Form</h4>*@
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="preview-tab-pane" role="tabpanel" aria-labelledby="preview-tab" tabindex="0">
+                        <form class="row g-3 needs-validation" novalidate>
+                            <input type="hidden" id="hfOrganizationID">
+                            <!-- Organization Name -->
+                            <div class="col-md-6">
+                                <label class="form-label label fs-16">Organization Name</label>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control h-55 ps-5" id="txtOrganizationName" required>
+                                    <div class="invalid-feedback">Please enter Organization Name.</div>
+                                    <i class="ri-building-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Registration No -->
+                            <div class="col-md-6">
+                                <label class="form-label label fs-16">Registration No</label>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control h-55 ps-5" id="txtRegistrationNo" required>
+                                    <div class="invalid-feedback">Please enter Registration No.</div>
+                                    <i class="ri-file-list-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Office Address -->
+                            <div class="col-md-12">
+                                <label class="form-label label fs-16">Office Address</label>
+                                <div class="position-relative">
+                                    <textarea class="form-control ps-5 py-3" id="txtOfficeAddress" rows="3" required></textarea>
+                                    <div class="invalid-feedback">Please enter Office Address.</div>
+                                    <i class="ri-map-pin-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:13px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Office State -->
+                            <div class="col-md-4">
+                                <label class="form-label label fs-16">Office State</label>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control h-55 ps-5" id="txtOfficeState" required>
+                                    <div class="invalid-feedback">Please enter Office State.</div>
+                                    <i class="ri-building-4-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Office City -->
+                            <div class="col-md-4">
+                                <label class="form-label label fs-16">Office City</label>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control h-55 ps-5" id="txtOfficeCity" required>
+                                    <div class="invalid-feedback">Please enter Office City.</div>
+                                    <i class="ri-community-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Office Mobile -->
+                            <div class="col-md-4">
+                                <label class="form-label label fs-16">Office Mobile No</label>
+
+                                <div class="position-relative">
+                                    <input type="text"
+                                           class="form-control h-55 ps-5"
+                                           id="txtOfficeMobileNo"
+                                           maxlength="10"
+                                           placeholder="Enter Office Mobile No"
+                                           required>
+
+                                    <div class="invalid-feedback">
+                                        Please enter a valid 10 digit Office Mobile No.
+                                    </div>
+
+                                    <i class="ri-phone-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                                       style="top:2px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Official Email -->
+                            <div class="col-md-6">
+                                <label class="form-label label fs-16">Official Email</label>
+
+                                <div class="position-relative">
+                                    <input type="email"
+                                           class="form-control h-55 ps-5"
+                                           id="txtOfficialEmail"
+                                           maxlength="100"
+                                           placeholder="Enter Official Email"
+                                           required>
+
+                                    <div class="invalid-feedback">
+                                        Please enter a valid Official Email.
+                                    </div>
+
+                                    <i class="ri-mail-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                                       style="top:2px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Logo Upload -->
+                            <div class="col-md-4">
+                                <label class="form-label label fs-16">Organization Logo</label>
+                                <input type="file" class="form-control h-55" id="fuOrganizationLogo" accept="image/*" required>
+                                <input type="hidden" id="hfOrganizationLogo">
+                                <div class="invalid-feedback">
+                                    Please select Organization Logo.
+                                </div>
+                            </div>
+
+                            <!-- Logo Preview -->
+                            <div class="col-md-2 text-center">
+                                <label class="form-label label fs-16">Preview</label>
+                                <img id="imgLogo" src="~/Content/Admin/assets/Images/no-image.png" class="img-thumbnail" style="width:110px;height:110px;object-fit:contain;">
+                            </div>
+
+                            <!-- Owner Name -->
+                            <div class="col-md-4">
+                                <label class="form-label label fs-16">Owner Name</label>
+                                <div class="position-relative">
+                                    <input type="text" class="form-control h-55 ps-5" id="txtOwnerName" required>
+                                    <div class="invalid-feedback">Please enter Owner Name.</div>
+                                    <i class="ri-user-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20" style="top:2px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Owner Mobile -->
+                            <div class="col-md-4">
+                                <label class="form-label label fs-16">Owner Mobile No</label>
+
+                                <div class="position-relative">
+                                    <input type="text"
+                                           class="form-control h-55 ps-5"
+                                           id="txtOwnerMobileNo"
+                                           maxlength="10"
+                                           placeholder="Enter Mobile Number"
+                                           required>
+
+                                    <div class="invalid-feedback">
+                                        Please enter a valid 10 digit mobile number.
+                                    </div>
+
+                                    <i class="ri-phone-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                                       style="top:2px!important;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Owner Email -->
+                            <div class="col-md-4">
+                                <label class="form-label label fs-16">Owner Email</label>
+
+                                <div class="position-relative">
+                                    <input type="email"
+                                           class="form-control h-55 ps-5"
+                                           id="txtOwnerEmail"
+                                           placeholder="Enter Owner Email"
+                                           maxlength="100"
+                                           required>
+
+                                    <div class="invalid-feedback">
+                                        Please enter a valid email address.
+                                    </div>
+
+                                    <i class="ri-mail-line position-absolute top-0 start-0 fs-20 text-gray-light ps-20"
+                                       style="top:2px!important;"></i>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card bg-white p-20 rounded-10 border border-white mb-4">
+        <div class="d-flex justify-content-end mt-4">
+            <button type="button" id="btnSave" class="btn btn-primary fw-normal fs-16 text-white">
+                <span id="btnText">Save Organization</span>
+                <span id="btnLoader" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+            </button>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+
+        GetOrganization();
+        $("#txtOwnerMobileNo").on("input", function () {
+            this.value = this.value.replace(/[^0-9]/g, "").slice(0, 10);
+        });
+        $("#txtOfficeMobileNo").on("input", function () {
+            this.value = this.value.replace(/\D/g, "").slice(0, 10);
+        });
+
+            $("#txtOwnerEmail").on("blur", function () {
+
+                var email = $(this).val().trim();
+                var emailRegex = /^[^@@\s]+@@[^@@\s]+\.[^@@\s]+$/;
+
+                if (email === "")
+                    return;
+
+                if (!emailRegex.test(email)) {
+                    toastr.error("Please enter a valid Owner Email.");
+                    $(this).focus();
+                }
+
+            });
+        $("#txtOfficialEmail").on("blur", function () {
+
+            var email = $(this).val().trim();
+
+            if (email === "")
+                return;
+
+            var emailRegex = /^[^@@\s]+@@[^@@\s]+\.[^@@\s]+$/;
+
+            if (!emailRegex.test(email)) {
+                toastr.error("Please enter a valid Official Email.");
+                $(this).focus();
+            }
+
+        });
+        function GetOrganization() {
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetOrganization",
+                success: function (res) {
+
+                    if (res != null) {
+                        $("#hfOrganizationID").val(res.OrganizationID);
+                        $("#txtOrganizationName").val(res.OrganizationName);
+                        $("#txtRegistrationNo").val(res.RegistrationNo);
+                        $("#txtOfficeAddress").val(res.OfficeAddress);
+                        $("#txtOfficeState").val(res.OfficeState);
+                        $("#txtOfficeCity").val(res.OfficeCity);
+                        $("#txtOfficeMobileNo").val(res.OfficeMobileNo);
+                        $("#txtOfficialEmail").val(res.OfficialEmail);
+                        $("#txtOwnerName").val(res.OwnerName);
+                        $("#txtOwnerMobileNo").val(res.OwnerMobileNo);
+                        $("#txtOwnerEmail").val(res.OwnerEmail);
+                        if (res.OrganizationLogo != "") {
+                            $("#hfOrganizationLogo").val(res.OrganizationLogo);
+                            $("#imgLogo").attr("src", "/Content/Admin/assets/Images/" + res.OrganizationLogo);
+                        }
+                    }
+                },
+                error: function () {
+                    alert("Error loading organization.");
+                }
+            });
+
+        }
+        $("#fuOrganizationLogo").change(function () {
+
+            if (this.files.length > 0) {
+
+                var file = this.files[0];
+
+                $("#hfOrganizationLogo").val(file.name);
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $("#imgLogo").attr("src", e.target.result);
+                };
+
+                reader.readAsDataURL(file);
+            }
+
+        });
+        $("#btnSave").click(function () {
+
+            var form = document.querySelector(".needs-validation");
+
+            if (!form.checkValidity()) {
+                form.classList.add("was-validated");
+                return;
+            }
+
+            $("#btnSave").prop("disabled", true);
+            $("#btnText").text("Saving...");
+            $("#btnLoader").removeClass("d-none");
+
+            SaveOrganization();
+        });
+
+        // Remove validation while typing
+        $(".form-control, textarea").on("keyup change", function () {
+            $(this).removeClass("is-invalid");
+        });
+        function SaveBranchMaster() {
+
+            var valid = true;
+
+            valid &= ValidateDropdown("#ddlOrganization");
+            valid &= ValidateControl("#txtBranchCode");
+            valid &= ValidateControl("#txtBranchName");
+            valid &= ValidateControl("#txtAddress");
+            valid &= ValidateControl("#txtState");
+            valid &= ValidateControl("#txtCity");
+            valid &= ValidateControl("#txtPincode");
+            valid &= ValidateControl("#txtMobileNo");
+            valid &= ValidateDropdown("#ddlBranchHeadUser");
+
+            if (!valid) {
+                toastr.warning("Please fill all required fields.");
+                return false;
+            }
+
+            // Show Loader
+            $("#btnSave").prop("disabled", true);
+            $("#btnLoader").removeClass("d-none");
+            $("#btnText").text("Saving...");
+
+            var obj = {
+                // Your Object
+            };
+
+            $.ajax({
+                url: "/bctechadmin/SaveBranchMaster",
+                type: "POST",
+                data: obj,
+
+                success: function (res) {
+
+                    $("#btnSave").prop("disabled", false);
+                    $("#btnLoader").addClass("d-none");
+                    $("#btnText").text("Save Branch");
+
+                    if (res.Status == 1) {
+                        toastr.success(res.Message);
+
+                        setTimeout(function () {
+                            window.location.href = "/bctechadmin/BranchMaster";
+                        }, 1000);
+                    }
+                    else {
+                        toastr.error(res.Message);
+                    }
+                },
+
+                error: function () {
+
+                    $("#btnSave").prop("disabled", false);
+                    $("#btnLoader").addClass("d-none");
+                    $("#btnText").text("Save Branch");
+
+                    toastr.error("Something went wrong.");
+                }
+            });
+        }
+
+    </script>
+    }

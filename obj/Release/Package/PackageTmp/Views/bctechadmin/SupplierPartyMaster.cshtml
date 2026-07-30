@@ -1,0 +1,1200 @@
+﻿@{
+    ViewBag.Title = "SupplierPartyMaster";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0">
+
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Company Name, Mobile No, GST No..." />
+
+            <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+            </div>
+
+        </form>
+
+        <a href="javascript:void(0);"
+           class="text-primary fs-16 text-decoration-none"
+           onclick="OpenSupplierPartyModal()">
+
+            + Add Supplier
+
+        </a>
+
+    </div>
+
+    <div class="default-table-area mx-minus-1 table-contact-list">
+
+        <div class="table-responsive">
+
+            <table class="table-common"
+                   id="tblSupplierParty">
+
+                <thead>
+                    <tr>
+
+                        <th width="60">SR</th>
+
+                        <th>Company Name</th>
+
+                        <th>Contact Person</th>
+
+                        <th>Mobile No</th>
+
+                        <th>Email Address</th>
+
+                        <th>GST No</th>
+
+                        <th>City</th>
+
+                        <th>State</th>
+
+                        <th>Opening Balance</th>
+
+                        <th>Status</th>
+
+                        <th class="text-center" width="120">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+            <span class="fs-15"
+                  id="lblShowing">
+            </span>
+            <nav class="custom-pagination">
+                <ul class="pagination mb-0 justify-content-center"
+                    id="pagination">
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================== Supplier Party Modal ====================== -->
+
+<div class="modal fade"
+     id="SupplierPartyModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header bg-primary text-white">
+
+                <h5 class="modal-title">
+
+                    <i class="ri-user-3-line me-2"></i>
+
+                    Supplier Party Master
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden"
+                       id="hfPartyID"
+                       value="0" />
+
+                <div class="row">
+
+                    <!-- Party Type -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Party Type
+
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+                        <select id="ddlPartyType"
+                                class="form-select">
+
+                            <option value="">Select Party Type</option>
+
+                            <option value="Supplier">Supplier</option>
+
+                            <option value="Vendor">Vendor</option>
+
+                            <option value="Manufacturer">Manufacturer</option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Company Name -->
+
+                    <div class="col-md-8 mb-3">
+
+                        <label class="form-label">
+
+                            Company Name
+
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+                        <input type="text"
+                               id="txtCompanyName"
+                               class="form-control"
+                               maxlength="150"
+                               placeholder="Enter Company Name" />
+
+                    </div>
+
+                    <!-- Contact Person -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Contact Person
+
+                        </label>
+
+                        <input type="text"
+                               id="txtContactPerson"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Enter Contact Person" />
+
+                    </div>
+
+                    <!-- Mobile No -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Mobile No
+
+                            <span class="text-danger">*</span>
+
+                        </label>
+
+                        <input type="text"
+                               id="txtMobileNo"
+                               class="form-control"
+                               maxlength="10"
+                               placeholder="Enter Mobile No" />
+
+                    </div>
+
+                    <!-- Alternate Mobile -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Alternate Mobile No
+
+                        </label>
+
+                        <input type="text"
+                               id="txtAlternateMobileNo"
+                               class="form-control"
+                               maxlength="10"
+                               placeholder="Enter Alternate Mobile No" />
+
+                    </div>
+
+                    <!-- Email -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Email Address
+
+                        </label>
+
+                        <input type="email"
+                               id="txtEmailAddress"
+                               class="form-control"
+                               maxlength="150"
+                               placeholder="Enter Email Address" />
+
+                    </div>
+
+                    <!-- GST -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            GST No
+
+                        </label>
+
+                        <input type="text"
+                               id="txtGSTNo"
+                               class="form-control"
+                               maxlength="15"
+                               placeholder="Enter GST Number" />
+
+                    </div>
+
+                    <!-- Opening Balance -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Opening Balance
+
+                        </label>
+
+                        <input type="number"
+                               id="txtOpeningBalance"
+                               class="form-control"
+                               step="0.01"
+                               value="0"
+                               placeholder="0.00" />
+
+                    </div>
+
+                    <!-- Address -->
+
+                    <div class="col-md-12 mb-3">
+
+                        <label class="form-label">
+
+                            Address
+
+                        </label>
+
+                        <textarea id="txtAddress"
+                                  class="form-control"
+                                  rows="3"
+                                  maxlength="300"
+                                  placeholder="Enter Address"></textarea>
+
+                    </div>
+
+                    <!-- City -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            City
+
+                        </label>
+
+                        <input type="text"
+                               id="txtCity"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Enter City" />
+
+                    </div>
+
+                    <!-- State -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            State
+
+                        </label>
+
+                        <input type="text"
+                               id="txtState"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Enter State" />
+
+                    </div>
+
+                    <!-- Pincode -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Pincode
+
+                        </label>
+
+                        <input type="text"
+                               id="txtPincode"
+                               class="form-control"
+                               maxlength="6"
+                               placeholder="Enter Pincode" />
+
+                    </div>
+
+                </div>
+                <hr />
+
+                <h5 class="mb-3">
+
+                    <i class="ri-bank-line me-2"></i>
+
+                    Bank Details
+
+                </h5>
+
+                <div class="row">
+
+                    <!-- Bank Name -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Bank Name
+
+                        </label>
+
+                        <input type="text"
+                               id="txtBankName"
+                               class="form-control"
+                               maxlength="150"
+                               placeholder="Enter Bank Name" />
+
+                    </div>
+
+                    <!-- Account No -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Account No
+
+                        </label>
+
+                        <input type="text"
+                               id="txtAccountNo"
+                               class="form-control"
+                               maxlength="30"
+                               placeholder="Enter Account Number" />
+
+                    </div>
+
+                    <!-- IFSC Code -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            IFSC Code
+
+                        </label>
+
+                        <input type="text"
+                               id="txtIFSCCode"
+                               class="form-control"
+                               maxlength="20"
+                               placeholder="Enter IFSC Code" />
+
+                    </div>
+
+                    <!-- Active -->
+
+                    <div class="col-md-12">
+
+                        <div class="form-check form-switch">
+
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="chkIsActive"
+                                   checked />
+
+                            <label class="form-check-label"
+                                   for="chkIsActive">
+
+                                Active
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    <i class="ri-close-line me-1"></i>
+
+                    Close
+
+                </button>
+
+                <button type="button"
+                        class="btn btn-warning"
+                        id="btnClearSupplier"
+                        onclick="ClearSupplierForm()">
+
+                    <i class="ri-refresh-line me-1"></i>
+
+                    Reset
+
+                </button>
+
+                <button type="button"
+                        class="btn btn-primary"
+                        id="btnSaveSupplier"
+                        onclick="SaveSupplier()">
+
+                    <i class="ri-save-line me-1"></i>
+
+                    Save Supplier
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+
+        var pageNumber = 1;
+
+        $(document).ready(function () {
+
+            GetSupplierPartyList();
+
+            $("#txtSearch").keyup(function () {
+
+                pageNumber = 1;
+                GetSupplierPartyList();
+
+            });
+
+        });
+
+        //===========================================
+        // Get Supplier Party List
+        //===========================================
+
+        function GetSupplierPartyList() {
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/GetSupplierPartyList",
+
+                data: {
+
+                    Search: $.trim($("#txtSearch").val()),
+                    PageNumber: pageNumber
+
+                },
+
+                success: function (response) {
+
+                    var html = "";
+
+                    if (response.Status == 1 && response.Data.length > 0) {
+
+                        $.each(response.Data, function (index, item) {
+
+                            var sr = ((pageNumber - 1) * 10) + index + 1;
+
+                            html += "<tr>";
+
+                            html += "<td>" + sr + "</td>";
+
+                            html += "<td>" + item.CompanyName + "</td>";
+
+                            html += "<td>" + item.ContactPerson + "</td>";
+
+                            html += "<td>" + item.MobileNo + "</td>";
+
+                            html += "<td>" + item.EmailAddress + "</td>";
+
+                            html += "<td>" + item.GSTNo + "</td>";
+
+                            html += "<td>" + item.City + "</td>";
+
+                            html += "<td>" + item.State + "</td>";
+
+                            html += "<td>" + item.OpeningBalance + "</td>";
+
+                            if (item.IsActive) {
+
+                                html += "<td><span class='badge bg-success'>Active</span></td>";
+
+                            }
+                            else {
+
+                                html += "<td><span class='badge bg-danger'>Inactive</span></td>";
+
+                            }
+
+                            html += "<td class='text-center'>";
+
+                            html += "<a href='javascript:void(0);' class='text-info me-2' onclick='ViewSupplierParty(" + item.PartyID + ")'>";
+                            html += "<i class='ri-eye-line fs-18'></i>";
+                            html += "</a>";
+
+                            html += "<a href='javascript:void(0);' class='text-primary me-2' onclick='EditSupplierParty(" + item.PartyID + ")'>";
+                            html += "<i class='ri-edit-line fs-18'></i>";
+                            html += "</a>";
+
+                            html += "<a href='javascript:void(0);' class='text-danger' onclick='DeleteSupplierParty(" + item.PartyID + ")'>";
+                            html += "<i class='ri-delete-bin-line fs-18'></i>";
+                            html += "</a>";
+
+                            html += "</td>";
+
+                            html += "</tr>";
+
+                        });
+
+                    }
+                    else {
+
+                        html += "<tr>";
+                        html += "<td colspan='11' class='text-center'>No Record Found</td>";
+                        html += "</tr>";
+
+                    }
+
+                    $("#tblSupplierParty tbody").html(html);
+
+                    $("#lblShowing").html(response.ShowingText);
+
+                    $("#pagination").html(response.Pagination);
+
+                },
+
+                error: function () {
+
+                    toastr.error("Unable to load supplier party list.");
+
+                }
+
+            });
+
+        }
+
+        //===========================================
+        // Pagination
+        //===========================================
+
+        $(document).on("click", "#pagination a", function (e) {
+
+            e.preventDefault();
+
+            var page = $(this).data("page");
+
+            if (page != undefined) {
+
+                pageNumber = page;
+
+                GetSupplierPartyList();
+
+            }
+
+        });
+
+        //===========================================
+        // Open Modal
+        //===========================================
+
+        function OpenSupplierPartyModal() {
+
+            ClearSupplierForm();
+
+            ShowSupplierPartyModal();
+
+        }
+
+        //===========================================
+        // Show Modal
+        //===========================================
+
+        function ShowSupplierPartyModal() {
+
+            var modalElement = document.getElementById("SupplierPartyModal");
+
+            var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+            modal.show();
+
+        }
+
+        //===========================================
+        // Hide Modal
+        //===========================================
+
+        function HideSupplierPartyModal() {
+
+            var modal = bootstrap.Modal.getOrCreateInstance(
+                document.getElementById("SupplierPartyModal"));
+
+            modal.hide();
+
+        }
+
+        //===========================================
+        // Clear Form
+        //===========================================
+
+        function ClearSupplierForm() {
+
+            $("#hfPartyID").val(0);
+
+            $("#ddlPartyType").val("");
+
+            $("#txtCompanyName").val("");
+
+            $("#txtContactPerson").val("");
+
+            $("#txtMobileNo").val("");
+
+            $("#txtAlternateMobileNo").val("");
+
+            $("#txtEmailAddress").val("");
+
+            $("#txtGSTNo").val("");
+
+            $("#txtAddress").val("");
+
+            $("#txtCity").val("");
+
+            $("#txtState").val("");
+
+            $("#txtPincode").val("");
+
+            $("#txtBankName").val("");
+
+            $("#txtAccountNo").val("");
+
+            $("#txtIFSCCode").val("");
+
+            $("#txtOpeningBalance").val("0");
+
+            $("#chkIsActive").prop("checked", true);
+
+            $(".form-control").prop("readonly", false);
+
+            $(".form-select").prop("disabled", false);
+
+            $("#chkIsActive").prop("disabled", false);
+
+            $("#btnSaveSupplier").prop("disabled", false);
+
+        }
+
+        function SaveSupplier() {
+
+    var PartyID = $("#hfPartyID").val();
+
+    var PartyType = $("#ddlPartyType").val();
+
+    var CompanyName = $.trim($("#txtCompanyName").val());
+
+    var ContactPerson = $.trim($("#txtContactPerson").val());
+
+    var MobileNo = $.trim($("#txtMobileNo").val());
+
+    var AlternateMobileNo = $.trim($("#txtAlternateMobileNo").val());
+
+    var EmailAddress = $.trim($("#txtEmailAddress").val());
+
+    var GSTNo = $.trim($("#txtGSTNo").val());
+
+    var Address = $.trim($("#txtAddress").val());
+
+    var City = $.trim($("#txtCity").val());
+
+    var State = $.trim($("#txtState").val());
+
+    var Pincode = $.trim($("#txtPincode").val());
+
+    var BankName = $.trim($("#txtBankName").val());
+
+    var AccountNo = $.trim($("#txtAccountNo").val());
+
+    var IFSCCode = $.trim($("#txtIFSCCode").val());
+
+    var OpeningBalance = $.trim($("#txtOpeningBalance").val());
+
+    var IsActive = $("#chkIsActive").is(":checked");
+
+    //===========================================
+    // Validation
+    //===========================================
+
+    if (PartyType == "") {
+
+        toastr.warning("Please Select Party Type.");
+
+        $("#ddlPartyType").focus();
+
+        return;
+
+    }
+
+    if (CompanyName == "") {
+
+        toastr.warning("Please Enter Company Name.");
+
+        $("#txtCompanyName").focus();
+
+        return;
+
+    }
+
+    if (MobileNo == "") {
+
+        toastr.warning("Please Enter Mobile Number.");
+
+        $("#txtMobileNo").focus();
+
+        return;
+
+    }
+
+    if (!/^[0-9]{10}$/.test(MobileNo)) {
+
+        toastr.warning("Please Enter Valid Mobile Number.");
+
+        $("#txtMobileNo").focus();
+
+        return;
+
+    }
+
+    if (AlternateMobileNo != "" && !/^[0-9]{10}$/.test(AlternateMobileNo)) {
+
+        toastr.warning("Please Enter Valid Alternate Mobile Number.");
+
+        $("#txtAlternateMobileNo").focus();
+
+        return;
+
+    }
+
+    if (EmailAddress != "") {
+
+        var EmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!EmailPattern.test(EmailAddress)) {
+
+            toastr.warning("Please Enter Valid Email Address.");
+
+            $("#txtEmailAddress").focus();
+
+            return;
+
+        }
+
+    }
+
+    if (GSTNo != "" && GSTNo.length != 15) {
+
+        toastr.warning("GST Number must be 15 characters.");
+
+        $("#txtGSTNo").focus();
+
+        return;
+
+    }
+
+    if (Pincode != "" && !/^[0-9]{6}$/.test(Pincode)) {
+
+        toastr.warning("Please Enter Valid Pincode.");
+
+        $("#txtPincode").focus();
+
+        return;
+
+    }
+
+    if (OpeningBalance == "") {
+
+        OpeningBalance = 0;
+
+    }
+
+    //===========================================
+    // Disable Button
+    //===========================================
+
+    $("#btnSaveSupplier").prop("disabled", true);
+
+    //===========================================
+    // FormData
+    //===========================================
+
+    var formData = new FormData();
+
+    formData.append("PartyID", PartyID);
+
+    formData.append("PartyType", PartyType);
+
+    formData.append("CompanyName", CompanyName);
+
+    formData.append("ContactPerson", ContactPerson);
+
+    formData.append("MobileNo", MobileNo);
+
+    formData.append("AlternateMobileNo", AlternateMobileNo);
+
+    formData.append("EmailAddress", EmailAddress);
+
+    formData.append("GSTNo", GSTNo);
+
+    formData.append("Address", Address);
+
+    formData.append("City", City);
+
+    formData.append("State", State);
+
+    formData.append("Pincode", Pincode);
+
+    formData.append("BankName", BankName);
+
+    formData.append("AccountNo", AccountNo);
+
+    formData.append("IFSCCode", IFSCCode);
+
+    formData.append("OpeningBalance", OpeningBalance);
+
+    formData.append("IsActive", IsActive);
+
+    //===========================================
+    // Save Ajax
+    //===========================================
+
+    $.ajax({
+
+        type: "POST",
+
+        url: "/bctechadmin/SaveSupplierParty",
+
+        data: formData,
+
+        processData: false,
+
+        contentType: false,
+
+        success: function (response) {
+
+            $("#btnSaveSupplier").prop("disabled", false);
+
+            if (response.Status == 1) {
+
+                toastr.success(response.Message);
+
+                HideSupplierPartyModal();
+
+                GetSupplierPartyList();
+
+            }
+            else {
+
+                toastr.error(response.Message);
+
+            }
+
+        },
+
+        error: function () {
+
+            $("#btnSaveSupplier").prop("disabled", false);
+
+            toastr.error("Something went wrong.");
+
+        }
+
+    });
+
+        }
+        function EditSupplierParty(PartyID) {
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/GetSupplierPartyByID",
+
+                data: {
+
+                    PartyID: PartyID
+
+                },
+
+                success: function (response) {
+
+                    if (response.Status == 1) {
+
+                        var item = response.Data;
+
+                        $("#hfPartyID").val(item.PartyID);
+
+                        $("#ddlPartyType").val(item.PartyType);
+
+                        $("#txtCompanyName").val(item.CompanyName);
+
+                        $("#txtContactPerson").val(item.ContactPerson);
+
+                        $("#txtMobileNo").val(item.MobileNo);
+
+                        $("#txtAlternateMobileNo").val(item.AlternateMobileNo);
+
+                        $("#txtEmailAddress").val(item.EmailAddress);
+
+                        $("#txtGSTNo").val(item.GSTNo);
+
+                        $("#txtAddress").val(item.Address);
+
+                        $("#txtCity").val(item.City);
+
+                        $("#txtState").val(item.State);
+
+                        $("#txtPincode").val(item.Pincode);
+
+                        $("#txtBankName").val(item.BankName);
+
+                        $("#txtAccountNo").val(item.AccountNo);
+
+                        $("#txtIFSCCode").val(item.IFSCCode);
+
+                        $("#txtOpeningBalance").val(item.OpeningBalance);
+
+                        $("#chkIsActive").prop("checked", item.IsActive);
+
+                        // Enable Controls
+
+                        $(".form-control").prop("readonly", false);
+
+                        $(".form-select").prop("disabled", false);
+
+                        $("#chkIsActive").prop("disabled", false);
+
+                        $("#btnSaveSupplier").prop("disabled", false);
+
+                        $("#btnSaveSupplier").show();
+
+                        ShowSupplierPartyModal();
+
+                    }
+                    else {
+
+                        toastr.error(response.Message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    toastr.error("Unable to load supplier details.");
+
+                }
+
+            });
+
+        }
+        function ViewSupplierParty(PartyID) {
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/GetSupplierPartyByID",
+
+                data: {
+
+                    PartyID: PartyID
+
+                },
+
+                success: function (response) {
+
+                    if (response.Status == 1) {
+
+                        var item = response.Data;
+
+                        $("#hfPartyID").val(item.PartyID);
+
+                        $("#ddlPartyType").val(item.PartyType);
+
+                        $("#txtCompanyName").val(item.CompanyName);
+
+                        $("#txtContactPerson").val(item.ContactPerson);
+
+                        $("#txtMobileNo").val(item.MobileNo);
+
+                        $("#txtAlternateMobileNo").val(item.AlternateMobileNo);
+
+                        $("#txtEmailAddress").val(item.EmailAddress);
+
+                        $("#txtGSTNo").val(item.GSTNo);
+
+                        $("#txtAddress").val(item.Address);
+
+                        $("#txtCity").val(item.City);
+
+                        $("#txtState").val(item.State);
+
+                        $("#txtPincode").val(item.Pincode);
+
+                        $("#txtBankName").val(item.BankName);
+
+                        $("#txtAccountNo").val(item.AccountNo);
+
+                        $("#txtIFSCCode").val(item.IFSCCode);
+
+                        $("#txtOpeningBalance").val(item.OpeningBalance);
+
+                        $("#chkIsActive").prop("checked", item.IsActive);
+
+                        // ReadOnly Controls
+
+                        $(".form-control").prop("readonly", true);
+
+                        $(".form-select").prop("disabled", true);
+
+                        $("#chkIsActive").prop("disabled", true);
+
+                        $("#btnSaveSupplier").hide();
+
+                        ShowSupplierPartyModal();
+
+                    }
+                    else {
+
+                        toastr.error(response.Message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    toastr.error("Unable to load supplier details.");
+
+                }
+
+            });
+
+        }
+        function DeleteSupplierParty(PartyID) {
+
+            Swal.fire({
+
+                title: "Are you sure?",
+
+                text: "You won't be able to recover this record!",
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonColor: "#3085d6",
+
+                cancelButtonColor: "#d33",
+
+                confirmButtonText: "Yes, Delete it!"
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    $.ajax({
+
+                        type: "POST",
+
+                        url: "/bctechadmin/DeleteSupplierParty",
+
+                        data: {
+
+                            PartyID: PartyID
+
+                        },
+
+                        beforeSend: function () {
+
+                            Swal.showLoading();
+
+                        },
+
+                        success: function (response) {
+
+                            Swal.close();
+
+                            if (response.Status == 1) {
+
+                                toastr.success(response.Message);
+
+                                // Refresh List
+                                GetSupplierPartyList();
+
+                            }
+                            else {
+
+                                toastr.error(response.Message);
+
+                            }
+
+                        },
+
+                        error: function () {
+
+                            Swal.close();
+
+                            toastr.error("Unable to delete supplier.");
+
+                        }
+
+                    });
+
+                }
+
+            });
+
+        }
+    </script>
+}

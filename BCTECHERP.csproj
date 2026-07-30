@@ -114,6 +114,7 @@
     <Content Include="Content\Admin\assets\Images\canada.png" />
     <Content Include="Content\Admin\assets\Images\china.png" />
     <Content Include="Content\Admin\assets\Images\coming-soon.png" />
+    <Content Include="Content\Admin\assets\Images\coming-soon1.png" />
     <Content Include="Content\Admin\assets\Images\completed-projects.svg" />
     <Content Include="Content\Admin\assets\Images\consultation.png" />
     <Content Include="Content\Admin\assets\Images\course1.jpg" />
@@ -356,15 +357,12 @@
     <Content Include="Content\Admin\assets\js\simplebar.min.js" />
     <Content Include="Content\Admin\assets\js\swiper-bundle.min.js" />
     <Content Include="Content\Admin\assets\js\world-merc.js" />
-    <Content Include="Content\Upload\CourseImage\125a40c6-71b6-4142-b55c-ee1081b76002.png" />
     <Content Include="Content\Upload\CourseImage\19407019-1263-4bc9-8e94-64dc4178e43e.png" />
     <Content Include="Content\Upload\CourseImage\373130b5-a69b-4d65-b562-6c4f9bfa40ba.png" />
     <Content Include="Content\Upload\CourseImage\4cb9e634-0636-4942-b853-a097b8c8a372.png" />
     <Content Include="Content\Upload\CourseImage\4e353f79-4231-4f23-92b9-7853de59c2f3.png" />
     <Content Include="Content\Upload\CourseImage\509874da-a3f4-4757-91e2-748835278c24.png" />
     <Content Include="Content\Upload\CourseImage\63f31550-a5b6-46bb-a486-b3d075ecb48a.png" />
-    <Content Include="Content\Upload\CourseImage\7f0e436a-3186-4575-a41c-6429fc05d273.png" />
-    <Content Include="Content\Upload\CourseImage\860e6116-a5c7-427f-8e37-fea94775197c.jpg" />
     <Content Include="Content\Upload\CourseImage\87c3fb53-37cd-414c-8ced-cd617d2d953f.png" />
     <Content Include="Content\Upload\CourseImage\9a3e2d04-bbcb-4d43-8263-3b111848adfd.jpg" />
     <Content Include="Content\Upload\CourseImage\9e75163b-883f-46d2-9be6-b1c320dfabb0.png" />
@@ -382,9 +380,15 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\bctechadminController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Filters\CheckLoginAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\MaterialCategoryMaster.cs" />
+    <Compile Include="Models\MaterialMasterModel.cs" />
+    <Compile Include="Models\SupplierPartyMaster.cs" />
+    <Compile Include="Models\UnitMasterModel.cs" />
+    <Compile Include="Models\UserMasterModel.cs" />
     <Compile Include="Models\BranchMaster.cs" />
     <Compile Include="Models\CourseModel.cs" />
     <Compile Include="Models\EnquirySourceMaster.cs" />
@@ -431,6 +435,14 @@
     <Content Include="Views\bctechadmin\EnquirySourceMaster.cshtml" />
     <Content Include="Views\bctechadmin\CourseManage.cshtml" />
     <Content Include="Views\bctechadmin\CreateCourse.cshtml" />
+    <Content Include="Views\bctechadmin\Dashboard.cshtml" />
+    <Content Include="Views\bctechadmin\Myprofile.cshtml" />
+    <Content Include="Views\bctechadmin\ForgotPassword.cshtml" />
+    <Content Include="Views\bctechadmin\VerifyOTP.cshtml" />
+    <Content Include="Views\bctechadmin\MaterialCategoryMaster.cshtml" />
+    <Content Include="Views\bctechadmin\MaterialMaster.cshtml" />
+    <Content Include="Views\bctechadmin\UnitMaster.cshtml" />
+    <Content Include="Views\bctechadmin\SupplierPartyMaster.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -442,6 +454,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Content\Upload\CourseDescription\" />
     <Folder Include="Content\Upload\UserProofOfIdentity\" />
+    <Folder Include="Views\CheckLoginAttribute\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

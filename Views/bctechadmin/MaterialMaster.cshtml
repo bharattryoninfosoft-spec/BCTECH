@@ -1,0 +1,922 @@
+﻿@{
+    ViewBag.Title = "MaterialMaster";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0">
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Material...">
+
+            <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                <span class="material-symbols-outlined">search</span>
+            </div>
+        </form>
+
+        <a href="javascript:void(0);"
+           class="text-primary fs-16 text-decoration-none"
+           onclick="OpenMaterialModal()">
+            + Add Material
+        </a>
+
+    </div>
+
+    <div class="default-table-area mx-minus-1 table-contact-list">
+
+        <div class="table-responsive">
+
+            <table class="table-common" id="tblMaterial">
+
+                <thead>
+                    <tr>
+                        <th>SR</th>
+                        <th>Material Code</th>
+                        <th>Material Name</th>
+                        <th>Category</th>
+                        <th>Unit</th>
+                        <th>Purchase Price</th>
+                        <th>Issue Price</th>
+                        <th>Min Stock</th>
+                        <th>ReOrder Level</th>
+                        <th>Status</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+        <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+
+            <span class="fs-15" id="lblShowing"></span>
+
+            <nav class="custom-pagination">
+                <ul class="pagination mb-0 justify-content-center" id="pagination"></ul>
+            </nav>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ===================== Material Modal ====================== -->
+
+<div class="modal fade" id="MaterialModal" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header bg-primary text-white">
+
+                <h5 class="modal-title">
+                    <i class="ri-stack-line me-2"></i>
+                    Material Master
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden"
+                       id="hfMaterialID"
+                       value="0" />
+
+                <div class="row">
+
+                    <!-- Material Code -->
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            Material Code
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="txtMaterialCode"
+                               class="form-control"
+                               maxlength="50"
+                               placeholder="Enter Material Code">
+                    </div>
+
+                    <!-- Material Name -->
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">
+                            Material Name
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="txtMaterialName"
+                               class="form-control"
+                               maxlength="200"
+                               placeholder="Enter Material Name">
+                    </div>
+
+                    <!-- Material Category -->
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            Material Category
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <select id="ddlMaterialCategory"
+                                class="form-select">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                    </div>
+
+                    <!-- Unit -->
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            Unit
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <select id="ddlUnit"
+                                class="form-select">
+                            <option value="">-- Select Unit --</option>
+                        </select>
+                    </div>
+
+                    <!-- Period -->
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            Period Name
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="txtPeriodName"
+                               class="form-control"
+                               maxlength="20"
+                               placeholder="2026-2027">
+                    </div>
+
+                    <!-- Brand -->
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            Brand
+                        </label>
+
+                        <input type="text"
+                               id="txtBrand"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Enter Brand">
+                    </div>
+
+                    <!-- Model No -->
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            Model No
+                        </label>
+
+                        <input type="text"
+                               id="txtModelNo"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Enter Model No">
+                    </div>
+
+                    <!-- Barcode -->
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            Barcode
+                        </label>
+
+                        <input type="text"
+                               id="txtBarcode"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Enter Barcode">
+                    </div>
+                    <!-- Purchase Price -->
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">
+                            Purchase Price
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="number"
+                               id="txtPurchasePrice"
+                               class="form-control"
+                               step="0.01"
+                               min="0"
+                               placeholder="0.00">
+                    </div>
+
+                    <!-- Issue Price -->
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">
+                            Issue Price
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="number"
+                               id="txtIssuePrice"
+                               class="form-control"
+                               step="0.01"
+                               min="0"
+                               placeholder="0.00">
+                    </div>
+
+                    <!-- Minimum Stock -->
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">
+                            Minimum Stock
+                        </label>
+
+                        <input type="number"
+                               id="txtMinimumStock"
+                               class="form-control"
+                               min="0"
+                               placeholder="Minimum Stock">
+                    </div>
+
+                    <!-- ReOrder Level -->
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">
+                            ReOrder Level
+                        </label>
+
+                        <input type="number"
+                               id="txtReOrderLevel"
+                               class="form-control"
+                               min="0"
+                               placeholder="ReOrder Level">
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">
+                            Description
+                        </label>
+
+                        <textarea id="txtDescription"
+                                  class="form-control"
+                                  rows="4"
+                                  maxlength="500"
+                                  placeholder="Enter Material Description"></textarea>
+                    </div>
+
+                    <!-- Active -->
+                    <div class="col-md-12">
+
+                        <div class="form-check form-switch">
+
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="chkIsActive"
+                                   checked>
+
+                            <label class="form-check-label"
+                                   for="chkIsActive">
+                                Active
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    <i class="ri-close-line me-1"></i>
+                    Close
+                </button>
+
+                <button type="button"
+                        id="btnSaveMaterial"
+                        class="btn btn-primary"
+                        onclick="SaveMaterial()">
+                    <i class="ri-save-line me-1"></i>
+                    Save Material
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+@section Scripts{
+
+    <script>
+        var pageNumber = 1;
+        $(document).ready(function () {
+
+            BindCategory();
+            BindUnit();
+
+            GetMaterialList();
+
+            $("#txtSearch").keyup(function () {
+
+                pageNumber = 1;
+
+                GetMaterialList();
+
+            });
+
+        });
+        function GetMaterialList() {
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/GetMaterialList",
+
+                data: {
+
+                    Search: $.trim($("#txtSearch").val()),
+
+                    PageNumber: pageNumber
+
+                },
+
+                success: function (response) {
+
+                    var html = "";
+
+                    if (response.Status == 1 && response.Data.length > 0) {
+
+                        $.each(response.Data, function (index, item) {
+
+                            var sr = ((pageNumber - 1) * 10) + index + 1;
+
+                            html += "<tr>";
+
+                            html += "<td>" + sr + "</td>";
+                            html += "<td>" + item.MaterialCode + "</td>";
+                            html += "<td>" + item.MaterialName + "</td>";
+                            html += "<td>" + item.CategoryName + "</td>";
+                            html += "<td>" + item.UnitName + "</td>";
+                            html += "<td>" + item.PurchasePrice + "</td>";
+                            html += "<td>" + item.IssuePrice + "</td>";
+                            html += "<td>" + item.MinimumStock + "</td>";
+                            html += "<td>" + item.ReOrderLevel + "</td>";
+
+                            if (item.IsActive) {
+                                html += "<td><span class='badge bg-success'>Active</span></td>";
+                            }
+                            else {
+                                html += "<td><span class='badge bg-danger'>Inactive</span></td>";
+                            }
+
+                            html += "<td class='text-center'>";
+
+                            html += "<a href='javascript:void(0)' class='text-info me-2' onclick='ViewMaterial(" + item.MaterialID + ")'>";
+                            html += "<i class='ri-eye-line fs-18'></i>";
+                            html += "</a>";
+
+                            html += "<a href='javascript:void(0)' class='text-primary me-2' onclick='EditMaterial(" + item.MaterialID + ")'>";
+                            html += "<i class='ri-edit-line fs-18'></i>";
+                            html += "</a>";
+
+                            html += "<a href='javascript:void(0)' class='text-danger' onclick='DeleteMaterial(" + item.MaterialID + ")'>";
+                            html += "<i class='ri-delete-bin-line fs-18'></i>";
+                            html += "</a>";
+
+                            html += "</td>";
+
+                            html += "</tr>";
+
+                        });
+
+                    }
+                    else {
+
+                        html += "<tr>";
+                        html += "<td colspan='10' class='text-center'>No Record Found</td>";
+                        html += "</tr>";
+
+                    }
+
+                    $("#tblMaterial tbody").html(html);
+
+                    $("#lblShowing").html(response.ShowingText);
+
+                    $("#pagination").html(response.Pagination);
+
+                },
+
+                error: function () {
+
+                    toastr.error("Unable to load data.");
+
+                }
+
+            });
+
+        }
+        $(document).on("click", "#pagination a", function (e) {
+
+            e.preventDefault();
+
+            var page = $(this).data("page");
+
+            if (page != undefined) {
+
+                pageNumber = page;
+
+                GetMaterialList();
+
+            }
+
+        });
+        function OpenMaterialModal() {
+
+            ClearMaterialForm();
+
+            BindCategory();
+
+            BindUnit();
+
+            ShowMaterialModal();
+
+        }
+        function EditMaterial(id) {
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/GetMaterialByID",
+
+                data: {
+                    MaterialID: id
+                },
+
+                success: function (response) {
+
+                    if (response.Status == 1) {
+
+                        var item = response.Data;
+
+                        $("#hfMaterialID").val(item.MaterialID);
+
+                        $("#txtMaterialCode").val(item.MaterialCode);
+                        $("#txtMaterialName").val(item.MaterialName);
+
+                        BindCategory(item.MaterialCategoryID);
+                        BindUnit(item.UnitID);
+
+                        $("#txtPeriodName").val(item.PeriodName);
+                        $("#txtBrand").val(item.Brand);
+                        $("#txtModelNo").val(item.ModelNo);
+                        $("#txtBarcode").val(item.Barcode);
+
+                        $("#txtPurchasePrice").val(item.PurchasePrice);
+                        $("#txtIssuePrice").val(item.IssuePrice);
+
+                        $("#txtMinimumStock").val(item.MinimumStock);
+                        $("#txtReOrderLevel").val(item.ReOrderLevel);
+
+                        $("#txtDescription").val(item.Description);
+
+                        $("#chkIsActive").prop("checked", item.IsActive);
+
+                        $("#btnSaveMaterial").prop("disabled", false);
+
+                        ShowMaterialModal();
+
+                    }
+                    else {
+
+                        toastr.error(response.Message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    toastr.error("Unable to load record.");
+
+                }
+
+            });
+
+        }
+        function BindCategory(selectedCategoryID = 0) {
+
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetMaterialCategoryDropdown",
+                success: function (response) {
+
+                    var ddl = $("#ddlMaterialCategory");
+
+                    ddl.empty();
+                    ddl.append('<option value="">Select Category</option>');
+
+                    $.each(response.Data, function (i, item) {
+                        ddl.append('<option value="' + item.MaterialCategoryID + '">' + item.CategoryName + '</option>');
+                    });
+
+                    if (selectedCategoryID > 0) {
+                        ddl.val(selectedCategoryID);
+                    }
+                }
+            });
+
+        }
+        function BindUnit(selectedUnitID = 0) {
+
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetUnitDropdown",
+                success: function (response) {
+
+                    var ddl = $("#ddlUnit");
+
+                    ddl.empty();
+                    ddl.append('<option value="">Select Unit</option>');
+
+                    $.each(response.Data, function (i, item) {
+                        ddl.append('<option value="' + item.UnitID + '">' + item.UnitName + '</option>');
+                    });
+
+                    if (selectedUnitID > 0) {
+                        ddl.val(selectedUnitID);
+                    }
+                }
+            });
+
+        }
+        function ViewMaterial(id) {
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/GetMaterialByID",
+
+                data: {
+                    MaterialID: id
+                },
+
+                success: function (response) {
+
+                    if (response.Status == 1) {
+
+                        var item = response.Data;
+
+                        $("#hfMaterialID").val(item.MaterialID);
+
+                        $("#txtMaterialCode").val(item.MaterialCode).prop("readonly", true);
+                        $("#txtMaterialName").val(item.MaterialName).prop("readonly", true);
+
+                        BindCategory(item.MaterialCategoryID);
+                        BindUnit(item.UnitID);
+
+                        $("#ddlMaterialCategory").prop("disabled", true);
+                        $("#ddlUnit").prop("disabled", true);
+
+                        $("#txtPeriodName").val(item.PeriodName).prop("readonly", true);
+                        $("#txtBrand").val(item.Brand).prop("readonly", true);
+                        $("#txtModelNo").val(item.ModelNo).prop("readonly", true);
+                        $("#txtBarcode").val(item.Barcode).prop("readonly", true);
+
+                        $("#txtPurchasePrice").val(item.PurchasePrice).prop("readonly", true);
+                        $("#txtIssuePrice").val(item.IssuePrice).prop("readonly", true);
+
+                        $("#txtMinimumStock").val(item.MinimumStock).prop("readonly", true);
+                        $("#txtReOrderLevel").val(item.ReOrderLevel).prop("readonly", true);
+
+                        $("#txtDescription").val(item.Description).prop("readonly", true);
+
+                        $("#chkIsActive").prop("checked", item.IsActive);
+                        $("#chkIsActive").prop("disabled", true);
+
+                        $("#btnSaveMaterial").prop("disabled", true);
+
+                        ShowMaterialModal();
+
+                    }
+                    else {
+
+                        toastr.error(response.Message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    $("#btnSaveMaterial").prop("disabled", false);
+                    toastr.error("Something went wrong.");
+
+                }
+
+            });
+
+        }
+        function SaveMaterial() {
+
+            var MaterialID = $("#hfMaterialID").val();
+
+            var MaterialCode = $.trim($("#txtMaterialCode").val());
+            var MaterialName = $.trim($("#txtMaterialName").val());
+
+            var MaterialCategoryID = $("#ddlMaterialCategory").val();
+            var UnitID = $("#ddlUnit").val();
+
+            var PeriodName = $.trim($("#txtPeriodName").val());
+            var Brand = $.trim($("#txtBrand").val());
+            var ModelNo = $.trim($("#txtModelNo").val());
+            var Barcode = $.trim($("#txtBarcode").val());
+
+            var PurchasePrice = $.trim($("#txtPurchasePrice").val());
+            var IssuePrice = $.trim($("#txtIssuePrice").val());
+
+            var MinimumStock = $.trim($("#txtMinimumStock").val());
+            var ReOrderLevel = $.trim($("#txtReOrderLevel").val());
+
+            var Description = $.trim($("#txtDescription").val());
+
+            var IsActive = $("#chkIsActive").is(":checked");
+
+            //================ Validation =================//
+
+            if (MaterialCode == "") {
+                toastr.warning("Please Enter Material Code.");
+                $("#txtMaterialCode").focus();
+                return;
+            }
+
+            if (MaterialName == "") {
+                toastr.warning("Please Enter Material Name.");
+                $("#txtMaterialName").focus();
+                return;
+            }
+
+            if (MaterialCategoryID == "") {
+                toastr.warning("Please Select Material Category.");
+                $("#ddlMaterialCategory").focus();
+                return;
+            }
+
+            if (UnitID == "") {
+                toastr.warning("Please Select Unit.");
+                $("#ddlUnit").focus();
+                return;
+            }
+
+            if (PeriodName == "") {
+                toastr.warning("Please Enter Period Name.");
+                $("#txtPeriodName").focus();
+                return;
+            }
+
+            if (PurchasePrice == "") {
+                toastr.warning("Please Enter Purchase Price.");
+                $("#txtPurchasePrice").focus();
+                return;
+            }
+
+            if (IssuePrice == "") {
+                toastr.warning("Please Enter Issue Price.");
+                $("#txtIssuePrice").focus();
+                return;
+            }
+
+            if (isNaN(PurchasePrice)) {
+                toastr.warning("Invalid Purchase Price.");
+                $("#txtPurchasePrice").focus();
+                return;
+            }
+
+            if (isNaN(IssuePrice)) {
+                toastr.warning("Invalid Issue Price.");
+                $("#txtIssuePrice").focus();
+                return;
+            }
+
+            if (MinimumStock != "" && isNaN(MinimumStock)) {
+                toastr.warning("Invalid Minimum Stock.");
+                $("#txtMinimumStock").focus();
+                return;
+            }
+
+            if (ReOrderLevel != "" && isNaN(ReOrderLevel)) {
+                toastr.warning("Invalid ReOrder Level.");
+                $("#txtReOrderLevel").focus();
+                return;
+            }
+
+            $("#btnSaveMaterial").prop("disabled", true);
+
+            //================ FormData =================//
+
+            var formData = new FormData();
+
+            formData.append("MaterialID", MaterialID);
+            formData.append("MaterialCode", MaterialCode);
+            formData.append("MaterialName", MaterialName);
+
+            formData.append("MaterialCategoryID", MaterialCategoryID);
+            formData.append("UnitID", UnitID);
+
+            formData.append("PeriodName", PeriodName);
+            formData.append("Brand", Brand);
+            formData.append("ModelNo", ModelNo);
+            formData.append("Barcode", Barcode);
+
+            formData.append("PurchasePrice", PurchasePrice);
+            formData.append("IssuePrice", IssuePrice);
+            formData.append("MinimumStock", MinimumStock);
+            formData.append("ReOrderLevel", ReOrderLevel);
+
+            formData.append("Description", Description);
+            formData.append("IsActive", IsActive);
+
+            //================ Save =================//
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/SaveMaterial",
+
+                data: formData,
+
+                processData: false,
+
+                contentType: false,
+
+                success: function (response) {
+
+                    $("#btnSaveMaterial").prop("disabled", false);
+
+                    if (response.Status == 1) {
+
+                        toastr.success(response.Message);
+
+                        HideMaterialModal();
+
+                        GetMaterialList();
+
+                    }
+                    else {
+
+                        toastr.error(response.Message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    $("#btnSaveMaterial").prop("disabled", false);
+
+                    toastr.error("Something went wrong.");
+
+                }
+
+            });
+
+        }
+        function DeleteMaterial(MaterialID) {
+
+            Swal.fire({
+
+                title: "Are you sure?",
+
+                text: "You won't be able to recover this record!",
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonColor: "#3085d6",
+
+                cancelButtonColor: "#d33",
+
+                confirmButtonText: "Yes, Delete it!"
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    $.ajax({
+
+                        type: "POST",
+
+                        url: "/bctechadmin/DeleteMaterial",
+
+                        data: {
+                            MaterialID: MaterialID
+                        },
+
+                        beforeSend: function () {
+                            Swal.showLoading();
+                        },
+
+                        success: function (response) {
+
+                            Swal.close();
+
+                            if (response.Status == 1) {
+
+                                toastr.success(response.Message);
+
+                                GetMaterialList();
+
+                            }
+                            else {
+
+                                toastr.error(response.Message);
+
+                            }
+
+                        },
+
+                        error: function () {
+
+                            Swal.close();
+
+                            toastr.error("Unable to delete record.");
+
+                        }
+
+                    });
+
+                }
+
+            });
+
+        }
+        function ShowMaterialModal() {
+
+            var modalElement = document.getElementById("MaterialModal");
+            var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modal.show();
+
+        }
+
+        function HideMaterialModal() {
+
+            var modal = bootstrap.Modal.getOrCreateInstance(
+                document.getElementById("MaterialModal")
+            );
+
+            modal.hide();
+
+        }
+
+        function ClearMaterialForm() {
+
+            $("#hfMaterialID").val(0);
+
+            $("#txtMaterialCode").val("").prop("readonly", false);
+            $("#txtMaterialName").val("").prop("readonly", false);
+
+            $("#ddlMaterialCategory").val("").prop("disabled", false);
+            $("#ddlUnit").val("").prop("disabled", false);
+
+            $("#txtPeriodName").val("").prop("readonly", false);
+            $("#txtBrand").val("").prop("readonly", false);
+            $("#txtModelNo").val("").prop("readonly", false);
+            $("#txtBarcode").val("").prop("readonly", false);
+
+            $("#txtPurchasePrice").val("").prop("readonly", false);
+            $("#txtIssuePrice").val("").prop("readonly", false);
+
+            $("#txtMinimumStock").val("").prop("readonly", false);
+            $("#txtReOrderLevel").val("").prop("readonly", false);
+
+            $("#txtDescription").val("").prop("readonly", false);
+
+            $("#chkIsActive").prop("checked", true);
+            $("#chkIsActive").prop("disabled", false);
+
+            $("#btnSaveMaterial").prop("disabled", false);
+
+        }       
+    </script>
+
+}
