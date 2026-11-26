@@ -19910,6 +19910,7 @@ Only Header Dark SCSS
 .footer-area {
   border: 1px solid #eff3f9;
   border-bottom: 0;
+  margin-top: auto;
 }
 .footer-area p {
   padding: 21.5px 30px;

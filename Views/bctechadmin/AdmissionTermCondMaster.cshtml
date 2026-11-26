@@ -1,0 +1,707 @@
+﻿
+@{
+    ViewBag.Title = "Admission Term & Condition Master";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0">
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Admission Term & Condition...">
+
+            <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                <span class="material-symbols-outlined">search</span>
+            </div>
+        </form>
+
+        <a href="javascript:void(0);"
+           class="btn btn-primary text-white"
+           onclick="OpenAdmissionTermCondModal()">
+            <i class="ri-add-line"></i>
+            Add Term & Condition
+        </a>
+
+    </div>
+
+
+    <!-- Table -->
+    <div class="default-table-area mx-minus-1 table-contact-list">
+
+        <div class="table-responsive">
+
+            <table class="table-common" id="tblAdmissionTermCond">
+
+                <thead>
+                    <tr>
+                        <th width="60">SR</th>
+                        <th>Admission Term & Condition</th>
+                        <th width="100">Status</th>
+                        <th width="140">Created Date</th>
+                        <th width="100">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+        <div class="col-lg-12">
+
+            <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+
+                <span class="fs-15" id="lblShowing"></span>
+
+                <nav class="custom-pagination" aria-label="Page navigation">
+
+                    <ul class="pagination mb-0 justify-content-center"
+                        id="pagination">
+                    </ul>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Admission Term & Condition Modal -->
+    <div class="modal fade" id="AdmissionTermCondModal">
+
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Admission Term & Condition
+                    </h5>
+
+                    <button class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           id="hfAdmissionTermCondID"
+                           value="0" />
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Admission Term & Condition
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <textarea id="txtAdmissionTermCond"
+                                  class="form-control"
+                                  rows="5"
+                                  maxlength="1000"
+                                  placeholder="Enter Admission Term & Condition"></textarea>
+
+                    </div>
+
+
+                    <div class="form-check">
+
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="chkIsActive"
+                               checked>
+
+                        <label class="form-check-label"
+                               for="chkIsActive">
+                            Active
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+
+                    <button class="btn btn-primary text-white"
+                            onclick="SaveAdmissionTermCond()">
+                        Save
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @section Scripts{
+
+        <script>
+
+            var admissionTermConds = [];
+            var filteredAdmissionTermConds = [];
+
+            var currentPage = 1;
+            var pageSize = 10;
+
+
+            $(document).ready(function () {
+
+                GetAdmissionTermCond();
+
+
+                // Search
+                $("#txtSearch").on("keyup", function () {
+
+                    
+
+                    var search = $(this).val()
+                        .toLowerCase()
+                        .trim();
+                     
+                    filteredAdmissionTermConds =
+                        admissionTermConds.filter(function (x) {
+
+                            return (x.AdmissionTermCond || "")
+                                .toLowerCase()
+                                .includes(search);
+
+                        });
+
+                    console.log(filteredAdmissionTermConds);
+
+                    currentPage = 1;
+
+                    BindAdmissionTermCondGrid();
+
+                });
+
+            });
+
+
+            // ============================================
+            // GET LIST
+            // ============================================
+
+            function GetAdmissionTermCond() {
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/GetAdmissionTermCondList",
+
+                    type: "GET",
+
+                    dataType: "json",
+
+                    success: function (data) {
+
+                        admissionTermConds = data || [];
+
+                        filteredAdmissionTermConds = data || [];
+
+                        currentPage = 1;
+
+                        BindAdmissionTermCondGrid();
+
+                    },
+
+                    error: function () {
+
+                        toastr.error(
+                            "Unable to load Admission Term & Conditions."
+                        );
+
+                    }
+
+                });
+
+            }
+
+
+            // ============================================
+            // BIND GRID
+            // ============================================
+
+            function BindAdmissionTermCondGrid() {
+
+                var html = "";
+
+                var start =
+                    (currentPage - 1) * pageSize;
+
+                var end =
+                    Math.min(
+                        start + pageSize,
+                        filteredAdmissionTermConds.length
+                    );
+
+
+                for (var i = start; i < end; i++) {
+
+                    var item =
+                        filteredAdmissionTermConds[i];
+
+
+                    var statusHtml = item.IsActive
+
+                        ? `<span class="badge bg-success-subtle text-success">
+                                        Active
+                                   </span>`
+
+                        : `<span class="badge bg-danger-subtle text-danger">
+                                        Inactive
+                                   </span>`;
+
+
+                    html += `
+
+                                <tr>
+
+                                    <td>
+                                        ${i + 1}
+                                    </td>
+
+
+                                    <td>
+                                        ${item.AdmissionTermCond || "-"}
+                                    </td>
+
+
+                                    <td>
+                                        ${statusHtml}
+                                    </td>
+
+
+                                    <td>
+                                        ${item.CreatedDateTime || "-"}
+                                    </td>
+
+
+                                    <td>
+
+                                        <a href="javascript:void(0)"
+                                           onclick="EditAdmissionTermCond(${item.AdmissionTermCondID})"
+                                           title="Edit">
+
+                                            <i class="ri-edit-line text-primary"></i>
+
+                                        </a>
+
+                                        &nbsp;&nbsp;
+
+                                        <a href="javascript:void(0)"
+                                           onclick="DeleteAdmissionTermCond(${item.AdmissionTermCondID})"
+                                           title="Delete">
+
+                                            <i class="ri-delete-bin-line text-danger"></i>
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                            `;
+
+                }
+
+
+                $("#tblAdmissionTermCond tbody")
+                    .html(html);
+
+
+                $("#lblShowing").text(
+
+                    `Showing ${filteredAdmissionTermConds.length == 0
+                        ? 0
+                        : start + 1
+                    }
+                            to ${end}
+                            of ${filteredAdmissionTermConds.length} entries`
+
+                );
+
+
+                CreateAdmissionTermCondPagination();
+
+            }
+
+
+            // ============================================
+            // PAGINATION
+            // ============================================
+
+            function CreateAdmissionTermCondPagination() {
+
+                var totalPages =
+                    Math.ceil(
+                        filteredAdmissionTermConds.length /
+                        pageSize
+                    );
+
+
+                var html = "";
+
+
+                if (totalPages <= 1) {
+
+                    $("#pagination").html("");
+
+                    return;
+
+                }
+
+
+                // Previous
+
+                html += `
+
+                            <li class="page-item ${currentPage == 1
+                        ? 'disabled'
+                        : ''
+                    }">
+
+                                <a class="page-link"
+                                   href="javascript:void(0)"
+                                   ${currentPage == 1
+                        ? ''
+                        : `onclick="ChangeAdmissionTermCondPage(${currentPage - 1})"`
+                    }>
+
+                                    <i class="material-symbols-outlined">
+                                        west
+                                    </i>
+
+                                </a>
+
+                            </li>
+
+                        `;
+
+
+                // Pages
+
+                for (var i = 1; i <= totalPages; i++) {
+
+                    html += `
+
+                                <li class="page-item">
+
+                                    <a class="page-link ${currentPage == i
+                            ? 'active'
+                            : ''
+                        }"
+                                       href="javascript:void(0)"
+                                       onclick="ChangeAdmissionTermCondPage(${i})">
+
+                                        ${i}
+
+                                    </a>
+
+                                </li>
+
+                            `;
+
+                }
+
+
+                // Next
+
+                html += `
+
+                            <li class="page-item ${currentPage == totalPages
+                        ? 'disabled'
+                        : ''
+                    }">
+
+                                <a class="page-link"
+                                   href="javascript:void(0)"
+                                   ${currentPage == totalPages
+                        ? ''
+                        : `onclick="ChangeAdmissionTermCondPage(${currentPage + 1})"`
+                    }>
+
+                                    <i class="material-symbols-outlined">
+                                        east
+                                    </i>
+
+                                </a>
+
+                            </li>
+
+                        `;
+
+
+                $("#pagination").html(html);
+
+            }
+
+
+            // ============================================
+            // CHANGE PAGE
+            // ============================================
+
+            function ChangeAdmissionTermCondPage(page) {
+
+                var totalPages =
+                    Math.ceil(
+                        filteredAdmissionTermConds.length /
+                        pageSize
+                    );
+
+
+                if (page < 1 || page > totalPages)
+                    return;
+
+
+                currentPage = page;
+
+                BindAdmissionTermCondGrid();
+
+            }
+
+
+            // ============================================
+            // OPEN ADD MODAL
+            // ============================================
+
+            function OpenAdmissionTermCondModal() {
+
+                $("#hfAdmissionTermCondID").val(0);
+
+                $("#txtAdmissionTermCond").val("");
+
+                $("#chkIsActive").prop("checked", true);
+
+
+                $("#AdmissionTermCondModal").modal("show");
+
+            }
+
+
+            // ============================================
+            // SAVE
+            // ============================================
+
+            function SaveAdmissionTermCond() {
+
+                var termCond =
+                    $("#txtAdmissionTermCond")
+                        .val()
+                        .trim();
+
+
+                if (termCond == "") {
+
+                    toastr.warning(
+                        "Please Enter Admission Term & Condition."
+                    );
+
+                    $("#txtAdmissionTermCond").focus();
+
+                    return;
+
+                }
+
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/SaveAdmissionTermCond",
+
+                    type: "POST",
+
+                    data: {
+
+                        AdmissionTermCondID:
+                            $("#hfAdmissionTermCondID").val(),
+
+                        AdmissionTermCond:
+                            termCond,
+
+                        IsActive:
+                            $("#chkIsActive").is(":checked")
+
+                    },
+
+
+                    success: function (res) {
+
+                        if (res.Status) {
+
+                            toastr.success(res.Message);
+
+                            $("#AdmissionTermCondModal")
+                                .modal("hide");
+
+                            GetAdmissionTermCond();
+
+                        }
+                        else {
+
+                            toastr.warning(res.Message);
+
+                        }
+
+                    },
+
+
+                    error: function () {
+
+                        toastr.error(
+                            "Something went wrong."
+                        );
+
+                    }
+
+                });
+
+            }
+
+
+            // ============================================
+            // EDIT
+            // ============================================
+
+            function EditAdmissionTermCond(id) {
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/GetAdmissionTermCondByID",
+
+                    type: "GET",
+
+                    data: {
+                        id: id
+                    },
+
+
+                    success: function (item) {
+
+                        if (!item)
+                            return;
+
+
+                        $("#hfAdmissionTermCondID")
+                            .val(item.AdmissionTermCondID);
+
+
+                        $("#txtAdmissionTermCond")
+                            .val(item.AdmissionTermCond);
+
+
+                        $("#chkIsActive")
+                            .prop(
+                                "checked",
+                                item.IsActive
+                            );
+
+
+                        $("#AdmissionTermCondModal")
+                            .modal("show");
+
+                    }
+
+                });
+
+            }
+
+
+            // ============================================
+            // DELETE
+            // ============================================
+
+            function DeleteAdmissionTermCond(id) {
+
+                Swal.fire({
+
+                    title: "Are you sure?",
+
+                    text: "You won't be able to recover this record!",
+
+                    icon: "warning",
+
+                    showCancelButton: true,
+
+                    confirmButtonText: "Yes, Delete",
+
+                    cancelButtonText: "Cancel"
+
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+
+                            url: "/BCTECHAdmin/DeleteAdmissionTermCond",
+
+                            type: "POST",
+
+                            data: {
+                                id: id
+                            },
+
+
+                            success: function (response) {
+
+                                if (response == "Success") {
+
+                                    Swal.fire({
+
+                                        icon: "success",
+
+                                        title: "Deleted",
+
+                                        text: "Admission Term & Condition Deleted Successfully",
+
+                                        timer: 1500,
+
+                                        showConfirmButton: false
+
+                                    });
+
+
+                                    GetAdmissionTermCond();
+
+                                }
+
+                            }
+
+                        });
+
+                    }
+
+                });
+
+            }
+
+        </script>
+
+    }
+
+</div>

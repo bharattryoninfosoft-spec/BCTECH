@@ -1,0 +1,261 @@
+@{
+    bool isViewMode = ((ViewBag.Mode ?? "").ToString().ToLower() == "view");
+    ViewBag.Title = (isViewMode ? "Schedule Exam View" : (ViewBag.ScheduleExamId > 0 ? "Schedule Exam Edit" : "Schedule Exam Add"));
+    ViewData["PageTitle"] = ViewBag.Title;
+    ViewData["ParentMenu"] = "Student Exam";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+@if (isViewMode)
+{
+    <style>
+        #btnSaveSchedule {
+            display: none !important;
+        }
+    </style>
+}
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+    <div class="card-header bg-primary text-white py-3 px-4 rounded-top-10">
+        <h5 class="mb-0 text-white font-weight-bold fs-16" id="cardHeaderTitle">
+            <i class="@(isViewMode ? "ri-eye-line" : "ri-calendar-event-line") me-2"></i> @ViewBag.Title
+        </h5>
+    </div>
+    <div class="card-body p-4">
+        <form id="frmScheduleExamAdd" onsubmit="return false;">
+            <input type="hidden" id="hfScheduleExamId" value="@ViewBag.ScheduleExamId" />
+            <input type="hidden" id="hfMode" value="@ViewBag.Mode" />
+
+            <!-- Row 1: Select Course, Exam Type -->
+            <div class="row mb-3">
+                <div class="col-lg-3 col-md-5 col-sm-12">
+                    <label class="form-label fs-13 text-secondary mb-1">Select Course <span class="text-danger">*</span></label>
+                    <select class="form-select" id="ddlCourse" required>
+                        <option value="">Select Course Title</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-5 col-sm-12">
+                    <label class="form-label fs-13 text-secondary mb-1">Exam Type</label>
+                    <select class="form-select" id="ddlExamType">
+                        <option value="">Select Exam Type</option>
+                        <option value="Theory Exam">Theory Exam</option>
+                        <option value="Practical Exam">Practical Exam</option>
+                        <option value="Unit Theory Exam">Unit Theory Exam</option>
+                        <option value="Uni Practical Exam">Uni Practical Exam</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 2: Exam Schedule Date, No Of Question, Exam Minutes, Exam Total Marks -->
+            <div class="row mb-3 g-3">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label class="form-label fs-13 text-secondary mb-1">Exam Schedule Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="txtExamScheduleDate" placeholder="mm/dd/yyyy" required />
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label class="form-label fs-13 text-secondary mb-1">No Of Question <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="txtNoOfQuestion" placeholder="No Of Question" min="1" required />
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label class="form-label fs-13 text-secondary mb-1">Exam Minutes <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="txtExamMinutes" placeholder="Exam Minutes" min="1" required />
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label class="form-label fs-13 text-secondary mb-1">Exam Total Marks <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="txtExamTotalMarks" placeholder="Exam Total Marks" min="1" max="99" maxlength="2" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required />
+                </div>
+            </div>
+
+            <!-- Row 3: Practical Exam Time, Theory Exam Time, Exam Secure Code -->
+            <div class="row mb-4 g-3">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label class="form-label fs-13 text-secondary mb-1">Practical Exam Time</label>
+                    <input type="text" class="form-control" id="txtPracticalExamTime" placeholder="8:00 AM to 9:00 AM" value="8:00 AM to 9:00 AM" />
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <label class="form-label fs-13 text-secondary mb-1">Theory Exam Time</label>
+                    <input type="text" class="form-control" id="txtTheoryExamTime" placeholder="9:00 AM to 10:00 AM" value="9:00 AM to 10:00 AM" />
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12" hidden>
+                    <label class="form-label fs-13 text-secondary mb-1">Exam Secure Code <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id ="txtSecureCode" value="0" placeholder="Exam Secure Code" required />
+                </div>
+            </div>
+
+            <!-- Row 4: Buttons -->
+            <div class="d-flex align-items-center gap-2 pt-2">
+                @if (!isViewMode)
+                {
+                    <button type="button" class="btn btn-success text-white px-4 d-inline-flex align-items-center gap-2" id="btnSaveSchedule" onclick="saveScheduleExam()">
+                        <i class="ri-eye-line fs-16"></i> Save &amp; View
+                    </button>
+                }
+                <a href="/bctechadmin/ScheduleExam" class="btn btn-danger text-white px-4 d-inline-flex align-items-center gap-2 text-decoration-none">
+                    <i class="ri-arrow-left-line fs-16"></i> Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var examId = parseInt($("#hfScheduleExamId").val()) || 0;
+        var pageMode = ($("#hfMode").val() || "").toLowerCase();
+        var urlParams = new URLSearchParams(window.location.search);
+        var isViewMode = pageMode === "view" || (urlParams.get("mode") || "").toLowerCase() === "view";
+
+        $(document).ready(function () {
+            if (isViewMode) {
+                $("#btnSaveSchedule").hide();
+                $("#frmScheduleExamAdd input, #frmScheduleExamAdd select").prop("disabled", true);
+            }
+
+            loadCoursesDropdown(function () {
+                if (examId > 0) {
+                    loadExamDetails(examId);
+                }
+            });
+        });
+
+        function loadCoursesDropdown(callback) {
+            $.ajax({
+                url: "/bctechadmin/GetCourseGridList",
+                type: "GET",
+                dataType: "json",
+                success: function (res) {
+                    var courses = Array.isArray(res) ? res : (res.data || []);
+                    var opts = '<option value="">Select Course Title</option>';
+                    courses.forEach(function (c) {
+                        opts += '<option value="' + c.CourseID + '">' + (c.CourseTitle || ('Course #' + c.CourseID)) + '</option>';
+                    });
+                    $("#ddlCourse").html(opts);
+                    if (isViewMode) {
+                        $("#ddlCourse").prop("disabled", true);
+                    }
+                    if (typeof callback === "function") {
+                        callback();
+                    }
+                },
+                error: function () {
+                    toastr.error("Unable to load course list.");
+                    if (typeof callback === "function") {
+                        callback();
+                    }
+                }
+            });
+        }
+
+        function loadExamDetails(id) {
+            $.ajax({
+                url: "/bctechadmin/GetScheduleExamById",
+                type: "GET",
+                data: { id: id },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.Status && res.Data) {
+                        var d = res.Data;
+                        $("#ddlCourse").val(d.course_id);
+                        $("#txtExamScheduleDate").val(d.ExamScheduleDate);
+                        $("#txtNoOfQuestion").val(d.NoOfQuestion);
+                        $("#txtExamMinutes").val(d.ExamMinutes);
+                        $("#txtExamTotalMarks").val(d.ExamTotalMarks);
+                        $("#txtPracticalExamTime").val(d.PracticalExamTime);
+                        $("#txtTheoryExamTime").val(d.TheoryExamTime);
+                        $("#txtSecureCode").val(d.SecureCode);
+                        $("#ddlExamType").val(d.ExamType || "");
+
+                        if (isViewMode) {
+                            $("#cardHeaderTitle").html('<i class="ri-eye-line me-2"></i> Schedule Exam View');
+                            $("#frmScheduleExamAdd input, #frmScheduleExamAdd select").prop("disabled", true);
+                            $("#btnSaveSchedule").hide();
+                        } else {
+                            $("#cardHeaderTitle").html('<i class="ri-edit-line me-2"></i> Schedule Exam Edit');
+                        }
+                    } else {
+                        toastr.error(res ? res.Message : "Failed to load exam details.");
+                    }
+                },
+                error: function () {
+                    toastr.error("Error retrieving exam record.");
+                }
+            });
+        }
+
+        function saveScheduleExam() {
+            var courseId = $("#ddlCourse").val();
+            var examDate = $("#txtExamScheduleDate").val();
+            var noOfQuestion = $("#txtNoOfQuestion").val();
+            var examMinutes = $("#txtExamMinutes").val();
+            var totalMarks = $("#txtExamTotalMarks").val();
+            var practicalTime = $("#txtPracticalExamTime").val();
+            var theoryTime = $("#txtTheoryExamTime").val();
+            var secureCode = $("#txtSecureCode").val(0);
+            var examType = $("#ddlExamType").val() || "";
+
+            if (!courseId) {
+                toastr.warning("Please select a Course.");
+                $("#ddlCourse").focus();
+                return;
+            }
+            if (!examDate) {
+                toastr.warning("Please select Exam Schedule Date.");
+                $("#txtExamScheduleDate").focus();
+                return;
+            }
+            if (!noOfQuestion || parseInt(noOfQuestion) <= 0) {
+                toastr.warning("Please enter valid No Of Questions.");
+                $("#txtNoOfQuestion").focus();
+                return;
+            }
+            if (!examMinutes || parseInt(examMinutes) <= 0) {
+                toastr.warning("Please enter valid Exam Minutes.");
+                $("#txtExamMinutes").focus();
+                return;
+            }
+            if (!totalMarks || parseInt(totalMarks) <= 0 || totalMarks.length > 2 || parseInt(totalMarks) > 99) {
+                toastr.warning("Exam Total Marks allows only 2 digits (1 to 99).");
+                $("#txtExamTotalMarks").focus();
+                return;
+            }        
+
+            var postData = {
+                ScheduleExamId: examId,
+                course_id: parseInt(courseId),
+                ExamScheduleDate: examDate,
+                NoOfQuestion: noOfQuestion,
+                ExamTime: examMinutes,
+                ExamTotalMarks: totalMarks,
+                PracticalExamTime: practicalTime,
+                TheoryExamTime: theoryTime,
+                SecureCode: secureCode,
+                ExamType: examType
+            };
+
+            $("#btnSaveSchedule").prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> Saving...');
+
+            $.ajax({
+                url: "/bctechadmin/SaveScheduleExam",
+                type: "POST",
+                data: JSON.stringify(postData),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    $("#btnSaveSchedule").prop("disabled", false).html('<i class="ri-eye-line fs-16"></i> Save &amp; View');
+                    if (res && res.Status) {
+                        toastr.success(res.Message || "Schedule Exam saved successfully!");
+                        setTimeout(function () {
+                            window.location.href = "/bctechadmin/ScheduleExam";
+                        }, 800);
+                    } else {
+                        toastr.error(res ? res.Message : "Failed to save schedule.");
+                    }
+                },
+                error: function (xhr) {
+                    $("#btnSaveSchedule").prop("disabled", false).html('<i class="ri-eye-line fs-16"></i> Save &amp; View');
+                    toastr.error("An error occurred while saving the exam schedule.");
+                }
+            });
+        }
+    </script>
+}

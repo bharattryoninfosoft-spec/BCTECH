@@ -1,0 +1,1105 @@
+﻿@{
+    ViewBag.Title = "Create Purchase";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+
+    string Mode = Convert.ToString(ViewBag.Mode ?? "");
+    string PurchaseInvoiceID = Convert.ToString(ViewBag.PurchaseInvoiceID ?? "");
+}
+
+<input type="hidden" id="hfEncryptedID" value="@ViewBag.EncryptedID" />
+<input type="hidden" id="hfMode" value="@ViewBag.Mode" />
+<input type="hidden" id="hfPartyID" value="0" />
+<input type="hidden" id="hfPurchaseInvoiceID" value="@ViewBag.PurchaseInvoiceID" />
+<input type="hidden" id="hfLoggedInUserID" value="@ViewBag.LoggedInUserID" />
+
+<div class="container-fluid px-4">
+    <!-- Header: Bill From & Invoice Meta -->
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <!-- Bill From Section -->
+                <div class="col-lg-7 border-end">
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-3"> Bill From </h6>
+                        <div id="divSelectParty">
+                            <div class="party-box">
+                                <a href="javascript:void(0)" id="btnSelectParty"> + Add Party </a>
+                            </div>
+                        </div>
+                        <div id="divPartyDetails" style="display:none;">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h4 id="lblPartyName"></h4>
+                                <button class="btn btn-outline-primary btn-sm" id="btnChangeParty">
+                                    Change Supplier
+                                </button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <p>Phone : <b id="lblMobile"></b> </p>
+                                    <p>Email :<span id="lblEmail"></span></p>
+                                    <p>Address :<span id="lblAddress"></span></p>
+                                </div>
+                                <div class="col-md-5">
+                                    <p>Place of Supply :<span id="lblState"></span></p>
+                                    <p>GST :<span id="lblGST"></span></p>
+                                    <p>Balance :<span class="text-danger fw-bold" id="lblBalance"></span></p>
+                                    <p>Limit :<span id="lblLimit"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice Details Section -->
+                <div class="col-lg-5">
+                    <div class="p-3">
+                        <div class="invoice-title fw-bold text-secondary">
+                            Date and Invoice Number
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label"> Invoice Date </label>
+                                <input type="date" id="txtPurchaseInvoiceDate" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label"> Invoice No </label>
+                                <input type="text" id="txtPurchaseInvoiceNo" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label"> From Inv No </label>
+                                <input type="number" id="txtRefOrderNo" class="form-control" min="0" placeholder="Enter Ref No">
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label class="fw-bold form-label">Notes / Remarks </label>
+                                <input id="txtRemark" class="form-control">
+                            </div>
+                            <div class="col-lg-6 mb-3" id="divBranchContainer">
+                                <label class="fw-bold form-label">Branch</label>
+                                <select id="ddlBranch" class="form-select">
+                                    <option value="">-- Select Branch --</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label class="fw-bold form-label">Financial Year</label>
+                                <select id="ddlFinancialYear" class="form-select" disabled>
+                                    <option value="">-- Select Financial Year --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mt-3">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold">Invoice Details</h6>
+                <a href="javascript:void(0)" id="btnAddRow" class="text-decoration-none fw-bold text-primary">+ Add Items</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-bordered table-hover mb-0" id="tblPurchaseDetail">
+                        <thead class="table-light sticky-top" style="z-index: 1;">
+                            <tr>
+                                <th width="60">Sr No</th>
+                                <th>Items Name</th>
+                                <th width="120">HSN</th>
+                                <th width="130">Qty</th>
+                                <th width="120">Price</th>
+                                <th width="120">Discount</th>
+                                <th width="120">Tax</th>
+                                <th width="130">Amount</th>
+                                <th width="60" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyPurchase">
+                            <!-- Data rows inject dynamically -->
+                        </tbody>
+                        <tfoot class="table-light fw-bold" style="position: sticky; bottom: 0; z-index: 2;">
+                            <tr>
+                                <td colspan="9" class="align-middle">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 py-1">
+                                        <div>
+                                            <span class="text-secondary small">Sub Total:</span>
+                                            <span id="lblSubTotal">₹ 0.00</span>
+                                        </div>
+                                        <div id="divDiscountContainer" class="d-flex align-items-center gap-1">
+                                            <span class="text-secondary small">Discount:</span>
+                                            <div class="input-group input-group-sm" style="width: 110px;">
+                                                <span class="input-group-text">₹</span>
+                                                <input type="number" id="txtInvoiceDiscountRate" class="form-control text-end" value="0.00" step="0.01" min="0">
+                                            </div>
+                                            <span class="text-secondary small">/</span>
+                                            <div class="input-group input-group-sm" style="width: 90px;">
+                                                <input type="number" id="txtInvoiceDiscountPercentage" class="form-control text-end" value="0.00" step="0.01" min="0" max="100">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span class="text-secondary small">Tax Amount:</span>
+                                            <span id="lblGSTTotal">₹ 0.00</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-secondary small">Round Off:</span>
+                                            <span id="lblRoundOff">₹ 0.00</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-secondary small">Grand Total:</span>
+                                            <span class="text-danger" id="lblGrandTotal">₹ 0.00</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-end mt-4 mb-5">
+            <button class="btn btn-success" id="btnSave">
+                <i class="ri-save-line"></i> Save
+            </button>
+            <a href="@Url.Action("PurchaseMaster", "bctechadmin")" class="btn btn-secondary">
+                Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Material Modal -->
+    <div class="modal fade" id="materialModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Select Material </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="p-3 border-bottom">
+                        <input type="text" id="txtSearchMaterial" class="form-control form-control-lg" placeholder="Search Material...">
+                    </div>
+                    <div class="table-responsive" style="max-height: 400px;">
+                        <table class="table table-hover mb-0" id="tblMaterialSearch">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th width="50" class="text-center">
+                                        <input type="checkbox" id="chkAllMaterial" class="form-check-input">
+                                    </th>
+                                    <th width="60">Code</th>
+                                    <th>Material</th>
+                                    <th>HSN</th>
+                                    <th>Rate</th>
+                                    <th>GST %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btnAddSelectedMaterials">Add Selected Items</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Party Modal -->
+    <div class="modal fade" id="partyModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Select Supplier </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"> </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <input type="text" id="txtSearchParty" class="form-control" placeholder="Search Supplier">
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-primary w-100" id="btnCreateParty">
+                                + Create Supplier
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered" id="tblParty">
+                            <thead>
+                                <tr>
+                                    <th width="70">ID</th>
+                                    <th>Supplier Name</th>
+                                    <th>Mobile</th>
+                                    <th>GST</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            InitializePage();
+        });
+
+        $("body").attr("sidebar-data-theme", "sidebar-hide");
+
+        var MaterialList = [];
+        var PartyList = [];
+        var GstSlabList = [];
+
+        // Event Handlers
+        $("#btnSelectParty").click(function () {
+            BindParty();
+            $("#partyModal").modal("show");
+            $("#txtSearchParty").focus();
+        });
+
+        $("#txtSearchParty").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#tblParty tbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        $(document).on("click", ".SelectParty", function () {
+            $("#hfPartyID").val($(this).data("id"));
+            $("#lblPartyName").text($(this).data("name"));
+            $("#lblMobile").text($(this).data("mobile"));
+            $("#lblEmail").text($(this).data("email"));
+            $("#lblGST").text($(this).data("gst"));
+            $("#lblAddress").text($(this).data("address"));
+            $("#lblState").text($(this).data("state"));
+            $("#lblBalance").text("₹ " + parseFloat($(this).data("balance") || 0).toFixed(2));
+            $("#lblLimit").text("₹ " + parseFloat($(this).data("limit") || 0).toFixed(2));
+
+            $("#divSelectParty").hide();
+            $("#divPartyDetails").show();
+            $("#partyModal").modal("hide");
+        });
+
+        $("#btnAddRow").click(function () {
+            BindMaterial();
+            $("#materialModal").modal("show");
+            $("#txtSearchMaterial").val("").focus();
+        });
+
+        $("#btnAddSelectedMaterials").click(function () {
+            var selectedRows = $("#tblMaterialSearch tbody tr:visible .chkMaterial:checked");
+
+            if (selectedRows.length === 0) {
+                toastr.warning("Please select at least one material.");
+                return;
+            }
+
+            selectedRows.each(function () {
+                var materialID = $(this).data("id").toString();
+                var isAlreadyInGrid = false;
+
+                $("#tblPurchaseDetail tbody tr.DataRow").each(function () {
+                    if ($(this).find(".MaterialID").val().toString() === materialID) {
+                        isAlreadyInGrid = true;
+                        return false;
+                    }
+                });
+
+                if (!isAlreadyInGrid) {
+                    AddRowFromCheckbox($(this));
+                }
+            });
+
+            $("#materialModal").modal("hide");
+        });
+
+        $(document).on("change", "#chkAllMaterial", function () {
+            var isChecked = $(this).is(":checked");
+            $("#tblMaterialSearch tbody tr:visible .chkMaterial").prop("checked", isChecked);
+        });
+
+        $("#txtSearchMaterial").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#tblMaterialSearch tbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        $(document).on("click", ".RemoveRow", function () {
+            $(this).closest("tr").remove();
+            ResetSrNo();
+            CalculateGrandTotal();
+        });
+
+        $(document).on("input change", ".Qty, .Rate, .Discount, .GST", function () {
+            var $input = $(this);
+            var val = parseFloat($input.val()) || 0;
+
+            // Validation: Prevent negative values for qty, rate, discount
+            if (val < 0) {
+                $input.val(0);
+            }
+
+            // Validation: Prevent row item discount from exceeding 100%
+            if ($input.hasClass("Discount") && val > 100) {
+                $input.val(100);
+                toastr.warning("Item discount cannot exceed 100%.");
+            }
+
+            CalculateRow($input.closest("tr"));
+        });
+
+        var isCalculatingDiscount = false;
+
+        // Event Handlers for dual invoice-level discount inputs with complete validations
+        $(document).on("input change", "#txtInvoiceDiscountRate", function () {
+            if (isCalculatingDiscount) return;
+            isCalculatingDiscount = true;
+
+            var flatAmt = parseFloat($(this).val()) || 0;
+            if (flatAmt < 0) {
+                flatAmt = 0;
+                $(this).val("0.00");
+            }
+
+            // Compute current total pool (Subtotal + Tax)
+            var subTotal = 0;
+            var totalGST = 0;
+            $(".DataRow").each(function () {
+                var row = $(this);
+                var qty = parseFloat(row.find(".Qty").val()) || 0;
+                var rate = parseFloat(row.find(".Rate").val()) || 0;
+                var discPct = parseFloat(row.find(".Discount").val()) || 0;
+                var gstPct = parseFloat(row.find(".GST").val()) || 0;
+
+                var basic = qty * rate;
+                var discAmt = (basic * discPct) / 100;
+                var taxable = basic - discAmt;
+                var gstAmt = (taxable * gstPct) / 100;
+
+                subTotal += taxable;
+                totalGST += gstAmt;
+            });
+
+            var totalPool = subTotal + totalGST;
+
+            // Validation: Flat discount cannot exceed the full total pool amount
+            if (flatAmt > totalPool) {
+                flatAmt = totalPool;
+                $(this).val(flatAmt.toFixed(2));
+                toastr.warning("Bill discount cannot exceed the total invoice amount.");
+            }
+
+            if (totalPool > 0) {
+                var pct = (flatAmt / totalPool) * 100;
+                if (pct > 100) pct = 100;
+                $("#txtInvoiceDiscountPercentage").val(pct.toFixed(2));
+            } else {
+                $("#txtInvoiceDiscountPercentage").val("0.00");
+            }
+
+            isCalculatingDiscount = false;
+            CalculateGrandTotal();
+        });
+
+        $(document).on("input change", "#txtInvoiceDiscountPercentage", function () {
+            if (isCalculatingDiscount) return;
+            isCalculatingDiscount = true;
+
+            var pct = parseFloat($(this).val()) || 0;
+
+            // Validation: Bill discount percentage cannot exceed 100%
+            if (pct > 100) {
+                pct = 100;
+                $(this).val("100.00");
+                toastr.warning("Bill discount percentage cannot exceed 100%.");
+            } else if (pct < 0) {
+                pct = 0;
+                $(this).val("0.00");
+            }
+
+            var subTotal = 0;
+            var totalGST = 0;
+            $(".DataRow").each(function () {
+                var row = $(this);
+                var qty = parseFloat(row.find(".Qty").val()) || 0;
+                var rate = parseFloat(row.find(".Rate").val()) || 0;
+                var discPct = parseFloat(row.find(".Discount").val()) || 0;
+                var gstPct = parseFloat(row.find(".GST").val()) || 0;
+
+                var basic = qty * rate;
+                var discAmt = (basic * discPct) / 100;
+                var taxable = basic - discAmt;
+                var gstAmt = (taxable * gstPct) / 100;
+
+                subTotal += taxable;
+                totalGST += gstAmt;
+            });
+
+            var totalPool = subTotal + totalGST;
+            var flatAmt = (totalPool * pct) / 100;
+            $("#txtInvoiceDiscountRate").val(flatAmt.toFixed(2));
+
+            isCalculatingDiscount = false;
+            CalculateGrandTotal();
+        });
+
+        $("#btnSave").click(function () {
+            SavePurchase();
+        });
+
+        $("#btnChangeParty").click(function () {
+            $("#hfPartyID").val("0");
+            $("#divPartyDetails").hide();
+            $("#divSelectParty").show();
+
+            BindParty();
+            $("#partyModal").modal("show");
+            $("#txtSearchParty").val("").focus();
+        });
+
+        $(document).on("change", ".GSTSelect", function () {
+            var selectedOption = $(this).find("option:selected");
+            var row = $(this).closest("tr");
+
+            row.find(".GST").val(selectedOption.val());
+            row.find(".GSTSLABId").val(selectedOption.data("slabid"));
+
+            CalculateRow(row);
+        });
+        $(document).on("keypress", "#txtRefOrderNo", function (e) {
+            // Allow: backspace, delete, tab, escape, enter
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
+                // Allow: Ctrl+A, Command+A
+                (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress if not
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+
+        // Initialize Page & Load Setup Data
+        function InitializePage() {
+            var encryptedId = $("#hfEncryptedID").val();
+            var mode = $("#hfMode").val();
+            SetCurrentDate();
+            LoadParty();
+            LoadMaterial();
+            LoadGstSlabs();
+            LoadBranches();
+            LoadFinancialYears();
+            CheckUserBranchPermission();
+
+            if (encryptedId) {
+                LoadPurchaseData(encryptedId);
+            } else {
+                GetPurchaseInvoiceNo();
+            }
+            if (mode === "V") {
+                $("input, select, textarea").prop("disabled", true);
+                $("#btnSave").hide();
+                $("#btnAddRow, #btnSelectParty, #btnChangeParty").hide();
+                $(".RemoveRow").hide();
+            }
+        }
+
+        function LoadPurchaseData(encryptedId) {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetPurchaseByID",
+                data: JSON.stringify({ id: encryptedId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        if (response.Master && response.Master.length > 0) {
+                            BindPurchaseMaster(response.Master[0]);
+                        }
+                        if (response.Detail && response.Detail.length > 0) {
+                            BindPurchaseDetail(response.Detail);
+                        }
+                    } else {
+                        toastr.error("Error: " + response.Message);
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                    toastr.error("Failed to load purchase details.");
+                }
+            });
+        }
+
+        function BindPurchaseMaster(master) {
+            $("#txtPurchaseInvoiceNo").val(master.PurchaseInvoiceNo);
+
+            if (master.PurchaseInvoiceDate) {
+                $("#txtPurchaseInvoiceDate").val(FormatDateForInput(master.PurchaseInvoiceDate));
+            }
+
+            $("#hfPartyID").val(master.PartyId);
+            $("#txtRefOrderNo").val(master.RefOrderNo || "");
+            $("#txtRemark").val(master.NotesRemarks || master.Remark || "");
+
+            var billDiscountRate = master.PurchaseBillDiscountRate || master.BillDiscount || 0;
+            var billDiscountPct = master.PurchaseBillDiscountPercentage || 0;
+
+            $("#txtInvoiceDiscountRate").val(parseFloat(billDiscountRate).toFixed(2));
+            $("#txtInvoiceDiscountPercentage").val(parseFloat(billDiscountPct).toFixed(2));
+
+            var party = PartyList.find(p => p.PartyID == master.PartyId);
+            if (party) {
+                $("#lblPartyName").text(party.CompanyName || "");
+                $("#lblMobile").text(party.MobileNo || "");
+                $("#lblEmail").text(party.EmailAddress || "");
+                $("#lblAddress").text(party.Address || "");
+                $("#lblState").text(party.State || "");
+                $("#lblGST").text(party.GSTNo || "");
+                $("#lblBalance").text("₹ " + parseFloat(party.Balance || 0).toFixed(2));
+                $("#lblLimit").text("₹ " + parseFloat(party.Limit || 0).toFixed(2));
+            } else if (master.PartyName || master.CompanyName) {
+                $("#lblPartyName").text(master.CompanyName || master.PartyName || "");
+                $("#lblMobile").text(master.MobileNo || "");
+                $("#lblEmail").text(master.EmailAddress || "");
+                $("#lblAddress").text(master.Address || "");
+                $("#lblGST").text(master.GSTNo || "");
+            }
+            $("#ddlBranch").val(master.BranchId).trigger("change");
+            $("#divSelectParty").hide();
+            $("#divPartyDetails").show();
+
+            CalculateGrandTotal();
+        }
+
+        function BindPurchaseDetail(list) {
+            $("#tbodyPurchase").empty();
+
+            $.each(list, function (i, item) {
+                var sr = i + 1;
+                var html = "";
+
+                var qty = parseFloat(item.Qty || 1);
+                var rate = parseFloat(item.PurchasePrice || item.Rate || 0);
+                var discount = parseFloat(item.PurchaseDiscount || item.Discount || 0);
+                var gstRate = parseFloat(item.IGSTPer || item.CGSTRate * 2 || item.GSTPercentage || 0);
+                var gstSlabId = item.GSTSLABId || 1;
+
+                html += "<tr class='DataRow'>";
+                html += "<td class='text-center align-middle'>" + sr + "</td>";
+                html += "<td>";
+                html += "<div class='fw-bold text-danger mb-1'>" + (item.MaterialName || item.MaterialDescription || "Material") + "</div>";
+                html += "<input type='hidden' class='MaterialID' value='" + item.MaterialID + "'>";
+                html += "<textarea class='form-control form-control-sm MaterialDescription' rows='2' placeholder='Product Description'>" + (item.MaterialDescription || "") + "</textarea>";
+                html += "</td>";
+                html += "<td><input type='text' class='form-control HSNCode' value='" + (item.HSNCode || "") + "'></td>";
+                html += "<td>";
+                html += "<div class='input-group'>";
+                html += "<input type='number' class='form-control Qty text-end' value='" + qty + "'>";
+                html += "<span class='input-group-text'>" + (item.UnitShortName || "PCS") + "</span>";
+                html += "<input type='hidden' class='UnitID' value='" + (item.UnitID || 1) + "'>";
+                html += "</div>";
+                html += "</td>";
+                html += "<td><input type='number' class='form-control Rate text-end' value='" + rate + "'></td>";
+                html += "<td>";
+                html += "<div class='input-group'>";
+                html += "<input type='number' class='form-control Discount text-end' value='" + discount + "'>";
+                html += "<span class='input-group-text'>%</span>";
+                html += "</div>";
+                html += "</td>";
+                html += "<td>";
+                html += "<div class='input-group input-group-sm mb-1'>";
+                html += "<select class='form-select GSTSelect'>";
+                $.each(GstSlabList, function (index, slab) {
+                    var isSelected = (slab.GSTSLABId == gstSlabId || slab.GST == gstRate) ? "selected" : "";
+                    html += "<option value='" + slab.GST + "' data-slabid='" + slab.GSTSLABId + "' " + isSelected + ">" + slab.GSTSLABName + "</option>";
+                });
+                html += "</select>";
+                html += "</div>";
+                html += "<input type='text' class='form-control form-control-sm GSTAmount text-center' value='0.00' readonly>";
+                html += "<input type='hidden' class='GST' value='" + gstRate + "'>";
+                html += "<input type='hidden' class='GSTSLABId' value='" + gstSlabId + "'>";
+                html += "</td>";
+                html += "<td><input type='text' class='form-control Amount text-end' value='0.00' readonly></td>";
+                html += "<td width='60' class='text-center align-middle'>";
+                html += "<a href='javascript:void(0);' class='text-danger RemoveRow' title='Delete'>";
+                html += "<i class='ri-delete-bin-line fs-5'></i>";
+                html += "</a>";
+                html += "</td>";
+                html += "</tr>";
+
+                $("#tbodyPurchase").append(html);
+                CalculateRow($("#tbodyPurchase tr.DataRow:last"));
+            });
+
+            CalculateGrandTotal();
+        }
+
+        function CalculateRow(row) {
+            var Qty = parseFloat(row.find(".Qty").val()) || 0;
+            var Rate = parseFloat(row.find(".Rate").val()) || 0;
+            var Discount = parseFloat(row.find(".Discount").val()) || 0;
+            var GST = parseFloat(row.find(".GST").val()) || 0;
+
+            var BasicAmount = Qty * Rate;
+            var DiscountAmount = (BasicAmount * Discount) / 100;
+            var TaxableAmount = BasicAmount - DiscountAmount;
+            var GSTAmount = (TaxableAmount * GST) / 100;
+            var TotalAmount = TaxableAmount + GSTAmount;
+
+            row.find(".GSTAmount").val(GSTAmount.toFixed(2));
+            row.find(".Amount").val(TotalAmount.toFixed(2));
+
+            CalculateGrandTotal();
+        }
+
+        function CalculateGrandTotal() {
+            var SubTotal = 0;
+            var TotalGST = 0;
+
+            $(".DataRow").each(function () {
+                var row = $(this);
+                var Qty = parseFloat(row.find(".Qty").val()) || 0;
+                var Rate = parseFloat(row.find(".Rate").val()) || 0;
+                var DiscountPercent = parseFloat(row.find(".Discount").val()) || 0;
+                var GSTPercent = parseFloat(row.find(".GST").val()) || 0;
+
+                var BasicAmount = Qty * Rate;
+                var DiscountAmount = (BasicAmount * DiscountPercent) / 100;
+                var TaxableAmount = BasicAmount - DiscountAmount;
+                var GSTAmount = (TaxableAmount * GSTPercent) / 100;
+
+                SubTotal += TaxableAmount;
+                TotalGST += GSTAmount;
+            });
+
+            $("#lblSubTotal").text("₹ " + SubTotal.toFixed(2));
+            $("#lblGSTTotal").text("₹ " + TotalGST.toFixed(2));
+
+            var billDiscount = parseFloat($("#txtInvoiceDiscountRate").val()) || 0;
+
+            var RawGrandTotal = (SubTotal + TotalGST) - billDiscount;
+            var GrandTotal = Math.round(RawGrandTotal);
+            var RoundOff = GrandTotal - RawGrandTotal;
+
+            $("#lblRoundOff").text("₹ " + RoundOff.toFixed(2));
+            $("#lblGrandTotal").text("₹ " + GrandTotal.toFixed(2));
+        }
+
+        function ResetSrNo() {
+            $("#tbodyPurchase tr.DataRow").each(function (index) {
+                $(this).find("td:eq(0)").html(index + 1);
+            });
+        }
+
+        function FormatDateForInput(value) {
+            if (!value) return "";
+            var date;
+
+            if (value.indexOf('/Date(') === 0) {
+                date = new Date(parseInt(value.substr(6)));
+            } else if (value.includes("/")) {
+                var parts = value.split("/");
+                return parts[2] + "-" + ("0" + parts[1]).slice(-2) + "-" + ("0" + parts[0]).slice(-2);
+            } else {
+                date = new Date(value);
+            }
+
+            var day = ("0" + date.getDate()).slice(-2);
+            var month = ("0" + (date.getMonth() + 1)).slice(-2);
+            var year = date.getFullYear();
+
+            return year + "-" + month + "-" + day;
+        }
+
+        function SetCurrentDate() {
+            var today = new Date();
+            var dd = ("0" + today.getDate()).slice(-2);
+            var mm = ("0" + (today.getMonth() + 1)).slice(-2);
+            var yyyy = today.getFullYear();
+
+            $("#txtPurchaseInvoiceDate").val(yyyy + "-" + mm + "-" + dd);
+        }
+
+        function GetPurchaseInvoiceNo() {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetPurchaseInvoiceNo",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        $("#txtPurchaseInvoiceNo").val(response.InvoiceNo);
+                    }
+                }
+            });
+        }
+
+        function LoadParty() {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetSupplierList",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        PartyList = response.Data;
+                    }
+                }
+            });
+        }
+
+        function BindParty() {
+            var html = "";
+            $.each(PartyList, function (i, item) {
+                html += "<tr class='SelectParty'";
+                html += " data-id='" + item.PartyID + "'";
+                html += " data-name='" + (item.CompanyName || "") + "'";
+                html += " data-mobile='" + (item.MobileNo || "") + "'";
+                html += " data-email='" + (item.EmailAddress || "") + "'";
+                html += " data-gst='" + (item.GSTNo || "") + "'";
+                html += " data-address='" + (item.Address || "") + "'";
+                html += " data-state='" + (item.State || "") + "'";
+                html += " data-balance='" + (item.Balance || "0.00") + "'";
+                html += ">";
+                html += "<td>" + (i + 1) + "</td>";
+                html += "<td>" + (item.CompanyName || "") + "</td>";
+                html += "<td>" + (item.MobileNo || "") + "</td>";
+                html += "<td>" + (item.GSTNo || "") + "</td>";
+                html += "<td>" + (item.Balance || "0.00") + "</td>";
+                html += "</tr>";
+            });
+            $("#tblParty tbody").html(html);
+        }
+
+        function LoadMaterial() {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetMaterialItem",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        MaterialList = response.Data;
+                    }
+                }
+            });
+        }
+
+        function LoadGstSlabs() {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetGSTList",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        GstSlabList = response.Data;
+                    }
+                }
+            });
+        }
+
+        function BindMaterial() {
+            var html = "";
+            var existingMaterials = [];
+            $("#tbodyPurchase tr.DataRow").each(function () {
+                var matId = $(this).find(".MaterialID").val();
+                if (matId) {
+                    existingMaterials.push(matId.toString());
+                }
+            });
+
+            $.each(MaterialList, function (i, item) {
+                var isAlreadyAdded = existingMaterials.includes(item.MaterialID.toString());
+                var checkboxAttrs = isAlreadyAdded ? "checked disabled" : "";
+
+                html += "<tr>";
+                html += "<td class='text-center'>";
+                html += "<input type='checkbox' class='form-check-input chkMaterial' " + checkboxAttrs + "";
+                html += " data-id='" + item.MaterialID + "'";
+                html += " data-name='" + item.MaterialName + "'";
+                html += " data-hsn='" + item.HSNCode + "'";
+                html += " data-rate='" + item.PurchasePrice + "'";
+                html += " data-unitid='" + (item.UnitID || 1) + "'";
+                html += " data-unitname='" + (item.UnitShortName || "PCS") + "'";
+                html += " data-gstid='" + item.GSTSLABId + "'";
+                html += " data-gst='" + item.GSTPercentage + "'>";
+                html += "</td>";
+                html += "<td>" + (i + 1) + "</td>";
+                html += "<td>" + item.MaterialName + (isAlreadyAdded ? " <span class='text-muted'>(Already Added)</span>" : "") + "</td>";
+                html += "<td>" + item.HSNCode + "</td>";
+                html += "<td class='text-end'>" + item.PurchasePrice + "</td>";
+                html += "<td class='text-center'>" + item.GSTPercentage + "%</td>";
+                html += "</tr>";
+            });
+
+            $("#tblMaterialSearch tbody").html(html);
+            $("#chkAllMaterial").prop("checked", false);
+        }
+
+        function AddRowFromCheckbox(checkbox) {
+            var SrNo = $("#tbodyPurchase tr.DataRow").length + 1;
+            var html = "";
+
+            html += "<tr class='DataRow'>";
+            html += "<td class='text-center align-middle'>" + SrNo + "</td>";
+            html += "<td>";
+            html += "<div class='fw-bold text-danger mb-1'>" + checkbox.data("name") + "</div>";
+            html += "<input type='hidden' class='MaterialID' value='" + checkbox.data("id") + "'>";
+            html += "<textarea class='form-control form-control-sm MaterialDescription' rows='2' placeholder='Product Description'></textarea>";
+            html += "</td>";
+            html += "<td><input type='text' class='form-control HSNCode' value='" + checkbox.data("hsn") + "'></td>";
+            html += "<td>";
+            html += "<div class='input-group'>";
+            html += "<input type='number' class='form-control Qty text-end' value='1'>";
+            html += "<span class='input-group-text'>" + (checkbox.data("unitname") || "PCS") + "</span>";
+            html += "<input type='hidden' class='UnitID' value='" + checkbox.data("unitid") + "'>";
+            html += "</div>";
+            html += "</td>";
+            html += "<td><input type='number' class='form-control Rate text-end' value='" + checkbox.data("rate") + "'></td>";
+            html += "<td>";
+            html += "<div class='input-group'>";
+            html += "<input type='number' class='form-control Discount text-end' value='0'>";
+            html += "<span class='input-group-text'>%</span>";
+            html += "</div>";
+            html += "</td>";
+            html += "<td>";
+            html += "<div class='input-group input-group-sm mb-1'>";
+            html += "<select class='form-select GSTSelect'>";
+            $.each(GstSlabList, function (index, slab) {
+                var isSelected = (slab.GSTSLABId == checkbox.data("gstid")) ? "selected" : "";
+                html += "<option value='" + slab.GST + "' data-slabid='" + slab.GSTSLABId + "' " + isSelected + ">" + slab.GSTSLABName + "</option>";
+            });
+            html += "</select>";
+            html += "</div>";
+            html += "<input type='text' class='form-control form-control-sm GSTAmount text-center' value='0.00' readonly>";
+            html += "<input type='hidden' class='GST' value='" + checkbox.data("gst") + "'>";
+            html += "<input type='hidden' class='GSTSLABId' value='" + checkbox.data("gstid") + "'>";
+            html += "</td>";
+            html += "<td><input type='text' class='form-control Amount text-end' value='0.00' readonly></td>";
+            html += "<td width='60' class='text-center align-middle'>";
+            html += "<a href='javascript:void(0);' class='text-danger RemoveRow' title='Delete'>";
+            html += "<i class='ri-delete-bin-line fs-5'></i>";
+            html += "</a>";
+            html += "</td>";
+            html += "</tr>";
+
+            $("#tbodyPurchase").append(html);
+            CalculateRow($("#tbodyPurchase tr.DataRow:last"));
+        }
+ 
+        function ValidatePurchase() {
+            if ($("#hfPartyID").val() == "0" || $("#hfPartyID").val() == "") {
+                toastr.warning("Please select a supplier.");
+                return false;
+            }
+
+            // Validate From Inv No (Ref Order No) is not empty and is numeric
+            var refOrderNo = $("#txtRefOrderNo").val().trim();
+            if (refOrderNo === "" || isNaN(refOrderNo)) {
+                toastr.warning("Please enter a valid numeric From Inv No.");
+                $("#txtRefOrderNo").focus();
+                return false;
+            }
+
+            if ($("#tbodyPurchase tr.DataRow").length == 0) {
+                toastr.warning("Please add at least one item.");
+                return false;
+            }
+            return true;
+        }
+
+        function SavePurchase() {
+            if (!ValidatePurchase()) return;
+
+            var formData = GetPurchaseMaster();
+            formData.PurchaseDetails = GetPurchaseDetail();
+            var isEdit = parseInt(formData.PurchaseInvoiceID) > 0;
+            var targetUrl = isEdit ? "/bctechadmin/UpdatePurchase" : "/bctechadmin/SavePurchase";
+
+            $.ajax({
+                type: "POST",
+                url: targetUrl,
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(formData),
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        toastr.success(response.Message);
+                        window.location.href = "/bctechadmin/PurchaseMaster";
+                    } else {
+                        toastr.error(response.Message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Something went wrong.");
+                }
+            });
+        }
+
+        function GetPurchaseMaster() {
+            var branchId = $("#ddlBranch").val() || $("#hfUserBranchID").val() || 1;
+            var loggedInUserId = $("#hfLoggedInUserID").val() || 1;
+
+            var discountRate = parseFloat($("#txtInvoiceDiscountRate").val()) || 0;
+            var discountPct = parseFloat($("#txtInvoiceDiscountPercentage").val()) || 0;
+            var financialYearId = $("#ddlFinancialYear").val() || 1;
+
+            return {
+                PurchaseInvoiceID: $("#hfPurchaseInvoiceID").val() || 0,
+                PurchaseInvoiceNo: $("#txtPurchaseInvoiceNo").val(),
+                PurchaseInvoiceDate: $("#txtPurchaseInvoiceDate").val(),
+                RefOrderNo: $("#txtRefOrderNo").val(),
+                IsOutOfState: false,
+                PartyId: $("#hfPartyID").val(),
+                PaymentTerm: "",
+                DueDate: null,
+                SubTotal: $("#lblSubTotal").text().replace("₹", "").trim() || 0,
+                GSTTax: $("#lblGSTTotal").text().replace("₹", "").trim() || 0,
+                Amount: $("#lblGrandTotal").text().replace("₹", "").trim() || 0,
+                NotesRemarks: $("#txtRemark").val(),
+                PurchaseBillDiscountRate: discountRate,
+                PurchaseBillDiscountPercentage: discountPct,
+                TotalAmount: $("#lblGrandTotal").text().replace("₹", "").trim() || 0,
+                FinancialYearID: financialYearId,
+                BranchId: branchId,
+                UserId: loggedInUserId,
+                RoundOff: $("#lblRoundOff").text().replace("₹", "").trim() || 0
+            };
+        }
+
+        function GetPurchaseDetail() {
+            var Detail = [];
+            var currentFinancialYearId = $("#ddlFinancialYear").val() || 1;
+            var currentBranchId = $("#ddlBranch").val() || $("#hfUserBranchID").val() || 1;
+
+            $("#tbodyPurchase tr.DataRow").each(function () {
+                var row = $(this);
+                var gstRate = parseFloat(row.find(".GST").val()) || 0;
+                var rate = parseFloat(row.find(".Rate").val()) || 0;
+                var discount = parseFloat(row.find(".Discount").val()) || 0;
+
+                Detail.push({
+                    MaterialID: row.find(".MaterialID").val(),
+                    MaterialDescription: row.find(".MaterialDescription").val() || "",
+                    HSNCode: row.find(".HSNCode").val() || "",
+                    Qty: row.find(".Qty").val(),
+                    UnitID: row.find(".UnitID").val() || 1,
+                    PurchasePrice: rate,
+                    PurchaseDiscount: discount,
+                    PurchaseRateAfterDiscount: rate - ((rate * discount) / 100),
+                    GSTSLABId: row.find(".GSTSLABId").val() || 1,
+                    CGST: 0,
+                    CGSTRate: 0,
+                    SGST: 0,
+                    SGSTRate: 0,
+                    IGST: 0,
+                    IGSTPer: gstRate,
+                    Amount: row.find(".Amount").val(),
+                    FinancialYearID: currentFinancialYearId,
+                    BranchId: currentBranchId
+                });
+            });
+
+            return Detail;
+        }
+
+        function LoadBranches() {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/BranchList",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        var html = "<option value=''>-- Select Branch --</option>";
+                        $.each(response.Data, function (i, item) {
+                            html += "<option value='" + item.BranchId + "'>" + item.BranchName + "</option>";
+                        });
+                        $("#ddlBranch").html(html);
+                    } else {
+                        toastr.error(response.Message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Unable to load branch list.");
+                }
+            });
+        }
+
+        function LoadFinancialYears() {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/FinancialYearList",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        var html = "<option value=''>-- Select Financial Year --</option>";
+                        var defaultYearID = "";
+
+                        $.each(response.Data, function (i, item) {
+                            var isSelected = "";
+                            if (item.IsDefault === 1) {
+                                isSelected = "selected";
+                                defaultYearID = item.FinancialYearID;
+                            }
+                            html += "<option value='" + item.FinancialYearID + "' " + isSelected + ">" + item.FinancialYear + "</option>";
+                        });
+
+                        $("#ddlFinancialYear").html(html);
+                    } else {
+                        toastr.error(response.Message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Unable to load financial year list.");
+                }
+            });
+        }
+
+        function CheckUserBranchPermission() {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetLoggedInUserInfo",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Status) {
+                        var category = response.UserCategory;
+                        var userBranchId = response.BranchId;
+                        var userId = response.UserId;
+                        $("#hfLoggedInUserID").val(userId);
+
+                        if (category === "Admin") {
+                            $("#divBranchContainer").show();
+                        }
+                        else if (category === "Branch Head") {
+                            $("#divBranchContainer").show();
+                            $("#ddlBranch").val(userBranchId).prop("disabled", true);
+                        }
+                        else {
+                            $("#divBranchContainer").hide();
+                            if ($("#hfUserBranchID").length === 0) {
+                                $("form").append("<input type='hidden' id='hfUserBranchID' value='" + userBranchId + "'>");
+                            }
+                        }
+                    }
+                },
+                error: function () {
+                    console.log("Failed to check user permissions.");
+                }
+            });
+        }
+    </script>
+}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -9,6 +9,16 @@ namespace BCTECHERP.Filters
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            // Allow actions decorated with [AllowAnonymous]
+            bool hasAllowAnonymous = filterContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), inherit: true) ||
+                                     filterContext.ActionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAnonymousAttribute), inherit: true);
+
+            if (hasAllowAnonymous)
+            {
+                base.OnActionExecuting(filterContext);
+                return;
+            }
+
             HttpCookie cookie = HttpContext.Current.Request.Cookies["UserID"];
 
             if (cookie == null || string.IsNullOrEmpty(cookie.Value))

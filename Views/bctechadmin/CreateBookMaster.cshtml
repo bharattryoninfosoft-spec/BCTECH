@@ -1,0 +1,376 @@
+@{
+    ViewBag.Title = "CreateBookMaster";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+    int bookId = ViewBag.BookID != null ? Convert.ToInt32(ViewBag.BookID) : 0;
+}
+
+<div class="card bg-white p-20 rounded-10 border border-white mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <h5 class="mb-0 text-primary">
+            <i class="ri-book-3-line me-2"></i>
+            @(bookId > 0 ? "Edit Book Master" : "Create Book Master")
+        </h5>
+        <a href="/bctechadmin/BookMaster" class="btn btn-outline-secondary">
+            <i class="ri-arrow-left-line me-1"></i> Back to List
+        </a>
+    </div>
+
+    <div class="card-body p-0">
+        <input type="hidden" id="hfBookID" value="@bookId" />
+
+        <div class="row g-3">
+            <!-- Organization -->
+            <div class="col-md-6">
+                <label class="form-label font-weight-bold">Organization</label>
+                <select id="ddlOrganizationID" class="form-select" disabled style="background-color: #e9ecef; cursor: not-allowed;">
+                    <option value="0">Select Organization</option>
+                </select>
+            </div>
+
+            <!-- Book Category -->
+            <div class="col-md-6">
+                <label class="form-label font-weight-bold">Book Category <span class="text-danger">*</span></label>
+                <select id="ddlBookCategoryID" class="form-select">
+                    <option value="0">Select Category</option>
+                </select>
+            </div>
+
+            <!-- Book Source -->
+            <div class="col-md-6">
+                <label class="form-label font-weight-bold">Book Source</label>
+                <select id="ddlBookSourceID" class="form-select">
+                    <option value="0">Select Source</option>
+                </select>
+            </div>
+
+            <!-- Course -->
+            <div class="col-md-6">
+                <label class="form-label font-weight-bold">Course</label>
+                <select id="ddlCourseID" class="form-select">
+                    <option value="0">Select Course</option>
+                </select>
+            </div>
+
+            <!-- Book Code -->
+            <div class="col-md-4">
+                <label class="form-label font-weight-bold">Book Code</label>
+                <input type="text" id="txtBookCode" class="form-control" placeholder="Enter Book Code" maxlength="50" />
+            </div>
+
+            <!-- Book Title -->
+            <div class="col-md-8">
+                <label class="form-label font-weight-bold">Book Title <span class="text-danger">*</span></label>
+                <input type="text" id="txtBookTitle" class="form-control" placeholder="Enter Book Title" maxlength="200" />
+            </div>
+
+            <!-- Sub Title -->
+            <div class="col-md-6">
+                <label class="form-label">Book SubTitle</label>
+                <input type="text" id="txtBookSubTitle" class="form-control" placeholder="Enter SubTitle" maxlength="200" />
+            </div>
+
+            <!-- Author Name -->
+            <div class="col-md-6">
+                <label class="form-label">Author Name</label>
+                <input type="text" id="txtAuthorName" class="form-control" placeholder="Enter Author Name" maxlength="150" />
+            </div>
+
+            <!-- Publisher Name -->
+            <div class="col-md-6">
+                <label class="form-label">Publisher Name</label>
+                <input type="text" id="txtPublisherName" class="form-control" placeholder="Enter Publisher Name" maxlength="150" />
+            </div>
+
+            <!-- Price -->
+            <div class="col-md-3">
+                <label class="form-label">Price (&#8377;)</label>
+                <input type="number" step="0.01" id="txtPrice" class="form-control" placeholder="0.00" value="0.00" />
+            </div>
+
+            <!-- Total Pages -->
+            <div class="col-md-3">
+                <label class="form-label">Total Pages</label>
+                <input type="number" id="txtTotalPages" class="form-control" placeholder="0" value="0" />
+            </div>
+
+            <!-- Rack No -->
+            <div class="col-md-4">
+                <label class="form-label">Rack No</label>
+                <input type="text" id="txtRackNo" class="form-control" placeholder="e.g. R-102" maxlength="50" />
+            </div>
+
+            <!-- Minimum Stock -->
+            <div class="col-md-4">
+                <label class="form-label">Minimum Stock</label>
+                <input type="number" id="txtMinimumStock" class="form-control" placeholder="0" value="0" />
+            </div>
+
+            <!-- Is E-Book Checkbox -->
+            <div class="col-md-4 align-self-center pt-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="chkIsEBook" onchange="ToggleEBookField()">
+                    <label class="form-check-label font-weight-bold" for="chkIsEBook">Is E-Book?</label>
+                </div>
+            </div>
+
+            <!-- E-Book File Upload -->
+            <div class="col-md-6" id="divEBookFile" style="display:none;">
+                <label class="form-label">E-Book File (PDF/EPUB)</label>
+                <input type="file" id="fuEBookFile" class="form-control" accept=".pdf,.epub,.mobi" />
+                <small id="spEBookFileName" class="text-muted d-block mt-1"></small>
+            </div>
+
+            <!-- Book Cover Image -->
+            <div class="col-md-6">
+                <label class="form-label">Book Cover Image</label>
+                <div class="d-flex align-items-center gap-3">
+                    <input type="file" id="fuBookCoverImage" class="form-control" accept="image/*" onchange="PreviewCoverImage(this)">
+                    <img id="imgCoverPreview" src="~/Content/Admin/assets/images/no-image.png" class="img-thumbnail rounded" style="width: 65px; height: 65px; object-fit: cover;" />
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="col-md-12">
+                <label class="form-label">Book Description</label>
+                <textarea id="txtBookDescription" class="form-control" rows="4" placeholder="Enter book details or summary..."></textarea>
+            </div>
+
+            <!-- Active -->
+            <div class="col-md-12">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="chkIsActive" checked>
+                    <label class="form-check-label" for="chkIsActive">Active Status</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+            <a href="/bctechadmin/BookMaster" class="btn btn-secondary px-4">Cancel</a>
+            <button type="button" class="btn btn-primary text-white px-4" id="btnSaveBook" onclick="SaveBookMaster()">
+                <i class="ri-save-line me-1"></i> Save Book Master
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var currentBookID = @bookId;
+        var currentCoverPath = "";
+        var currentEBookPath = "";
+
+        $(document).ready(function () {
+            LoadDropdowns(function () {
+                if (currentBookID > 0) {
+                    LoadBookData(currentBookID);
+                }
+            });
+        });
+
+        function LoadDropdowns(callback) {
+            var orgReq = $.ajax({ url: "/BCTECHAdmin/GetOrganizationList", type: "GET", dataType: "json" });
+            var catReq = $.ajax({ url: "/BCTECHAdmin/GetBookCategoryList", type: "GET", dataType: "json" });
+            var srcReq = $.ajax({ url: "/BCTECHAdmin/GetBookSourceList", type: "GET", dataType: "json" });
+            var crsReq = $.ajax({ url: "/BCTECHAdmin/GetCourseDropdownList", type: "GET", dataType: "json" });
+
+            $.when(orgReq, catReq, srcReq, crsReq).done(function (orgRes, catRes, srcRes, crsRes) {
+                // Populate Organizations
+                var orgList = orgRes[0].Data || orgRes[0];
+                var orgOptions = "";
+                if (orgList && orgList.length) {
+                    $.each(orgList, function (i, item) {
+                        orgOptions += "<option value='" + item.OrganizationID + "'>" + item.OrganizationName + "</option>";
+                    });
+                    $("#ddlOrganizationID").html(orgOptions);
+                    if (currentBookID === 0) {
+                        $("#ddlOrganizationID").val(orgList[0].OrganizationID);
+                    }
+                } else {
+                    $("#ddlOrganizationID").html("<option value='1'>Default Organization</option>");
+                }
+                $("#ddlOrganizationID").prop("disabled", true);
+
+                // Populate Categories
+                var catList = catRes[0];
+                var catOptions = "<option value='0'>Select Category</option>";
+                if (catList && catList.length) {
+                    $.each(catList, function (i, item) {
+                        catOptions += "<option value='" + item.BookCategoryID + "'>" + item.BookCategoryTitle + "</option>";
+                    });
+                }
+                $("#ddlBookCategoryID").html(catOptions);
+
+                // Populate Sources
+                var srcList = srcRes[0];
+                var srcOptions = "<option value='0'>Select Source</option>";
+                if (srcList && srcList.length) {
+                    $.each(srcList, function (i, item) {
+                        srcOptions += "<option value='" + item.BookSourceID + "'>" + item.BookSourceTitle + "</option>";
+                    });
+                }
+                $("#ddlBookSourceID").html(srcOptions);
+
+                // Populate Courses
+                var crsList = crsRes[0];
+                var crsOptions = "<option value='0'>Select Course</option>";
+                if (crsList && crsList.length) {
+                    $.each(crsList, function (i, item) {
+                        crsOptions += "<option value='" + item.CourseID + "'>" + item.CourseTitle + "</option>";
+                    });
+                }
+                $("#ddlCourseID").html(crsOptions);
+
+                if (typeof callback === "function") {
+                    callback();
+                }
+            });
+        }
+
+        function LoadBookData(id) {
+            $.ajax({
+                url: "/BCTECHAdmin/GetBookMasterByID",
+                type: "GET",
+                data: { id: id },
+                dataType: "json",
+                success: function (model) {
+                    if (model && model.BookID > 0) {
+                        $("#hfBookID").val(model.BookID);
+                        $("#ddlOrganizationID").val(model.OrganizationID || 0);
+                        $("#ddlBookCategoryID").val(model.BookCategoryID || 0);
+                        $("#ddlBookSourceID").val(model.BookSourceID || 0);
+                        $("#ddlCourseID").val(model.CourseID || 0);
+                        $("#txtBookCode").val(model.BookCode || "");
+                        $("#txtBookTitle").val(model.BookTitle || "");
+                        $("#txtBookSubTitle").val(model.BookSubTitle || "");
+                        $("#txtAuthorName").val(model.AuthorName || "");
+                        $("#txtPublisherName").val(model.PublisherName || "");
+                        $("#txtPrice").val(model.Price || 0);
+                        $("#txtTotalPages").val(model.TotalPages || 0);
+                        $("#txtRackNo").val(model.RackNo || "");
+                        $("#txtMinimumStock").val(model.MinimumStock || 0);
+                        $("#txtBookDescription").val(model.BookDescription || "");
+                        $("#chkIsEBook").prop("checked", model.IsEBook === 1 || model.IsEBook === true);
+                        $("#chkIsActive").prop("checked", model.IsActive === 1 || model.IsActive === true);
+
+                        currentCoverPath = model.BookCoverImage || "";
+                        currentEBookPath = model.EBookFile || "";
+
+                        if (currentCoverPath) {
+                            $("#imgCoverPreview").attr("src", currentCoverPath);
+                        } else {
+                            $("#imgCoverPreview").attr("src", "/Content/Admin/assets/images/no-image.png");
+                        }
+
+                        if (currentEBookPath) {
+                            $("#spEBookFileName").text("Existing E-Book File: " + currentEBookPath.split('/').pop());
+                        }
+
+                        ToggleEBookField();
+                    }
+                },
+                error: function (err) {
+                    console.error("Error loading book data:", err);
+                }
+            });
+        }
+
+        function ToggleEBookField() {
+            if ($("#chkIsEBook").is(":checked")) {
+                $("#divEBookFile").slideDown();
+            } else {
+                $("#divEBookFile").slideUp();
+            }
+        }
+
+        function PreviewCoverImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imgCoverPreview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function SaveBookMaster() {
+            var bookTitle = $("#txtBookTitle").val().trim();
+            if (bookTitle === "") {
+                if (typeof toastr !== "undefined") {
+                    toastr.warning("Please enter Book Title.");
+                } else {
+                    alert("Please enter Book Title.");
+                }
+                $("#txtBookTitle").focus();
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append("BookID", $("#hfBookID").val());
+            formData.append("OrganizationID", $("#ddlOrganizationID").val() || "0");
+            formData.append("BookCategoryID", $("#ddlBookCategoryID").val() || "0");
+            formData.append("BookSourceID", $("#ddlBookSourceID").val() || "0");
+            formData.append("CourseID", $("#ddlCourseID").val() || "0");
+            formData.append("BookCode", $("#txtBookCode").val().trim());
+            formData.append("BookTitle", bookTitle);
+            formData.append("BookSubTitle", $("#txtBookSubTitle").val().trim());
+            formData.append("AuthorName", $("#txtAuthorName").val().trim());
+            formData.append("PublisherName", $("#txtPublisherName").val().trim());
+            formData.append("Price", $("#txtPrice").val() || "0");
+            formData.append("TotalPages", $("#txtTotalPages").val() || "0");
+            formData.append("RackNo", $("#txtRackNo").val().trim());
+            formData.append("MinimumStock", $("#txtMinimumStock").val() || "0");
+            formData.append("BookDescription", $("#txtBookDescription").val().trim());
+            formData.append("IsEBook", $("#chkIsEBook").is(":checked") ? 1 : 0);
+            formData.append("IsActive", $("#chkIsActive").is(":checked") ? 1 : 0);
+            formData.append("BookCoverImage", currentCoverPath);
+            formData.append("EBookFile", currentEBookPath);
+
+            var coverFiles = $("#fuBookCoverImage")[0].files;
+            if (coverFiles && coverFiles.length > 0) {
+                formData.append("BookCoverImageFile", coverFiles[0]);
+            }
+
+            var ebookFiles = $("#fuEBookFile")[0].files;
+            if (ebookFiles && ebookFiles.length > 0) {
+                formData.append("EBookFileObj", ebookFiles[0]);
+            }
+
+            $.ajax({
+                url: "/BCTECHAdmin/SaveBookMaster",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    $("#btnSaveBook").prop("disabled", true);
+                },
+                success: function (res) {
+                    $("#btnSaveBook").prop("disabled", false);
+                    if (res.Status) {
+                        if (typeof toastr !== "undefined") {
+                            toastr.success(res.Message);
+                        } else {
+                            alert(res.Message);
+                        }
+                        setTimeout(function () {
+                            window.location.href = "/bctechadmin/BookMaster";
+                        }, 800);
+                    } else {
+                        if (typeof toastr !== "undefined") {
+                            toastr.error(res.Message);
+                        } else {
+                            alert(res.Message);
+                        }
+                    }
+                },
+                error: function (err) {
+                    $("#btnSaveBook").prop("disabled", false);
+                    console.error("Save error:", err);
+                    if (typeof toastr !== "undefined") {
+                        toastr.error("Error occurred while saving book.");
+                    }
+                }
+            });
+        }
+    </script>
+}

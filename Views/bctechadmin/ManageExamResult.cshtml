@@ -1,0 +1,242 @@
+@model List<BCTECHERP.Models.SecureCode>
+@{
+    ViewBag.Title = "Manage Exam Result";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+    ViewData["ParentMenu"] = "Student Exam";
+    ViewData["PageTitle"] = "Manage Exam Result";
+}
+
+<style>
+    .card-exam {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #ffffff;
+    }
+    .card-exam:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+        border-color: #cbd5e1;
+    }
+    .exam-img-container {
+        height: 150px;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        overflow: hidden;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .exam-img-container img {
+        max-height: 130px;
+        max-width: 90%;
+        object-fit: contain;
+    }
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        font-size: 13px;
+        border-bottom: 1px dashed #e2e8f0;
+    }
+    .detail-label {
+        color: #64748b;
+        font-weight: 500;
+    }
+    .detail-value {
+        color: #1e293b;
+        font-weight: 600;
+        text-align: right;
+    }
+    .secure-code-box {
+        font-size: 16px;
+        font-weight: 700;
+        color: #334155;
+        letter-spacing: 0.5px;
+    }
+    .btn-purple {
+        background-color: #6f42c1 !important;
+        border-color: #6f42c1 !important;
+        color: #ffffff !important;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.2s ease-in-out;
+    }
+    .btn-purple:hover {
+        background-color: #59359a !important;
+        box-shadow: 0 4px 10px rgba(111, 66, 193, 0.35);
+        color: #ffffff !important;
+    }
+</style>
+<!-- Main Content Area: Cards / List View -->
+@if (Model != null && Model.Count > 0)
+{
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            string courseImg = !string.IsNullOrEmpty(item.course_image) ? item.course_image : "/Content/Admin/assets/images/course-default.png";
+            string dateStr = item.Exam_schedule_Date != DateTime.MinValue ? item.Exam_schedule_Date.ToString("dd-MMM-yyyy") : "-";
+
+            <div class="col-xl-4 col-lg-6 col-md-6 col-12">
+                <div class="card card-exam h-100 shadow-sm">
+                    <!-- Course Image -->
+                    <div class="exam-img-container">
+                        <img src="@courseImg" onerror="this.onerror=null; this.src='/Content/Admin/assets/images/course-default.png';" alt="@item.course_title" />
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <!-- Course Title -->
+                        <h4 class="text-center fw-bold text-dark mb-3" style="font-size: 1.25rem;">
+                            @(string.IsNullOrEmpty(item.course_title) ? "Exam" : item.course_title)
+                        </h4>
+
+                        <!-- Details Rows matching Screenshot -->
+                        <div class="px-2 mb-3">
+                            <div class="detail-row">
+                                <span class="detail-label">Exam Date</span>
+                                <span class="detail-value">:@dateStr</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">No. Of Questions</span>
+                                <span class="detail-value">:@item.No_Of_Question</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Exam Time</span>
+                                <span class="detail-value">:@item.Exam_Time Minutes</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Total Marks</span>
+                                <span class="detail-value">:@item.Exam_Total_Marks Marks</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Practical Exam</span>
+                                <span class="detail-value">:@(string.IsNullOrEmpty(item.Practical_Exam_Time) ? "-" : item.Practical_Exam_Time)</span>
+                            </div>
+                            <div class="detail-row" style="border-bottom: none;">
+                                <span class="detail-label">Theory Exam</span>
+                                <span class="detail-value">:@(string.IsNullOrEmpty(item.Theory_Exam_Time) ? "-" : item.Theory_Exam_Time)</span>
+                            </div>
+                        </div>
+
+                        <!-- Secure Code -->
+                        <div class="text-center my-2 py-2" style="background-color: #f8fafc; border-radius: 8px;">
+                            <span class="secure-code-box">Secure Code: @(item.SecureCodeNo > 0 ? item.SecureCodeNo.ToString() : "-")</span>
+                        </div>
+
+                        <!-- Action Button -->
+                      <div class="text-center mt-3">
+                            <a href="@Url.Action("StudentExamination", "bctechAdmin", new { id = item.Schedule_Exam_Id })" class="btn btn-purple px-4 py-2 w-100">
+                                <i class="fa fa-arrow-right me-1"></i> Student Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card bg-white rounded-10 border border-light shadow-sm p-5 text-center my-4">
+        <div class="py-4">
+            <i class="fa fa-calendar-times-o text-muted mb-3" style="font-size: 3rem;"></i>
+            <h5 class="text-secondary fw-semibold">No Scheduled Exams Found</h5>
+            <p class="text-muted fs-13 mb-3">No hall ticket records found for date: <strong>@ViewBag.DisplayDate</strong>.</p>
+            <p class="text-muted fs-12">Try selecting another exam date from the date picker above.</p>
+        </div>
+    </div>
+}
+
+<!-- Student Details Modal -->
+<div class="modal fade" id="modalStudentDetails" tabindex="-1" aria-labelledby="modalStudentDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+            <div class="modal-header bg-white py-3 border-bottom pb-2">
+                <h5 class="modal-title fs-16 fw-semibold text-secondary mb-0" id="modalCourseTitle">Exam Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 pt-3">
+                <!-- Enrolled Students Table -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fs-13 text-secondary fw-semibold">Enrolled Students (<span id="modalStudCount">0</span>)</span>
+                    <input type="text" id="modalSearch" class="form-control form-control-sm" style="width: 200px;" placeholder="Search students..." onkeyup="filterStudents(this.value);" />
+                </div>
+
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover table-bordered align-middle mb-0" style="font-size: 13px;" id="tblModalStudents">
+                        <thead style="background-color: #f8fafc; color: #475569;">
+                            <tr>
+                                <th style="width: 45px;" class="text-center">#</th>
+                                <th>Student Name</th>
+                                <th class="text-center" style="width: 85px;">Gender</th>
+                                <th>Enrollment</th>
+                                <th>Mobile No</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblModalStudentsBody">
+                            <tr>
+                                <td colspan="5" class="text-center py-3 text-muted">Loading students...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer bg-light py-2 px-3 border-top d-flex justify-content-end">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showStudentDetailsModal(scheduleExamId, courseTitle, examDate, practicalTime, theoryTime, noQuestions, examTime, totalMarks) {
+            $('#modalCourseTitle').text(courseTitle + ' | ' + examDate);
+            $('#tblModalStudentsBody').html('<tr><td colspan="5" class="text-center py-3 text-secondary"><i class="fa fa-spinner fa-spin me-1"></i> Loading students...</td></tr>');
+            $('#modalSearch').val('');
+
+            var modalEl = document.getElementById('modalStudentDetails');
+            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.show();
+
+            $.ajax({
+                type: "POST",
+                url: "/bctechAdmin/GetExamHallTicketStudentDetails",
+                data: { Schedule_Exam_Id: scheduleExamId },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.data && res.data.length > 0) {
+                        $('#modalStudCount').text(res.data.length);
+                        var html = '';
+                        $.each(res.data, function (i, s) {
+                            html += '<tr>';
+                            html += '<td class="text-center text-muted fw-semibold">' + (i + 1) + '</td>';
+                            html += '<td class="fw-semibold text-dark">' + (s.student_full_name || '-') + '</td>';
+                            html += '<td class="text-center">' + (s.student_gender || '-') + '</td>';
+                            html += '<td>' + (s.student_String_En_No || '-') + '</td>';
+                            html += '<td>' + (s.student_mobile_no || '-') + '</td>';
+                            html += '</tr>';
+                        });
+                        $('#tblModalStudentsBody').html(html);
+                    } else {
+                        $('#modalStudCount').text('0');
+                        $('#tblModalStudentsBody').html('<tr><td colspan="5" class="text-center py-3 text-muted">No students found for this exam.</td></tr>');
+                    }
+                },
+                error: function () {
+                    $('#tblModalStudentsBody').html('<tr><td colspan="5" class="text-center py-3 text-danger">Failed to load student details.</td></tr>');
+                }
+            });
+        }
+
+        function filterStudents(query) {
+            var val = (query || '').toLowerCase().trim();
+            $('#tblModalStudentsBody tr').each(function () {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(val) > -1);
+            });
+        }
+    </script>
+}

@@ -16,10 +16,13 @@
                 <span class="material-symbols-outlined">search</span>
             </div>
         </form>
-        <a href="/bctechadmin/CreateCourse"
-           class="text-primary fs-16 text-decoration-none">
-            + Add New Course
+         
+
+        <a href="/bctechadmin/CreateCourse" class="btn btn-primary text-white">
+            <i class="ri-add-line"></i> Add New Course
         </a>
+
+
     </div>
     <div class="default-table-area mx-minus-1 table-contact-list">
         <div class="table-responsive">
@@ -33,6 +36,7 @@
                         <th>Course Title</th>
                         <th>Duration</th>
                         <th>Course Fee</th>
+                        <th>Active</th>
                     </tr>
                 </thead>
                 <tbody id="tblCourseBody"></tbody>
@@ -94,6 +98,14 @@
                             html += "<td class='text-center'>" + item.CourseTitle + "</td>";
                             html += "<td class='text-center'>" + item.Duration + " " + item.DurationType + "</td>";
                             html += "<td class='text-center'>₹ " + parseFloat(item.CourseFee).toFixed(2) + "</td>";
+                            if (item.IsActive == "1") {
+                                html += "<td class='text-center'>  <span class='badge bg-success'>Active</span></td>";
+                            }
+                            else
+                            {
+                                html += "<td class='text-center'>  <span class='badge bg-danger'>Deactive</span></td>";
+                            }
+                            
                             html += "</tr>";
                             $("#tblCourseBody").append(html);
                         });

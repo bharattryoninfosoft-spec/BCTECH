@@ -1,0 +1,242 @@
+@{
+    ViewBag.Title = "Student List";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+
+    ViewData["ParentMenu"] = "Student";
+    ViewData["PageTitle"] = "Student List";
+}
+
+<input type="hidden" id="hfPageNumber" value="1" />
+<input type="hidden" id="hfPageSize" value="10" />
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <!-- Header & Search Controls -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0" onsubmit="return false;">
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Student Name, Enrollment, Mobile No..." />
+
+            <button type="button"
+                    id="btnSearch"
+                    class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent border-0">
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+            </button>
+        </form>
+
+        <a href="/bctechadmin/CreateStudentAdmission" class="btn btn-primary text-white">
+            <i class="ri-add-line me-1"></i> New Student Admission
+        </a>
+ 
+
+    </div>
+
+    <!-- Pure HTML Table -->
+    <div class="table-responsive p-3 pt-0">
+        <table class="table table-hover align-middle border-bottom mb-0" id="tblStudent">
+            <thead class="bg-light">
+                <tr class="text-secondary fs-13">
+                    <th width="40" class="text-center">SR</th>
+                    <th style="min-width: 175px;">Enrollment No</th>
+                    <th>Student Name</th>
+                    <th width="110">Mobile No</th>
+                    <th width="120">Branch</th>
+                    <th width="120">Batch</th>
+                    <th width="100">Admission Date</th>
+                    <th width="110" class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody id="tblStudentBody">
+                <!-- Dynamic Data Rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Custom Pagination -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3 border-top">
+        <span id="lblShowing" class="text-muted fs-14">
+            Showing 0 to 0 of 0 entries
+        </span>
+
+        <nav>
+            <ul class="pagination pagination-sm mb-0 gap-1" id="pagination">
+                <!-- Dynamic Pagination Buttons -->
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            // Initial Data Fetch
+            GetStudentList(1);
+
+            // Search Events
+            $("#btnSearch").click(function () {
+                GetStudentList(1);
+            });
+
+            var searchTimeout = null;
+            $("#txtSearch").keyup(function () {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function () {
+                    GetStudentList(1);
+                }, 400);
+            });
+
+        });
+
+        // Fetch Student List via AJAX
+        function GetStudentList(pageNumber) {
+            $("#hfPageNumber").val(pageNumber);
+
+            var param = {
+                SearchText: $("#txtSearch").val().trim(),
+                PageNumber: parseInt($("#hfPageNumber").val()),
+                PageSize: parseInt($("#hfPageSize").val())
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentList",
+                data: param,
+                dataType: "json",
+                beforeSend: function () {
+                    $("#tblStudentBody").html("<tr><td colspan='8' class='text-center py-4'><div class='spinner-border spinner-border-sm text-primary' role='status'></div></td></tr>");
+                },
+                success: function (response) {
+                    var html = "";
+                    var totalRecords = response.TotalRecords || 0;
+                    var data = response.Data || [];
+
+                    if (data.length > 0) {
+                        var srNo = (param.PageNumber - 1) * param.PageSize;
+
+                        $.each(data, function (i, item) {
+                            srNo++;
+                            var recordId = item.DeleteEncryptedID || item.EncryptedID || item.StudentID;
+
+                            html += "<tr>";
+                            html += "<td class='text-center fw-bold text-muted fs-13'>" + srNo + "</td>";
+                            html += "<td class='text-nowrap'><span class='fw-semibold text-primary fs-13'>" + (item.EnrollmentNo || '-') + "</span></td>";
+                            html += "<td><strong class='text-dark fs-13'>" + (item.StudentFullName || '-') + "</strong></td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.StudentMobileNo || '-') + "</td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.BranchName || '-') + "</td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.BatchTitle || '-') + "</td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.AdmissionDate || '-') + "</td>";
+
+                            // Actions: Redirects to dedicated CreateStudentAdmission page with Encrypted ID
+                            html += "<td class='text-center'>";
+                            html += "<a href='/bctechadmin/CreateStudentAdmission?id=" + (item.ViewEncryptedID || recordId) + "&mode=V' class='me-2' title='View'><i class='ri-eye-line text-info fs-16'></i></a>";
+                            html += "<a href='/bctechadmin/CreateStudentAdmission?id=" + (item.EditEncryptedID || recordId) + "' class='me-2' title='Edit'><i class='ri-edit-box-line text-primary fs-16'></i></a>";
+                            html += "<a href='javascript:void(0)' onclick='DeleteStudent(\"" + recordId + "\")' title='Delete'><i class='ri-delete-bin-line text-danger fs-16'></i></a>";
+                            html += "</td>";
+
+                            html += "</tr>";
+                        });
+
+                        $("#tblStudentBody").html(html);
+                        RenderPagination(totalRecords, param.PageNumber, param.PageSize);
+                    } else {
+                        $("#tblStudentBody").html("<tr><td colspan='8' class='text-center text-muted py-4'>No records found.</td></tr>");
+                        $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+                        $("#pagination").empty();
+                    }
+                },
+                error: function () {
+                    $("#tblStudentBody").html("<tr><td colspan='8' class='text-center text-danger py-4'>Failed to load data. Please try again.</td></tr>");
+                }
+            });
+        }
+
+        // Render Pagination Controls
+        function RenderPagination(totalRecords, currentPage, pageSize) {
+            var totalPages = Math.ceil(totalRecords / pageSize);
+            if (totalPages === 0) totalPages = 1;
+
+            var startEntry = (currentPage - 1) * pageSize + 1;
+            var endEntry = Math.min(currentPage * pageSize, totalRecords);
+
+            if (totalRecords === 0) {
+                $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+            } else {
+                $("#lblShowing").text("Showing " + startEntry + " to " + endEntry + " of " + totalRecords + " entries");
+            }
+
+            var paginationHtml = "";
+
+            if (currentPage > 1) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetStudentList(" + (currentPage - 1) + ")'>Previous</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Previous</a></li>";
+            }
+
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(totalPages, currentPage + 2);
+
+            for (var i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationHtml += "<li class='page-item active'><a class='page-link' href='javascript:void(0);'>" + i + "</a></li>";
+                } else {
+                    paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetStudentList(" + i + ")'>" + i + "</a></li>";
+                }
+            }
+
+            if (currentPage < totalPages) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetStudentList(" + (currentPage + 1) + ")'>Next</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Next</a></li>";
+            }
+
+            $("#pagination").html(paginationHtml);
+        }
+
+        // Delete Student Function
+        function DeleteStudent(studentId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/bctechadmin/DeleteStudent",
+                        data: { id: studentId },
+                        success: function (res) {
+                            if (res.IsSuccess) {
+                                toastr.success(res.Message);
+
+                                var rowCount = $("#tblStudentBody tr").length;
+                                var currentPage = parseInt($("#hfPageNumber").val()) || 1;
+
+                                if (rowCount === 1 && currentPage > 1) {
+                                    currentPage--;
+                                }
+
+                                GetStudentList(currentPage);
+                            } else {
+                                Swal.fire('Error', res.Message || 'Failed to delete record.', 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'An error occurred while deleting the record.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

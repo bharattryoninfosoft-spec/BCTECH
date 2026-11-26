@@ -13,10 +13,18 @@
                 <span class="material-symbols-outlined">search</span>
             </div>
         </form>
+
+        <!--
         <a href="javascript:void(0);" class="text-primary fs-16 text-decoration-none"
            onclick="OpenFinancialYearModal()">
             + Add Financial Year
+        </a>-->
+
+        <a href="javascript:void(0);" class="btn btn-primary text-white" onclick="OpenFinancialYearModal()">
+            <i class="ri-add-line"></i> Add Financial Year
         </a>
+
+
     </div>
     <div class="default-table-area mx-minus-1 table-contact-list">
         <div class="table-responsive">
@@ -41,7 +49,7 @@
             <span class="fs-15" id="lblShowing"></span>
 
             <nav class="custom-pagination" aria-label="Page navigation example">
-                <ul class="pagination mb-0 justify-content-center" id="pagination">                   
+                <ul class="pagination mb-0 justify-content-center" id="pagination">
                 </ul>
             </nav>
         </div>
@@ -178,27 +186,27 @@
                 var item = filteredFinancialYears[i];
 
                 html += `
-        <tr>
-             <td>${i + 1}</td>
-            <td>${item.FinancialYear}</td>
-            <td>${item.AssessmentYear}</td>
-            <td>${item.StartDate}</td>
-            <td>${item.EndDate}</td>
-            <td>${item.IsDefault
+            <tr>
+                 <td>${i + 1}</td>
+                <td>${item.FinancialYear}</td>
+                <td>${item.AssessmentYear}</td>
+                <td>${item.StartDate}</td>
+                <td>${item.EndDate}</td>
+                <td>${item.IsDefault
                         ? '<span class="badge bg-success">Yes</span>'
                         : '<span class="badge bg-secondary">No</span>'}</td>
-            <td>
-               <a href="javascript:void(0)"
-                       onclick="EditFinancialYear(${item.FinancialYearID})">
-                        <i class="ri-edit-line text-primary"></i>
+                <td>
+                   <a href="javascript:void(0)"
+                           onclick="EditFinancialYear(${item.FinancialYearID})">
+                            <i class="ri-edit-line text-primary"></i>
+                        </a>
+                    &nbsp;
+                   <a href="javascript:void(0)"
+                       onclick="DeleteFinancialYear(${item.FinancialYearID})">
+                        <i class="ri-delete-bin-line text-danger"></i>
                     </a>
-                &nbsp;
-               <a href="javascript:void(0)"
-                   onclick="DeleteFinancialYear(${item.FinancialYearID})">
-                    <i class="ri-delete-bin-line text-danger"></i>
-                </a>
-            </td>
-        </tr>`;
+                </td>
+            </tr>`;
             }
 
             $("#tblFinancialYear tbody").html(html);
@@ -215,30 +223,30 @@
 
             var html = "";
             html += `
-                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="javascript:void(0)"
-                       ${currentPage == 1 ? '' : `onclick="ChangePage(${currentPage - 1})"`}>
-                        <i class="material-symbols-outlined">west</i>
-                    </a>
-                </li>`;
+                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="javascript:void(0)"
+                           ${currentPage == 1 ? '' : `onclick="ChangePage(${currentPage - 1})"`}>
+                            <i class="material-symbols-outlined">west</i>
+                        </a>
+                    </li>`;
             for (var i = 1; i <= totalPages; i++) {
 
                 html += `
-                    <li class="page-item">
-                        <a class="page-link ${currentPage == i ? 'active' : ''}"
-                           href="javascript:void(0)"
-                           onclick="ChangePage(${i})">
-                            ${i}
-                        </a>
-                    </li>`;
+                        <li class="page-item">
+                            <a class="page-link ${currentPage == i ? 'active' : ''}"
+                               href="javascript:void(0)"
+                               onclick="ChangePage(${i})">
+                                ${i}
+                            </a>
+                        </li>`;
             }
-           html += `
-            <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                <a class="page-link" href="javascript:void(0)"
-                   ${currentPage == totalPages ? '' : `onclick="ChangePage(${currentPage + 1})"`}>
-                    <i class="material-symbols-outlined">east</i>
-                </a>
-            </li>`;
+            html += `
+                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="javascript:void(0)"
+                       ${currentPage == totalPages ? '' : `onclick="ChangePage(${currentPage + 1})"`}>
+                        <i class="material-symbols-outlined">east</i>
+                    </a>
+                </li>`;
 
             $("#pagination").html(html);
         }
@@ -260,7 +268,7 @@
             $("#txtAssessmentYear").val("");
             $("#txtStartDate").val("");
             $("#txtEndDate").val("");
-            $("#chkDefault").prop("checked", false);                          
+            $("#chkDefault").prop("checked", false);
             var year = new Date().getFullYear();
             $("#txtCurrentYear").val(year);
             GenerateFinancialYear();
@@ -447,5 +455,5 @@
             // End Date (31-Mar)
             $("#txtEndDate").val((year + 1) + "-03-31");
         }
-        </script>
-    }
+    </script>
+}

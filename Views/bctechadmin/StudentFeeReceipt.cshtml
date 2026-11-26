@@ -1,0 +1,1651 @@
+@{
+    ViewBag.Title = "Student Fee Receipt";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+
+    ViewData["ParentMenu"] = "Student";
+    ViewData["PageTitle"] = "Student Fee Receipt";
+
+    int currentUserID = ViewBag.CurrentUserID != null ? (int)ViewBag.CurrentUserID : 1;
+    string currentUserName = ViewBag.CurrentUserName != null ? ViewBag.CurrentUserName.ToString() : "Admin";
+}
+
+
+
+<input type="hidden" id="hfPageNumber" value="1" />
+<input type="hidden" id="hfPageSize" value="10" />
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <!-- Header & Search Controls -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+
+        <div class="position-relative" style="min-width: 300px; max-width: 400px; flex: 1;">
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control ps-5"
+                   placeholder="Search Receipt No, Student Name, Enrollment, Mobile..." />
+
+            <button type="button"
+                    id="btnSearch"
+                    class="btn p-0 position-absolute top-50 start-0 translate-middle-y ms-3 text-muted border-0 bg-transparent">
+                <span class="material-symbols-outlined align-middle fs-20">search</span>
+            </button>
+        </div>
+
+        <a href="javascript:void(0);" class="btn btn-primary text-white px-3" onclick="OpenFeeReceiptModal()">
+            <i class="ri-add-line me-1 fs-15 align-middle"></i> Add Fee Receipt
+        </a>
+
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-responsive p-3 pt-0">
+        <table class="table table-hover align-middle border-bottom mb-0" id="tblFeeReceipt" style="min-width: 1250px; width: 100%;">
+            <thead class="bg-light">
+                <tr class="text-secondary fs-13 text-nowrap">
+
+                    <th class="text-center" style="width: 50px; min-width: 50px;">SR</th>
+                    <th class="text-center" style="width: 140px; min-width: 140px;">Action</th>
+                    <th style="width: 100px; min-width: 100px;">Receipt No</th>
+                    <th style="width: 150px; min-width: 155px;">Receipt Date</th>
+                    <th style="width: 150px; min-width: 250px;">Student Name</th>
+                    <th class="text-end" style="width: 120px; min-width: 120px;">Amount (&#8377;) <br /></th>
+                    <!--<th class="text-center" style="width: 120px; min-width: 120px;">Received In</th>-->
+                    <th class="text-center" style="width: 140px; min-width: 140px;">Receipt Type</th>
+                    <th style="width: 130px; min-width: 130px;">Received By</th>
+
+                </tr>
+            </thead>
+            <tbody id="tblFeeReceiptBody">
+                <!-- Dynamic Data Rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Custom Pagination -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3 border-top">
+        <span id="lblShowing" class="text-muted fs-14">
+            Showing 0 to 0 of 0 entries
+        </span>
+
+        <nav>
+            <ul class="pagination pagination-sm mb-0 gap-1" id="pagination">
+                <!-- Dynamic Pagination Buttons -->
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal fade" id="StudentFeeReceiptModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="modalTitle">Add Student Fee Receipt</h5>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <input type="hidden" id="hfStudentFeeReceiptID" value="0" />
+
+                <div class="row">
+
+                    <!-- Left Column: Receipt Form -->
+                    <div class="col-lg-7 border-end pe-lg-4">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Student Name <span class="text-danger">*</span></label>
+                            <select id="ddlStudentID" class="form-select select2">
+                                <option value="">Select Student</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Receipt Date <span class="text-danger">*</span></label>
+                            <input type="datetime-local" id="txtReceiptDate" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Receipt No <span class="text-danger">*</span></label>
+                            <input type="text" id="txtFeeReceiptNo" class="form-control" placeholder="Receipt Number (Auto-generated on student select)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Received Amount (&#8377;) <span class="text-danger">*</span></label>
+                            <input type="tel" step="0.01" id="txtAmountReceived" class="form-control" placeholder="Enter Amount" maxlength="15" onkeypress="return validateFloatKeyPress(this,event);" />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Received In <span class="text-danger">*</span></label>
+                                <select id="ddlPaymentTypeID" class="form-select">
+                                    <option value="">Select Payment Type</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Receipt Type</label>
+                                <select id="ddlFeesTypeID" class="form-select">
+                                    <option value="">Select Receipt Type</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label fw-semibold">Transaction Number / Cheque No</label>
+                                <input type="text" id="txtTransactionNo" class="form-control" placeholder="Enter Transaction Number" />
+                            </div>
+                            <div class="col-md-6" id="divBankName">
+                                <label class="form-label fw-semibold">Bank Name</label>
+                                <input type="text" id="txtBankName" class="form-control" placeholder="Enter Bank Name (e.g. HDFC, SBI)" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Received By <span class="text-danger">*</span></label>
+                            <select id="ddlReceivedByUserID" class="form-select" disabled style="background-color: #e9ecef; pointer-events: none;">
+                                <option value="">Select User</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Receipt Remark</label>
+                            <textarea id="txtRemarks" class="form-control" rows="3" placeholder="Enter internal remarks of student"></textarea>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Student Summary & Fee Details -->
+                    <div class="col-lg-5 ps-lg-4 mt-3 mt-lg-0">
+
+                        <div class="card bg-light border-0 mb-3">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <div id="divStudentPhotoReceipt" class="flex-shrink-0 d-none">
+                                        <img id="imgStudentPhotoReceipt" src="" alt="Student Photo" class="rounded-circle border border-2 border-primary shadow-sm" style="width: 55px; height: 55px; object-fit: cover;" />
+                                    </div>
+                                    <div id="avatarStudentPhotoReceipt" class="flex-shrink-0 bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 55px; height: 55px;">
+                                        <i class="ri-user-line fs-24"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title text-primary mb-1"><i class="ri-user-3-line me-1"></i> Selected Student Info</h6>
+                                        <div class="fw-bold text-dark fs-14" id="lblStudentName">-</div>
+                                    </div>
+                                </div>
+                                <p class="mb-1 text-muted fs-13"><strong>Enrollment No:</strong> <span id="lblStudentEnrollment" class="text-dark">-</span></p>
+                                <p class="mb-1 text-muted fs-13"><strong>Mobile No:</strong> <span id="lblStudentMobile" class="text-dark">-</span></p>
+                                <p class="mb-0 text-muted fs-13"><strong>Father Name:</strong> <span id="lblFatherName" class="text-dark">-</span></p>
+                            </div>
+                        </div>
+
+                        <div class="border rounded p-3 mb-3 bg-white">
+                            <h6 class="fw-bold text-secondary mb-2 fs-14">FeesInstallment Amount Table</h6>
+                            <table class="table table-sm table-bordered fs-12 mb-0" id="tblFeesInstallment">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Installment</th>
+                                        <th>Due Date</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblFeesInstallmentBody">
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-2">Select a student to view installments</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="border rounded p-3 bg-white">
+                            <h6 class="fw-bold text-secondary mb-2 fs-14">Received Total Amount table</h6>
+                            <div class="d-flex justify-content-between align-items-center fs-13 py-1 border-bottom">
+                                <span>Total FeesInstallment:</span>
+                                <span class="fw-bold text-dark fs-14" id="lblTotalFeeAmount">&#8377; 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center fs-13 py-1 border-bottom">
+                                <span>Previous Received:</span>
+                                <span class="fw-bold text-info fs-14" id="lblPreviousReceived">&#8377; 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center fs-13 py-1 border-bottom">
+                                <span>Current Payment:</span>
+                                <span class="fw-bold text-success fs-14" id="lblCurrentReceived">&#8377; 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center fs-13 py-1 border-bottom bg-light px-2 my-1 rounded">
+                                <span class="fw-bold text-dark">Total Remaining Amount:</span>
+                                <span class="fw-bold text-danger fs-15" id="lblRemainingAmount">&#8377; 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center fs-13 py-1">
+                                <span>Status:</span>
+                                <span class="badge bg-success">Branch Ledger Sync Active</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary text-white" onclick="SaveFeeReceipt()">Save Fee Receipt</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- View Details Modal -->
+<div class="modal fade" id="ViewStudentFeeReceiptModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header bg-light">
+                <h5 class="modal-title"><i class="ri-file-list-3-line me-2 text-info"></i> View Fee Receipt Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th class="w-35 bg-light">Receipt ID</th>
+                            <td id="vReceiptID"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Receipt No</th>
+                            <td id="vReceiptNo" class="fw-bold text-primary"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Receipt Date</th>
+                            <td id="vReceiptDate"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Student Name</th>
+                            <td id="vStudentName" class="fw-bold"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Enrollment No</th>
+                            <td id="vEnrollmentNo"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Amount Received</th>
+                            <td id="vAmountReceived" class="fw-bold text-success fs-16"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Received In (Payment Type)</th>
+                            <td id="vPaymentType"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Receipt Type (Fees Type)</th>
+                            <td id="vFeesType"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Transaction Number</th>
+                            <td id="vTransactionNo"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Bank Name</th>
+                            <td id="vBankName"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Received By</th>
+                            <td id="vReceivedBy"></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Remarks</th>
+                            <td id="vRemarks"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Fee Ledger & Invoice Print Modal -->
+<div class="modal fade" id="FeeLedgerPrintModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header bg-light d-print-none border-bottom">
+                <h5 class="modal-title fw-bold text-success">
+                    <i class="ri-file-list-3-line me-2"></i>Student Fee Receipt Invoice
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4 bg-white" id="printableLedgerArea">
+                <style type="text/css">
+                    .invoice-container {
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        color: #212529;
+                        background: #fff;
+                        padding: 15px;
+                    }
+                    .invoice-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 12px;
+                    }
+                    .invoice-table th, .invoice-table td {
+                        border: 1px solid #dee2e6;
+                        padding: 6px 10px;
+                        font-size: 13px;
+                    }
+                    .invoice-table th {
+                        background-color: #f8f9fa;
+                        font-weight: 600;
+                    }
+                    .bg-label {
+                        background-color: #f1f3f5 !important;
+                        font-weight: 600;
+                        color: #495057;
+                    }
+                    .highlight-amount-box {
+                        background-color: #e2e3e5;
+                        border: 1px solid #ced4da;
+                        text-align: center;
+                        font-size: 22px;
+                        font-weight: 700;
+                        padding: 10px 15px;
+                        border-radius: 4px;
+                        color: #111;
+                        margin-top: 10px;
+                    }
+                    @@import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+128&display=swap');
+                    .barcode-box {
+                        font-family: 'Libre Barcode 128', monospace;
+                        font-size: 38px;
+                        line-height: 1;
+                        letter-spacing: 0;
+                        color: #000;
+                    }
+                    .stub-table th, .stub-table td {
+                        padding: 4px 8px;
+                        font-size: 12px;
+                        border: 1px solid #ced4da;
+                    }
+                    @@media print {
+                        /* Hide entire web app UI, sidebars, headers, backdrops */
+                        body, html {
+                            background: #ffffff !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            width: 100% !important;
+                            height: auto !important;
+                            overflow: visible !important;
+                        }
+                        .sidebar-area, .header-area, .footer-area, .card, .modal-backdrop, .modal-header, .modal-footer, .d-print-none, nav, header, aside, .layout-wrapper {
+                            display: none !important;
+                        }
+                        .modal {
+                            position: absolute !important;
+                            display: block !important;
+                            left: 0 !important;
+                            top: 0 !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            width: 100% !important;
+                            height: auto !important;
+                            overflow: visible !important;
+                            background: #fff !important;
+                            box-shadow: none !important;
+                        }
+                        .modal-dialog, .modal-content {
+                            max-width: 100% !important;
+                            width: 100% !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                            background: #fff !important;
+                        }
+                        #printableLedgerArea {
+                            display: block !important;
+                            position: absolute !important;
+                            left: 0 !important;
+                            top: 0 !important;
+                            width: 100% !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                        }
+                        #printableLedgerArea .table-responsive {
+                            display: block !important;
+                            overflow: visible !important;
+                        }
+                        .invoice-container {
+                            padding: 0 !important;
+                            margin: 0 !important;
+                        }
+                        .invoice-table {
+                            margin-bottom: 4px !important;
+                        }
+                        .invoice-table th, .invoice-table td {
+                            padding: 2px 4px !important;
+                            font-size: 10px !important;
+                        }
+                        .stub-table th, .stub-table td {
+                            padding: 1px 3px !important;
+                            font-size: 9px !important;
+                        }
+                        .highlight-amount-box {
+                            font-size: 16px !important;
+                            padding: 3px 8px !important;
+                            margin-top: 2px !important;
+                        }
+                        .barcode-box {
+                            font-size: 16px !important;
+                        }
+                        h3 {
+                            font-size: 18px !important;
+                            margin-bottom: 0 !important;
+                        }
+                        h5 {
+                            font-size: 13px !important;
+                            margin-bottom: 2px !important;
+                        }
+                        h6 {
+                            font-size: 11px !important;
+                            margin-bottom: 2px !important;
+                        }
+                        .my-4 {
+                            margin-top: 4px !important;
+                            margin-bottom: 4px !important;
+                        }
+                        .mb-3 {
+                            margin-bottom: 4px !important;
+                        }
+                        .mb-2 {
+                            margin-bottom: 2px !important;
+                        }
+                        .p-3 {
+                            padding: 4px !important;
+                        }
+                        .pt-3, .pb-3 {
+                            padding-top: 2px !important;
+                            padding-bottom: 2px !important;
+                        }
+                        .mt-4 {
+                            margin-top: 4px !important;
+                        }
+                        @@page {
+                            size: A4 portrait;
+                            margin: 4mm;
+                        }
+                    }
+                </style>
+
+                <div class="invoice-container">
+                    
+                    <!-- Invoice Top Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-2">
+                        <div>
+                            <h3 id="printBranchName" class="fw-bold text-dark mb-1" style="font-size: 24px;">Branch</h3>
+                            <div class="text-muted fs-13">Student Fee Receipt Invoice</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold text-success" style="font-size: 22px;">Receipt # <span id="printReceiptNo">18</span></div>
+                            <div class="barcode-box text-dark mt-1" id="printBarcodeText">BR002-2026-0007</div>
+                            <svg id="printBarcodeSVG" class="mt-1" style="max-height: 38px; max-width: 220px; display: none;"></svg>
+                        </div>
+                    </div>
+
+                    <!-- 2-Column Info Block & Amount Box -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <table class="invoice-table m-0">
+                                <tr>
+                                    <td class="bg-label" width="40%">Receipt Date</td>
+                                    <td id="printReceiptDate" width="60%">18 August 2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-label">Received In</td>
+                                    <td id="printPaymentType">Online</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-label">Cheque/Tran. Number</td>
+                                    <td id="printTransactionNo">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-label">Received Fee</td>
+                                    <td id="printReceivedFee" class="fw-bold text-success">&#8377; 5,000.00</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-label">Balance Fee</td>
+                                    <td id="printBalanceFee" class="fw-bold text-danger">&#8377; 12,700.00</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="bg-light p-2 border rounded-1 mb-2" style="border-color: #dee2e6 !important;">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="bg-label pe-2">Received From :</span>
+                                    <span id="printStudentName" class="fw-bold text-dark fs-14">Shekhar Patil</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="bg-label pe-2">ID Card No. :</span>
+                                    <span id="printEnrollmentNo" class="fw-semibold">48</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="bg-label pe-2">Section/ Admis Batch :</span>
+                                    <span id="printBatchTime" class="fw-semibold">10.00 to 11.30 AM</span>
+                                </div>
+                            </div>
+
+                            <div class="highlight-amount-box">
+                                &#8377; <span id="printHighlightAmount">5,000.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <!-- Signatures Top Section -->
+                    <div class="row pt-3 pb-3">
+                        <div class="col-6">
+                            <div class="fw-bold text-dark mt-4">Authorised Signatory</div>
+                        </div>
+                        <div class="col-6 text-end">
+                            <div class="fw-bold text-dark mt-4">For <span id="printSignBranch">Branch</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Dotted Separator / OFFICE USE ONLY -->
+                    <div class="text-center position-relative my-4">
+                        <hr style="border-top: 2px dashed #6c757d; opacity: 0.8;" />
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 fw-bold text-secondary fs-12 tracking-wider">OFFICE USE ONLY</span>
+                    </div>
+
+                    <!-- OFFICE USE STUB PORTION -->
+                    <div class="border p-3 rounded bg-white">
+                        <h5 id="stubBranchTitle" class="text-center fw-bold mb-3 text-dark">Branch</h5>
+
+                        <div class="table-responsive mb-3">
+                            <table class="invoice-table stub-table m-0">
+                                <tbody>
+                                    <tr>
+                                        <td class="bg-label" width="20%">Student Name</td>
+                                        <td id="stubStudentName" width="30%" class="fw-bold">Shekhar Patil</td>
+                                        <td class="bg-label" width="20%">Receipt Number</td>
+                                        <td id="stubReceiptNo" width="30%" class="fw-bold text-success">18</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-label">Student ID Card No.</td>
+                                        <td id="stubEnrollmentNo">48</td>
+                                        <td class="bg-label">Receipt Date</td>
+                                        <td id="stubReceiptDate">18/08/2026 03:32 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-label">Invoice Number</td>
+                                        <td id="stubInvoiceNo">48</td>
+                                        <td class="bg-label">Received Amount</td>
+                                        <td id="stubReceivedAmount" class="fw-bold text-success">&#8377; 5,000.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-label">Course Joining Date</td>
+                                        <td id="stubJoiningDate">18/08/2026 03:25 PM</td>
+                                        <td class="bg-label">Payment Mode</td>
+                                        <td id="stubPaymentMode">Online</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-label">Fees Payable</td>
+                                        <td id="stubFeesPayable" class="fw-bold">&#8377; 17,700.00</td>
+                                        <td class="bg-label">Cheque/ Tran. Number</td>
+                                        <td id="stubTranNo">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-label">Fees Paid Till Date</td>
+                                        <td id="stubFeesPaid" class="fw-bold text-success">&#8377; 5,000.00</td>
+                                        <td class="bg-label">Account</td>
+                                        <td id="stubBankName">baroda bank</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-label">Balance Fees</td>
+                                        <td id="stubBalanceFees" class="fw-bold text-danger">&#8377; 12,700.00</td>
+                                        <td class="bg-label">Admission for</td>
+                                        <td id="stubCourseTitle" class="fw-bold text-primary">SQL</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-label">Concession</td>
+                                        <td id="stubConcession">&#8377; 0.00</td>
+                                        <td class="bg-label">Received By</td>
+                                        <td id="stubReceivedBy">Admin</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Fees Installment Amount & Paid History Table in Stub -->
+                        <h6 class="fw-bold text-dark mb-2 border-bottom pb-1"><i class="ri-list-check-2 me-1"></i> Fees Installment Amount & Paid History Table</h6>
+                        <div class="table-responsive mb-3">
+                            <table class="invoice-table stub-table">
+                                <thead>
+                                    <tr class="bg-light text-dark">
+                                        <th style="min-width: 120px;">Invoice #</th>
+                                        <th style="min-width: 180px;">Package Details</th>
+                                        <th style="min-width: 120px;">Fees Details</th>
+                                        <th width="110" class="text-nowrap">Invoice Date</th>
+                                        <th width="120" class="text-end text-nowrap">Received Fee</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="printStubLedgerTableBody">
+                                    <!-- Dynamic Installment and Receipt Ledger Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row pt-2 pb-1">
+                            <div class="col-6">
+                                <div class="fw-bold text-dark fs-13">Authorised Signatory</div>
+                            </div>
+                            <div class="col-6 text-end">
+                                <div class="fw-bold text-dark fs-13">For <span id="stubSignBranch">Branch</span></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer bg-light d-print-none">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success px-4 fw-bold" onclick="PrintLedgerInvoice()">
+                    <i class="ri-printer-line me-1 fs-15"></i> Print Invoice
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script>
+        var studentDropdownData = [];
+        var currentInstallmentsList = [];
+        var currentLoggedInUserID = "@currentUserID";
+        var globalTotalFeeAmount = 0;
+        var globalPreviousReceived = 0;
+
+        $(document).ready(function () {
+            // Fetch initial receipt list
+            GetFeeReceiptList(1);
+
+            // Load Master Dropdowns
+            LoadAllDropdowns();
+
+            // Search Handlers
+            $("#btnSearch").click(function () {
+                GetFeeReceiptList(1);
+            });
+
+            var searchTimer = null;
+            $("#txtSearch").keyup(function () {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () {
+                    GetFeeReceiptList(1);
+                }, 400);
+            });
+
+            // Student selection change handler: Update student info & photo, load installments & generate Receipt No
+            $("#ddlStudentID").change(function () {
+                var stuId = $(this).val();
+                var currentReceiptId = parseInt($("#hfStudentFeeReceiptID").val()) || 0;
+                if (stuId) {
+                    var match = studentDropdownData.find(x => x.StudentID == stuId);
+                    if (match) {
+                        var cleanEnr = (match.StudentEnrollmentNo && !match.StudentEnrollmentNo.startsWith("AUTO-")) ? match.StudentEnrollmentNo : '-';
+                        $("#lblStudentName").text(match.StudentFullName || '-');
+                        $("#lblStudentEnrollment").text(cleanEnr);
+                        $("#lblStudentMobile").text(match.StudentMobileNo || '-');
+                        $("#lblFatherName").text(match.FatherName || '-');
+
+                        ShowStudentPhotoOrAvatar(match.StudentPhoto);
+                    }
+
+                    // Load Student's Installments dynamically
+                    FetchStudentInstallments(stuId, currentReceiptId);
+
+                    // Auto-generate receipt number based on selected student's branch if adding new receipt
+                    if ($("#hfStudentFeeReceiptID").val() == "0") {
+                        FetchReceiptNoByStudent(stuId);
+                    }
+                } else {
+                    $("#lblStudentName").text('-');
+                    $("#lblStudentEnrollment").text('-');
+                    $("#lblStudentMobile").text('-');
+                    $("#lblFatherName").text('-');
+                    ShowStudentPhotoOrAvatar("");
+                    currentInstallmentsList = [];
+                    globalTotalFeeAmount = 0;
+                    globalPreviousReceived = 0;
+                    UpdateFeeSummary();
+                    $("#tblFeesInstallmentBody").html("<tr><td colspan='3' class='text-center text-muted py-2'>Select a student to view installments</td></tr>");
+
+                    if ($("#hfStudentFeeReceiptID").val() == "0") {
+                        $("#txtFeeReceiptNo").val('');
+                    }
+                }
+            });
+
+            // Amount input & Receipt Type change sync
+            $("#txtAmountReceived").on("input keyup", function () {
+                UpdateFeeSummary();
+            });
+            $("#ddlFeesTypeID").on("change", function () {
+                UpdateFeeSummary();
+            });
+
+
+
+ 
+        });
+
+
+
+        function LoadStudentDataID(encryptedId) {
+
+             
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetEncryptStudentByID",
+                data: { id: encryptedId },
+                dataType: "json",
+                success: function (res) {
+                    //var d = (res && res.Data) ? res.Data : (res && res.IsSuccess ? res : null);
+                    //if (d && d.StudentID > 0) {
+                        
+                    //}
+                    if (res.IsSuccess == true)
+                    {
+                        alert(res.Message);
+                    }
+
+                    
+                },
+                error: function () {
+                    LoadEnquiryIntoAdmission(encryptedId);
+                }
+            });
+        }
+
+
+
+
+
+        // Toggle Student Photo image vs Avatar cleanly
+        function ShowStudentPhotoOrAvatar(photoUrl) {
+            var $imgDiv = $("#divStudentPhotoReceipt");
+            var $avatarDiv = $("#avatarStudentPhotoReceipt");
+            var $img = $("#imgStudentPhotoReceipt");
+
+            if (photoUrl && photoUrl.trim() !== "" && photoUrl.trim() !== "null") {
+                var formattedUrl = photoUrl.trim();
+                if (!formattedUrl.startsWith('/') && !formattedUrl.startsWith('http')) {
+                    formattedUrl = '/' + (formattedUrl.startsWith('Content/') ? formattedUrl : 'Content/profile/' + formattedUrl);
+                }
+
+                $img.off('load error');
+                $img.on('load', function () {
+                    $avatarDiv.removeClass("d-flex").addClass("d-none");
+                    $imgDiv.removeClass("d-none");
+                });
+                $img.on('error', function () {
+                    $imgDiv.addClass("d-none");
+                    $avatarDiv.removeClass("d-none").addClass("d-flex");
+                });
+
+                $img.attr("src", formattedUrl);
+            } else {
+                $img.attr("src", "");
+                $imgDiv.addClass("d-none");
+                $avatarDiv.removeClass("d-none").addClass("d-flex");
+            }
+        }
+
+        // Recalculate and update Fee Summary labels & color coded installment table rows
+        function UpdateFeeSummary() {
+            var currentPay = parseFloat($("#txtAmountReceived").val()) || 0;
+            var totalRec = globalPreviousReceived + currentPay;
+            var remaining = globalTotalFeeAmount - totalRec;
+
+            $("#lblTotalFeeAmount").html("&#8377; " + globalTotalFeeAmount.toFixed(2));
+            $("#lblPreviousReceived").html("&#8377; " + globalPreviousReceived.toFixed(2));
+            $("#lblCurrentReceived").html("&#8377; " + currentPay.toFixed(2));
+
+            var displayRemaining = remaining < 0 ? 0 : remaining;
+            var remainingClass = remaining > 0 ? "text-danger" : "text-success";
+
+            $("#lblRemainingAmount")
+                .removeClass("text-danger text-success")
+                .addClass(remainingClass)
+                .html("&#8377; " + displayRemaining.toFixed(2));
+
+            // Live update FeesInstallment Amount Table with Color Coding & Editable Next Due Date
+            var html = "";
+            if (currentInstallmentsList && currentInstallmentsList.length > 0) {
+                var runningPaid = totalRec;
+                $.each(currentInstallmentsList, function (i, item) {
+                    var instAmt = parseFloat(item.Amount || 0);
+                    var instName = item.InstallmentName || ("Installment " + (i + 1));
+                    var dueDate = item.DueDate || '-';
+                    var instId = item.FeesInstallmentID || 0;
+                    var dateInputVal = FormatDateForInput(dueDate);
+
+                    var dateDisplayHtml = "";
+                    if (runningPaid >= instAmt) {
+                        dateDisplayHtml = dueDate;
+                    } else {
+                        dateDisplayHtml = "<input type='date' class='form-control form-control-sm py-0 px-1 fs-12 border-primary-subtle' value='" + dateInputVal + "' onchange='SaveNextDueDate(" + instId + ", this.value)' title='Change Next Due Date' />";
+                    }
+
+                    if (runningPaid >= instAmt) {
+                        // Fully Paid -> Green Row
+                        runningPaid -= instAmt;
+                        html += "<tr class='table-success align-middle'>";
+                        html += "<td class='fw-semibold text-success'><i class='ri-checkbox-circle-fill me-1'></i>" + instName + "</td>";
+                        html += "<td>" + dateDisplayHtml + "</td>";
+                        html += "<td class='text-end fw-bold text-success'>&#8377; " + instAmt.toFixed(2) + " <span class='badge bg-success ms-1 fs-11'>Paid</span></td>";
+                        html += "</tr>";
+                    } else if (runningPaid > 0) {
+                        // Partially Paid -> Yellow Row
+                        var paidHere = runningPaid;
+                        var dueHere = instAmt - runningPaid;
+                        runningPaid = 0;
+                        html += "<tr class='table-warning align-middle'>";
+                        html += "<td class='fw-semibold text-dark'><i class='ri-time-fill text-warning me-1'></i>" + instName + "</td>";
+                        html += "<td>" + dateDisplayHtml + "</td>";
+                        html += "<td class='text-end fw-bold text-dark'>";
+                        html += "<div>&#8377; " + instAmt.toFixed(2) + "</div>";
+                        html += "<div class='fs-11 text-muted mt-1' style='line-height: 1.3;'>(Paid: &#8377; " + paidHere.toFixed(2) + " | <br />Rem. B/s: &#8377; " + dueHere.toFixed(2) + ")</div>";
+                        html += "</td>";
+                        html += "</tr>";
+                    } else {
+                        // Pending / Unpaid -> Standard Row
+                        html += "<tr class='align-middle'>";
+                        html += "<td class='text-secondary'>" + instName + "</td>";
+                        html += "<td>" + dateDisplayHtml + "</td>";
+                        html += "<td class='text-end fw-semibold text-dark'>&#8377; " + instAmt.toFixed(2) + "</td>";
+                        html += "</tr>";
+                    }
+                });
+            } else {
+                html = "<tr><td colspan='3' class='text-center text-muted py-2'>Select a student to view installments</td></tr>";
+            }
+            $("#tblFeesInstallmentBody").html(html);
+
+            // Validate if entered amount exceeds total remaining fee balance
+            var maxAllowed = globalTotalFeeAmount - globalPreviousReceived;
+            if (maxAllowed < 0) maxAllowed = 0;
+
+            if (globalTotalFeeAmount > 0 && currentPay > maxAllowed) {
+                $("#txtAmountReceived").addClass("is-invalid");
+                var errMsg = 'Amount cannot be greater than total remaining balance of &#8377; ' + maxAllowed.toFixed(2);
+                if ($("#lblAmountError").length === 0) {
+                    $("#txtAmountReceived").after('<div id="lblAmountError" class="invalid-feedback d-block fw-semibold mt-1">' + errMsg + '</div>');
+                } else {
+                    $("#lblAmountError").html(errMsg);
+                }
+            } else {
+                $("#txtAmountReceived").removeClass("is-invalid");
+                $("#lblAmountError").remove();
+            }
+        }
+
+        // Fetch Student Fee Installments and Total Received
+        function FetchStudentInstallments(stuId = 0, receiptId = 0, targetFeesTypeId = 0) {
+            receiptId = receiptId || parseInt($("#hfStudentFeeReceiptID").val()) || 0;
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentInstallmentDetails",
+                data: { studentId: stuId, receiptId: receiptId },
+                success: function (res) {
+                    currentInstallmentsList = (res && res.Installments) ? res.Installments : [];
+                    globalTotalFeeAmount = parseFloat(res.TotalFeeAmount || 0);
+                    globalPreviousReceived = parseFloat(res.TotalReceived || 0);
+
+                    // Filter Receipt Type Dropdown: Only show unpaid / pending installment receipt types
+                    FilterReceiptTypeDropdown(targetFeesTypeId);
+
+                    // Update Fee Summary and color coded installment rows
+                    UpdateFeeSummary();
+
+                    // Check if fees are fully paid when adding new receipt
+                    if (receiptId === 0 && globalTotalFeeAmount > 0) {
+                        var maxAllowed = globalTotalFeeAmount - globalPreviousReceived;
+                        if (maxAllowed <= 0) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Fees Fully Paid',
+                                text: 'Total Fees for this student are already fully paid! You cannot create a new fee receipt.'
+                            });
+                        }
+                    }
+                },
+                error: function () {
+                    $("#tblFeesInstallmentBody").html("<tr><td colspan='3' class='text-center text-danger py-2'>Error loading installments</td></tr>");
+                }
+            });
+        }
+
+        // Filter & populate Receipt Type Dropdown: Show all installment types sequentially
+        function FilterReceiptTypeDropdown(targetFeesTypeId) {
+            var html = "<option value=''>Select Receipt Type</option>";
+            if (currentInstallmentsList && currentInstallmentsList.length > 0) {
+                var tempPrev = globalPreviousReceived;
+                var firstUnpaidIndex = -1;
+
+                // Find index of the first unpaid installment
+                $.each(currentInstallmentsList, function (i, item) {
+                    var instAmt = parseFloat(item.Amount || 0);
+                    if (tempPrev >= instAmt) {
+                        tempPrev -= instAmt;
+                    } else {
+                        if (firstUnpaidIndex === -1) {
+                            firstUnpaidIndex = i;
+                        }
+                    }
+                });
+
+                var activeFeesTypeId = 0;
+                $.each(currentInstallmentsList, function (i, item) {
+                    var feesTypeId = item.FeesTypeID || 0;
+                    var title = item.InstallmentName || item.FeesTypeTitle || ("Installment " + (i + 1));
+
+                    if (firstUnpaidIndex !== -1 && i < firstUnpaidIndex) {
+                        // Preceding installment: Paid
+                        html += "<option value='" + feesTypeId + "' disabled class='text-muted'>" + title + " (Paid)</option>";
+                    } else if (firstUnpaidIndex !== -1 && i === firstUnpaidIndex) {
+                        // Active current installment
+                        html += "<option value='" + feesTypeId + "'>" + title + "</option>";
+                        activeFeesTypeId = feesTypeId;
+                    } else {
+                        // Future installment: Locked until previous is paid
+                        html += "<option value='" + feesTypeId + "' disabled class='text-muted'>" + title + " (Locked - Pay previous first)</option>";
+                    }
+                });
+
+                if (firstUnpaidIndex === -1) {
+                    html = "<option value=''>All Installments Paid</option>";
+                }
+
+                $("#ddlFeesTypeID").html(html);
+
+                if (targetFeesTypeId && targetFeesTypeId > 0) {
+                    $("#ddlFeesTypeID").val(targetFeesTypeId);
+                } else if (activeFeesTypeId > 0) {
+                    $("#ddlFeesTypeID").val(activeFeesTypeId);
+                }
+            } else {
+                $("#ddlFeesTypeID").html(html);
+            }
+        }
+
+        // Fetch Receipt No based on Student's Branch
+        function FetchReceiptNoByStudent(stuId) {
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetReceiptNoByStudent",
+                data: { studentId: stuId },
+                success: function (res) {
+                    if (res && res.ReceiptNo) {
+                        $("#txtFeeReceiptNo").val(res.ReceiptNo);
+                    }
+                }
+            });
+        }
+
+        // Fetch Fee Receipts with Pagination
+        function GetFeeReceiptList(pageNumber) {
+            $("#hfPageNumber").val(pageNumber);
+
+            var param = {
+                searchText: $("#txtSearch").val().trim(),
+                pageNumber: parseInt($("#hfPageNumber").val()),
+                pageSize: parseInt($("#hfPageSize").val())
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentFeeReceiptList",
+                data: param,
+                dataType: "json",
+                beforeSend: function () {
+                    $("#tblFeeReceiptBody").html("<tr><td colspan='9' class='text-center py-4'><div class='spinner-border spinner-border-sm text-primary' role='status'></div></td></tr>");
+                },
+                success: function (response) {
+                    var html = "";
+                    var totalRecords = response.TotalRecords || 0;
+                    var data = response.Data || [];
+
+                    if (data.length > 0) {
+                        var srNo = (param.pageNumber - 1) * param.pageSize;
+
+                        $.each(data, function (i, item) {
+                            srNo++;
+                            var recDate = FormatJsonDate(item.ReceiptDate);
+                            var amount = parseFloat(item.AmountReceived || 0).toFixed(2);
+
+                            var enrClean = (item.StudentEnrollmentNo && item.StudentEnrollmentNo.trim() !== '' && item.StudentEnrollmentNo !== '-' && !item.StudentEnrollmentNo.startsWith('AUTO-')) ? item.StudentEnrollmentNo.trim() : '';
+                            var mobile = (item.StudentMobileNo && item.StudentMobileNo.trim() !== '' && item.StudentMobileNo !== '-') ? item.StudentMobileNo.trim() : '';
+
+                            var payTitle = item.PaymentTypeTitle || 'Cash';
+                            var isUPI = payTitle.toLowerCase().includes('upi');
+                            var payBadgeClass = isUPI ? 'bg-primary-subtle text-primary border border-primary-subtle' : 'bg-success-subtle text-success border border-success-subtle';
+
+                            html += "<tr>";
+                            html += "<td class='text-center fw-bold text-muted fs-13 text-nowrap'>" + srNo + "</td>";
+                            html += "<td class='text-center text-nowrap'>";
+                            html += "<div class='d-inline-flex align-items-center justify-content-center gap-2'>";
+                            html += "<a href='javascript:void(0)' onclick='ViewFeeReceipt(" + item.StudentFeeReceiptID + ")' class='btn btn-sm btn-outline-info p-1 px-2' title='View'><i class='ri-eye-line fs-14'></i></a>";
+                            html += "<a href='javascript:void(0)' onclick='EditFeeReceipt(" + item.StudentFeeReceiptID + ")' class='btn btn-sm btn-outline-primary p-1 px-2' title='Edit'><i class='ri-edit-box-line fs-14'></i></a>";
+                            html += "<a href='javascript:void(0)' onclick='PrintFeeReceiptLedger(" + item.StudentFeeReceiptID + ")' class='btn btn-sm btn-outline-success p-1 px-2' title='Print Invoice'><i class='ri-printer-line me-1'></i></a>";
+                            //html += "<a href='javascript:void(0)' onclick='PrintFeeReceiptLedger(" + item.StudentFeeReceiptID + ")' title='Print Invoice' class='btn btn-sm btn-success p-1 px-2 text-white fs-12 text-decoration-none'><i class='ri-printer-line me-1'></i>Invoice</a>";
+                            html += "</div>";
+                            html += "</td>";
+                            html += "<td class='text-nowrap'><span class='fw-bold text-primary fs-13'>" + (item.FeeReceiptNo || '-') + "</span></td>";
+                            html += "<td class='text-secondary fs-13 text-nowrap'><i class='ri-calendar-line me-1 text-muted'></i>" + recDate + "</td>";
+
+                            // Student Name Column (Properly Viewable)
+                            html += "<td class='text-nowrap' style='min-width: 250px;'>";
+                            html += "<div class='fw-bold text-dark fs-13 text-nowrap'><i class='ri-user-3-line text-primary me-1'></i>" + (item.StudentFullName || '-') + "</div>";
+                            var metaHtml = "";
+                            if (enrClean) {
+                                metaHtml += "<span class='badge bg-light text-secondary border px-1 py-0 fs-11 me-1'><i class='ri-barcode-line me-1'></i>" + enrClean + "</span>";
+                            }
+                            if (mobile) {
+                                metaHtml += "<span class='text-muted fs-11'><i class='ri-phone-line text-success me-1'></i>" + mobile + "</span>";
+                            }
+                            if (metaHtml !== "") {
+                                html += "<div class='d-flex align-items-center flex-wrap gap-1 mt-1'>" + metaHtml + "</div>";
+                            }
+                            html += "</td>";
+
+                            html += "<td class='text-end fw-bold text-success fs-13 text-nowrap'>&#8377; " + amount + " <br /> <span class='badge " + payBadgeClass + " fw-medium fs-12 px-2 py-1'>" + payTitle + "</span></td>";
+                            //html += "<td class='text-center text-nowrap'> </td>";
+                            html += "<td class='text-center text-nowrap'><span class='badge bg-secondary-subtle text-secondary border border-secondary-subtle fw-medium fs-12 px-2 py-1'>" + (item.FeesTypeTitle || 'General') + "</span></td>";
+                            html += "<td class='text-secondary fs-13 text-nowrap'><i class='ri-user-line me-1 text-muted'></i>" + (item.ReceivedByUserName || 'Admin') + "</td>";
+                            
+                            html += "</tr>";
+                        });
+
+                        $("#tblFeeReceiptBody").html(html);
+                        RenderPagination(totalRecords, param.pageNumber, param.pageSize);
+                    } else {
+                        $("#tblFeeReceiptBody").html("<tr><td colspan='9' class='text-center text-muted py-4'>No Fee Receipt records found.</td></tr>");
+                        $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+                        $("#pagination").empty();
+                    }
+                },
+                error: function () {
+                    $("#tblFeeReceiptBody").html("<tr><td colspan='9' class='text-center text-danger py-4'>Failed to load receipt data. Please try again.</td></tr>");
+                }
+            });
+        }
+
+        // Render Pagination
+        function RenderPagination(totalRecords, currentPage, pageSize) {
+            var totalPages = Math.ceil(totalRecords / pageSize);
+            var start = totalRecords === 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+            var end = Math.min(currentPage * pageSize, totalRecords);
+
+            $("#lblShowing").text("Showing " + start + " to " + end + " of " + totalRecords + " entries");
+
+            var html = "";
+            if (totalPages <= 1) {
+                $("#pagination").empty();
+                return;
+            }
+
+            html += "<li class='page-item " + (currentPage === 1 ? "disabled" : "") + "'>";
+            html += "<a class='page-link' href='javascript:void(0)' onclick='GetFeeReceiptList(" + (currentPage - 1) + ")'>Previous</a>";
+            html += "</li>";
+
+            for (var i = 1; i <= totalPages; i++) {
+                html += "<li class='page-item " + (i === currentPage ? "active" : "") + "'>";
+                html += "<a class='page-link' href='javascript:void(0)' onclick='GetFeeReceiptList(" + i + ")'>" + i + "</a>";
+                html += "</li>";
+            }
+
+            html += "<li class='page-item " + (currentPage === totalPages ? "disabled" : "") + "'>";
+            html += "<a class='page-link' href='javascript:void(0)' onclick='GetFeeReceiptList(" + (currentPage + 1) + ")'>Next</a>";
+            html += "</li>";
+
+            $("#pagination").html(html);
+        }
+
+        // Load Student Dropdown (filters out fully paid students unless editing)
+        function LoadStudentDropdown(currentReceiptStudentId = 0, selectedStudentId = 0, callback = null) {
+            currentReceiptStudentId = currentReceiptStudentId || 0;
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentDropdownForReceipt",
+                data: { currentReceiptStudentId: currentReceiptStudentId },
+                success: function (data) {
+                    studentDropdownData = data || [];
+                    var html = "<option value=''>Select Student</option>";
+                    $.each(studentDropdownData, function (i, item) {
+                        html += "<option value='" + item.StudentID + "'>" + item.DisplayText + "</option>";
+                    });
+                    $("#ddlStudentID").html(html);
+                    if (selectedStudentId && selectedStudentId > 0) {
+                        $("#ddlStudentID").val(selectedStudentId);
+                    }
+                    if (callback) callback();
+                }
+            });
+        }
+
+        // Load Master Dropdowns
+        function LoadAllDropdowns() {
+            LoadStudentDropdown(0);
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetPaymentTypeDropdownForReceipt",
+                success: function (data) {
+                    var html = "<option value=''>Select Payment Type</option>";
+                    $.each(data, function (i, item) {
+                        html += "<option value='" + item.PaymentTypeID + "'>" + item.PaymentTypeTitle + "</option>";
+                    });
+                    $("#ddlPaymentTypeID").html(html);
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetUserDropdownForReceipt",
+                success: function (data) {
+                    var html = "<option value=''>Select User</option>";
+                    $.each(data, function (i, item) {
+                        html += "<option value='" + item.UserID + "'>" + item.UserName + "</option>";
+                    });
+                    $("#ddlReceivedByUserID").html(html);
+                    // Default select currently logged-in user
+                    if (currentLoggedInUserID) {
+                        $("#ddlReceivedByUserID").val(currentLoggedInUserID);
+                    }
+                }
+            });
+        }
+
+        // Open Modal for New Add
+        function OpenFeeReceiptModal() {
+            $("#hfStudentFeeReceiptID").val(0);
+            $("#modalTitle").text("Add Student Fee Receipt");
+            LoadStudentDropdown(0, 0, function() {
+                $("#ddlStudentID").val("").trigger("change");
+            });
+            SetCurrentDateTime();
+            $("#txtFeeReceiptNo").val("");
+            $("#txtAmountReceived").val("");
+            $("#ddlPaymentTypeID").val("");
+            $("#ddlFeesTypeID").val("");
+            $("#txtTransactionNo").val("");
+            $("#txtBankName").val("");
+            $("#ddlReceivedByUserID").val(currentLoggedInUserID);
+            $("#txtRemarks").val("");
+            currentInstallmentsList = [];
+            globalTotalFeeAmount = 0;
+            globalPreviousReceived = 0;
+            UpdateFeeSummary();
+            $("#tblFeesInstallmentBody").html("<tr><td colspan='3' class='text-center text-muted py-2'>Select a student to view installments</td></tr>");
+            $("#StudentFeeReceiptModal").modal("show");
+        }
+
+        // Set Current Date Time in input
+        function SetCurrentDateTime() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = String(now.getMonth() + 1).padStart(2, '0');
+            var day = String(now.getDate()).padStart(2, '0');
+            var hours = String(now.getHours()).padStart(2, '0');
+            var minutes = String(now.getMinutes()).padStart(2, '0');
+            var formatted = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+            $("#txtReceiptDate").val(formatted);
+        }
+
+        // Save Fee Receipt
+        function SaveFeeReceipt() {
+            var studentID = $("#ddlStudentID").val();
+            var receiptDate = $("#txtReceiptDate").val();
+            var feeReceiptNo = $("#txtFeeReceiptNo").val().trim();
+            var amountReceived = parseFloat($("#txtAmountReceived").val());
+            var paymentTypeID = $("#ddlPaymentTypeID").val();
+            var feesTypeID = $("#ddlFeesTypeID").val();
+            var receivedByUserID = $("#ddlReceivedByUserID").val() || currentLoggedInUserID;
+
+            if (!studentID) {
+                Swal.fire({ icon: 'warning', title: 'Validation', text: 'Please Select Student' });
+                return;
+            }
+            if (!receiptDate) {
+                Swal.fire({ icon: 'warning', title: 'Validation', text: 'Please Select Receipt Date' });
+                return;
+            }
+            if (!feeReceiptNo) {
+                Swal.fire({ icon: 'warning', title: 'Validation', text: 'Please Enter Fee Receipt No' });
+                return;
+            }
+            if (isNaN(amountReceived) || amountReceived <= 0) {
+                Swal.fire({ icon: 'warning', title: 'Validation', text: 'Please Enter Valid Received Amount' });
+                return;
+            }
+            if (!paymentTypeID) {
+                Swal.fire({ icon: 'warning', title: 'Validation', text: 'Please Select Received In (Payment Type)' });
+                return;
+            }
+
+            var receiptId = parseInt($("#hfStudentFeeReceiptID").val()) || 0;
+            if (globalTotalFeeAmount > 0) {
+                var maxAllowed = globalTotalFeeAmount - globalPreviousReceived;
+                if (maxAllowed < 0) maxAllowed = 0;
+
+                if (receiptId === 0 && maxAllowed <= 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Fees Fully Paid',
+                        text: 'Total Fees for this student are already fully paid! You cannot create a new fee receipt.'
+                    });
+                    return;
+                }
+
+                if (amountReceived > maxAllowed) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Received Amount',
+                        text: 'Received Amount (₹ ' + amountReceived.toFixed(2) + ') cannot be greater than total remaining balance of ₹ ' + maxAllowed.toFixed(2) + '.'
+                    });
+                    return;
+                }
+            }
+
+            var model = {
+                StudentFeeReceiptID: parseInt($("#hfStudentFeeReceiptID").val()),
+                StudentID: parseInt(studentID),
+                ReceiptDate: receiptDate,
+                FeeReceiptNo: feeReceiptNo,
+                AmountReceived: amountReceived,
+                PaymentTypeID: parseInt(paymentTypeID),
+                FeesTypeID: feesTypeID ? parseInt(feesTypeID) : 0,
+                TransactionNo: $("#txtTransactionNo").val().trim(),
+                BankName: $("#txtBankName").val().trim(),
+                ReceivedByUserID: parseInt(receivedByUserID),
+                Remarks: $("#txtRemarks").val().trim()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/SaveStudentFeeReceipt",
+                data: model,
+                success: function (res) {
+                    if (res.IsSuccess) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Saved Successfully',
+                            text: res.Message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                        $("#StudentFeeReceiptModal").modal("hide");
+                        GetFeeReceiptList(parseInt($("#hfPageNumber").val()));
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: res.Message });
+                    }
+                },
+                error: function () {
+                    Swal.fire({ icon: 'error', title: 'Server Error', text: 'An unexpected error occurred.' });
+                }
+            });
+        }
+
+        // View Fee Receipt
+        function ViewFeeReceipt(id) {
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentFeeReceiptByID",
+                data: { id: id },
+                success: function (res) {
+                    $("#vReceiptID").text(res.StudentFeeReceiptID);
+                    $("#vReceiptNo").text(res.FeeReceiptNo);
+                    $("#vReceiptDate").text(FormatJsonDate(res.ReceiptDate));
+                    $("#vStudentName").text(res.StudentFullName);
+                    $("#vEnrollmentNo").text(res.StudentEnrollmentNo || '-');
+                    $("#vAmountReceived").html("&#8377; " + parseFloat(res.AmountReceived || 0).toFixed(2));
+                    $("#vPaymentType").text(res.PaymentTypeTitle || 'Cash');
+                    $("#vFeesType").text(res.FeesTypeTitle || 'General');
+                    $("#vTransactionNo").text(res.TransactionNo || '-');
+                    $("#vBankName").text(res.BankName || '-');
+                    $("#vReceivedBy").text(res.ReceivedByUserName || 'Admin');
+                    $("#vRemarks").text(res.Remarks || '-');
+
+                    $("#ViewStudentFeeReceiptModal").modal("show");
+                }
+            });
+        }
+
+        // Edit Fee Receipt
+        function EditFeeReceipt(id) {
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentFeeReceiptByID",
+                data: { id: id },
+                success: function (res) {
+                    $("#hfStudentFeeReceiptID").val(res.StudentFeeReceiptID);
+                    $("#modalTitle").text("Edit Student Fee Receipt");
+
+                    LoadStudentDropdown(res.StudentID, res.StudentID, function () {
+                        var match = studentDropdownData.find(x => x.StudentID == res.StudentID);
+                        if (match) {
+                            $("#lblStudentName").text(match.StudentFullName || '-');
+                            $("#lblStudentEnrollment").text(match.StudentEnrollmentNo || '-');
+                            $("#lblStudentMobile").text(match.StudentMobileNo || '-');
+                            $("#lblFatherName").text(match.FatherName || '-');
+
+                            ShowStudentPhotoOrAvatar(match.StudentPhoto);
+                        }
+
+                        FetchStudentInstallments(res.StudentID, res.StudentFeeReceiptID, res.FeesTypeID);
+
+                        if (res.ReceiptDate) {
+                            var d = ParseDateObj(res.ReceiptDate);
+                            var formatted = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + 'T' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+                            $("#txtReceiptDate").val(formatted);
+                        }
+
+                        $("#txtFeeReceiptNo").val(res.FeeReceiptNo);
+                        $("#txtAmountReceived").val(res.AmountReceived);
+                        $("#ddlPaymentTypeID").val(res.PaymentTypeID);
+                        $("#txtTransactionNo").val(res.TransactionNo);
+                        $("#txtBankName").val(res.BankName || "");
+                        $("#ddlReceivedByUserID").val(res.ReceivedByUserID || currentLoggedInUserID);
+                        $("#txtRemarks").val(res.Remarks);
+
+                        $("#StudentFeeReceiptModal").modal("show");
+                    });
+                }
+            });
+        }
+
+        // Delete Fee Receipt
+        function DeleteFeeReceipt(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Deleting this receipt will also remove its corresponding Branch Ledger entry!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Delete",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/bctechadmin/DeleteStudentFeeReceipt",
+                        data: { id: id },
+                        success: function (res) {
+                            if (res.IsSuccess) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted',
+                                    text: res.Message,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                GetFeeReceiptList(parseInt($("#hfPageNumber").val()));
+                            } else {
+                                Swal.fire({ icon: 'error', title: 'Error', text: res.Message });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Print Fee Receipt & Student Ledger Report
+        function PrintFeeReceiptLedger(receiptId) {
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentFeeLedgerPrintDetails",
+                data: { id: receiptId },
+                success: function (res) {
+                    if (!res || !res.IsSuccess) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: (res ? res.Message : 'Failed to load ledger print details.') });
+                        return;
+                    }
+
+                    var rec = res.Receipt || {};
+                    var stu = res.Student || {};
+                    var summary = res.Summary || {};
+                    var insts = res.Installments || [];
+                    var history = res.PaymentHistory || [];
+
+                    // Populate Top Header & Receipt Info
+                    var branch = rec.BranchName || stu.BranchName || "Branch";
+                    $("#printBranchName").text(branch);
+                    $("#printSignBranch").text(branch);
+                    $("#stubBranchTitle").text(branch);
+
+                    var recNo = rec.FeeReceiptNo || (receiptId ? receiptId.toString() : "0");
+                    $("#printReceiptNo").text(recNo);
+                    $("#printBarcodeText").text(recNo);
+
+                    // Dynamic Barcode Generation using JsBarcode with Font Fallback
+                    try {
+                        if (typeof JsBarcode === "function") {
+                            JsBarcode("#printBarcodeSVG", recNo, {
+                                format: "CODE128",
+                                width: 1.5,
+                                height: 35,
+                                displayValue: false,
+                                margin: 0
+                            });
+                            $("#printBarcodeSVG").show();
+                            $("#printBarcodeText").hide();
+                        } else {
+                            $("#printBarcodeText").show();
+                            $("#printBarcodeSVG").hide();
+                        }
+                    } catch (e) {
+                        $("#printBarcodeText").show();
+                        $("#printBarcodeSVG").hide();
+                    }
+
+                    $("#printReceiptDate").text(rec.ReceiptDateShort || '-');
+                    $("#printPaymentType").text(rec.PaymentTypeTitle || 'Cash');
+                    $("#printTransactionNo").text(rec.TransactionNo || '-');
+
+                    var recFeeAmt = parseFloat(rec.AmountReceived || 0);
+                    $("#printReceivedFee").html("&#8377; " + recFeeAmt.toFixed(2));
+
+                    var balFeeAmt = parseFloat(summary.BalanceFee || 0);
+                    $("#printBalanceFee").html("&#8377; " + balFeeAmt.toFixed(2));
+
+                    var stuEnrClean = (stu.StudentEnrollmentNo && !stu.StudentEnrollmentNo.startsWith("AUTO-")) ? stu.StudentEnrollmentNo : '-';
+                    $("#printStudentName").text(stu.StudentFullName || '-');
+                    $("#printEnrollmentNo").text(stuEnrClean);
+                    $("#printBatchTime").text(stu.BatchTime || '-');
+                    $("#printHighlightAmount").text(recFeeAmt.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+
+
+                    // Populate FeesInstallment & Paid History Table
+                    var htmlLedger = "";
+                    if (history && history.length > 0) {
+                        $.each(history, function (i, item) {
+                            var amt = parseFloat(item.AmountReceived || 0).toFixed(2);
+
+                            htmlLedger += "<tr>";
+                            htmlLedger += "<td class='fw-semibold text-nowrap'>" + (item.FeeReceiptNo || (stu.StudentEnrollmentNo || '-')) + "</td>";
+                            htmlLedger += "<td style='white-space: normal; word-break: break-word;'>" + (stu.CourseTitle || 'General Course') + "</td>";
+                            htmlLedger += "<td>" + (item.FeesTypeTitle || ('Installment ' + (i + 1))) + "</td>";
+                            htmlLedger += "<td class='text-nowrap'>" + (item.ReceiptDateShort || item.ReceiptDateFormatted || '-') + "</td>";
+                            htmlLedger += "<td class='text-end fw-bold text-success text-nowrap'>&#8377; " + amt + "</td>";
+                            htmlLedger += "</tr>";
+                        });
+                    } else if (insts && insts.length > 0) {
+                        $.each(insts, function (i, item) {
+                            htmlLedger += "<tr>";
+                            htmlLedger += "<td class='fw-semibold text-nowrap'>" + (stu.StudentEnrollmentNo || '-') + "</td>";
+                            htmlLedger += "<td style='white-space: normal; word-break: break-word;'>" + (stu.CourseTitle || 'General Course') + "</td>";
+                            htmlLedger += "<td>" + (item.InstallmentName || ('Installment ' + (i + 1))) + "</td>";
+                            htmlLedger += "<td class='text-nowrap'>" + (item.DueDate || '-') + "</td>";
+                            htmlLedger += "<td class='text-end text-muted text-nowrap'>0.00</td>";
+                            htmlLedger += "</tr>";
+                        });
+                    } else {
+                        htmlLedger = "<tr><td colspan='5' class='text-center text-muted'>No fee installment details found.</td></tr>";
+                    }
+
+                    $("#printLedgerTableBody, #printStubLedgerTableBody").html(htmlLedger);
+
+                    // Populate Stub Details (Office Use Portion)
+                    $("#stubSignBranch").text(branch);
+                    $("#stubStudentName").text(stu.StudentFullName || '-');
+                    $("#stubEnrollmentNo").text(stuEnrClean);
+                    $("#stubInvoiceNo").text(stuEnrClean !== '-' ? stuEnrClean : (rec.FeeReceiptNo || '-'));
+                    $("#stubJoiningDate").text(stu.JoiningDateFormatted || '-');
+
+                    var totFee = parseFloat(summary.TotalFeeAmount || 0);
+                    var totPaid = parseFloat(summary.TotalReceived || 0);
+
+                    $("#stubFeesPayable").html("&#8377; " + totFee.toFixed(2));
+                    $("#stubFeesPaid").html("&#8377; " + totPaid.toFixed(2));
+                    $("#stubBalanceFees").html("&#8377; " + balFeeAmt.toFixed(2));
+
+                    $("#stubReceiptNo").text(rec.FeeReceiptNo || receiptId);
+                    $("#stubReceiptDate").text(rec.ReceiptDateFormatted || '-');
+                    $("#stubReceivedAmount").html("&#8377; " + recFeeAmt.toFixed(2));
+                    $("#stubPaymentMode").text(rec.PaymentTypeTitle || 'Cash');
+                    $("#stubTranNo").text(rec.TransactionNo || '-');
+                    $("#stubBankName").text(rec.BankName || 'Cash');
+                    $("#stubCourseTitle").text(stu.CourseTitle || 'General');
+                    $("#stubReceivedBy").text(rec.ReceivedByUserName || 'Admin');
+                    $("#stubReceivedBySignature").text(rec.ReceivedByUserName || 'Admin');
+                    $("#stubComment").text(rec.Remarks || '-');
+
+                    $("#FeeLedgerPrintModal").modal("show");
+                },
+                error: function () {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to fetch ledger report details.' });
+                }
+            });
+        }
+
+        // Trigger Browser Print
+        function PrintLedgerInvoice() {
+            window.print();
+        }
+
+        // Helper Date Formatter
+        function FormatJsonDate(dateStr) {
+            if (!dateStr) return '-';
+            var d = ParseDateObj(dateStr);
+            var day = String(d.getDate()).padStart(2, '0');
+            var month = String(d.getMonth() + 1).padStart(2, '0');
+            var year = d.getFullYear();
+            var hours = d.getHours();
+            var minutes = String(d.getMinutes()).padStart(2, '0');
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            var strHours = String(hours).padStart(2, '0');
+            return day + '/' + month + '/' + year + ' ' + strHours + ':' + minutes + ' ' + ampm;
+        }
+
+        function FormatDateForInput(dStr) {
+            if (!dStr || dStr === '-') return '';
+            var parts = dStr.split('/');
+            if (parts.length === 3) {
+                return parts[2] + '-' + parts[1].padStart(2, '0') + '-' + parts[0].padStart(2, '0');
+            }
+            return dStr;
+        }
+
+        function SaveNextDueDate(feesInstallmentId, newDateStr) {
+            if (!feesInstallmentId || feesInstallmentId <= 0 || !newDateStr) return;
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/UpdateInstallmentDueDate",
+                data: { feesInstallmentId: feesInstallmentId, dueDate: newDateStr },
+                success: function (res) {
+                    if (res && res.IsSuccess) {
+                        if (currentInstallmentsList) {
+                            $.each(currentInstallmentsList, function (i, item) {
+                                if (item.FeesInstallmentID === feesInstallmentId) {
+                                    var parts = newDateStr.split('-');
+                                    if (parts.length === 3) {
+                                        item.DueDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+                                    }
+                                }
+                            });
+                        }
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Next Due Date updated!'
+                        });
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: res.Message || 'Failed to update due date.' });
+                    }
+                },
+                error: function () {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Error updating due date.' });
+                }
+            });
+        }
+
+        function ParseDateObj(dateVal) {
+            if (typeof dateVal === 'string' && dateVal.indexOf('/Date(') !== -1) {
+                var milli = parseInt(dateVal.replace(/\/Date\((.*?)\)\//, '$1'));
+                return new Date(milli);
+            }
+            return new Date(dateVal);
+        }
+
+            function validateFloatKeyPress(el, evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode;
+                var number = el.value.split('.');
+                if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+                //just one dot (thanks ddlab)
+                if (number.length > 1 && charCode == 46) {
+                    return false;
+                }
+                //get the carat position
+                var caratPos = getSelectionStart(el);
+                var dotPos = el.value.indexOf(".");
+                if (caratPos > dotPos && dotPos > -1 && (number[1].length > 6)) {
+                    return false;
+                }
+                return true;
+            }
+
+            function getSelectionStart(o) {
+                if (o.createTextRange) {
+                    var r = document.selection.createRange().duplicate()
+                    r.moveEnd('character', o.value.length)
+                    if (r.text == '') return o.value.length
+                    return o.value.lastIndexOf(r.text)
+                } else return o.selectionStart
+            }
+
+    </script>
+}

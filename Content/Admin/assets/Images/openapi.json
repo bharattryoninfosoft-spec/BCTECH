@@ -1,0 +1,757 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "FinAGG GSP APIs",
+    "version": "1.0.0",
+    "license": {
+      "name": "Proprietary",
+      "url": "https://finagg.in/tnc"
+    },
+    "description": "# Overview\n\nFinAGG GSP APIs provide secure, scalable, and compliant programmatic access to India’s GST ecosystem through an authorized GST Suvidha Provider (GSP).\n\n**GST Developer Portal** https://developer.gst.gov.in\n\nThese APIs are intended for **system-to-system integration** and are **not meant to be accessed via browsers**, except for health and ping endpoints.\n\n---\n## API Ecosystem\n\n**FinAGG GSP** maintains multiple API servers for development, testing, and production usage.\n\n> **Note:** These are API servers and not meant to be browsable (except for Ping and GSTN Health endpoints).\n\n---\n## Sandbox Environment\n\n- **Base URL:** https://sandbox-gsp.finagg.in/basic/gstn/\n- **Ping** – Check if GSP is reachable\n- **GSTN Health Check** – Verify GSTN availability\n- **SSL Certificate** – Expiry: **26 JUN 2026**\n\n---\n## Production Environment\n\n- **Base URL:** https://gsp.finagg.in/basic/gstn/\n- **Ping** – Check if GSP is reachable\n- **GSTN Health Check** – Verify GSTN availability\n- **SSL Certificate** – Expiry: **28 AUG 2026**\n\n---\n## Supported Ecosystems\n\n- **GST Ecosystem** – Goods and Services Tax APIs via GSTN\n- **NIC Ecosystem** – eWay Bill APIs via NIC\n\n---\n## Authentication\n\nAll APIs are protected using **API Key authentication**\n\n(This you need to get from FinAGG GSP Team before you use these APIs, send a request to get the X-API-Key to **gsp@finagg.in** )\n\n**Required Header:** `x-api-key`\n",
+    "x-logo": {
+      "altText": "FinAGG GSP",
+      "backgroundColor": "#0f172a"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://gsp.finagg.in",
+      "description": "Production"
+    },
+    {
+      "url": "https://sandbox-gsp.finagg.in",
+      "description": "Sandbox"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Common APIs",
+      "description": "Common GST services"
+    },
+    {
+      "name": "Taxpayer APIs",
+      "description": "Taxpayer-specific services"
+    },
+    {
+      "name": "File Download",
+      "description": "Large GST file downloads"
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "GSP APIs",
+      "tags": [
+        "Common APIs",
+        "Taxpayer APIs",
+        "File Download"
+      ]
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "**API Key issued by FinAGG**\n\n- Mandatory for all requests\n- Passed via HTTP header\n- Rate limits enforced per key\n"
+      }
+    },
+    "parameters": {
+      "finaggVersion": {
+        "name": "finaggVersion",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "fin-v1"
+        }
+      },
+      "gspVersion": {
+        "name": "gspVersion",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "v1.1"
+        }
+      },
+      "action": {
+        "name": "action",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "OTPREQUEST"
+        }
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status_cd": {
+            "type": "string",
+            "example": "0"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "error_cd": {
+                "type": "string",
+                "example": "GEN5007"
+              },
+              "message": {
+                "type": "string",
+                "example": "Malformed Request"
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status_cd": {
+            "type": "string",
+            "example": "200"
+          },
+          "status_desc": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "gstin": {
+                "type": "string",
+                "example": "07AAAAA0000A1Z5"
+              },
+              "legalName": {
+                "type": "string",
+                "example": "Example Entity"
+              },
+              "state": {
+                "type": "string",
+                "example": "Delhi"
+              },
+              "regDate": {
+                "type": "string",
+                "example": "01-07-2017"
+              },
+              "sts": {
+                "type": "string",
+                "example": "Active"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "SuccessData": {
+        "description": "In case of successful response you will get the JSON according to the API endpoints \nPlease refer GST API Developer API link ** https://developer.gst.gov.in/apiportal\n",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SuccessResponse"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Request validation or GST data error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status_cd": "0",
+              "error": {
+                "error_cd": "GEN5007",
+                "message": "Malformed Request"
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Authentication failure",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status_cd": "0",
+              "error": {
+                "error_cd": "GEN5007",
+                "message": "Malformed Request"
+              }
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Access denied or API not enabled",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status_cd": "0",
+              "error": {
+                "error_cd": "GEN5007",
+                "message": "Malformed Request"
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status_cd": "0",
+              "error": {
+                "error_cd": "GEN5007",
+                "message": "Malformed Request"
+              }
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Rate limit exceeded",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status_cd": "0",
+              "error": {
+                "error_cd": "GEN5007",
+                "message": "Malformed Request"
+              }
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal processing error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status_cd": "0",
+              "error": {
+                "error_cd": "GEN5007",
+                "message": "Malformed Request"
+              }
+            }
+          }
+        }
+      },
+      "ServiceUnavailable": {
+        "description": "GSTN system unavailable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "status_cd": "0",
+              "error": {
+                "error_cd": "GEN5007",
+                "message": "Malformed Request"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/basic/gstn/{finaggVersion}/commonapi/{gspVersion}/search": {
+      "get": {
+        "tags": [
+          "Common APIs"
+        ],
+        "summary": "Common GST Search API",
+        "description": "Searches GSTN records to validate a GSTIN and retrieve taxpayer details.\n\n## Business Context\nGSTIN is the primary identifier of a business under GST. This API is typically the **first step in any GST workflow**.\n\n## What this API does\n- Validates whether a GSTIN is active and registered\n- Retrieves taxpayer details such as legal name, trade name, and registration status\n- Provides jurisdiction and registration metadata\n\n## Common Use Cases\n- Merchant/vendor onboarding\n- GST compliance validation\n- KYC and identity verification\n\n## Important Notes\n- Requires `action=SEARCHGSTIN`\n- Response depends on GSTN availability\n- Should be called before authentication or return APIs\n\n## Failure Scenarios\n- Invalid GSTIN format → 400 error\n- GSTIN not found → empty/failed response\n- GSTN downtime → timeout or service unavailable\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/commonapi/{gspVersion}/returns": {
+      "get": {
+        "tags": [
+          "Common APIs"
+        ],
+        "summary": "Common Returns Metadata",
+        "description": "Fetches GST return filing status and available return periods from GSTN.\n\n## Business Context\nGST returns must be filed periodically (monthly/quarterly), even if there is no business activity.\n\nThis API provides a **summary view of return compliance**, without fetching detailed data.\n\n## What this API does\n- Lists available return types (GSTR-1, GSTR-3B, etc.)\n- Shows filing status (Filed / Pending / Not Filed)\n- Provides available tax periods for each return\n\n## Common Use Cases\n- Compliance dashboards\n- Pre-check before downloading returns\n- Identifying missing filings\n\n## Important Notes\n- Does NOT return invoice-level data\n- Lightweight API for quick checks\n- Should be used before calling return download APIs\n\n## Failure Scenarios\n- Unauthorized access (if authentication required)\n- Partial data due to GSTN latency\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/commonapi/{gspVersion}/fip/searchbypan": {
+      "get": {
+        "tags": [
+          "Common APIs"
+        ],
+        "summary": "Common PAN to GST API",
+        "description": "Fetches all GSTINs registered under a given PAN.\n\n## Business Context\nA single PAN can have multiple GST registrations across different states or business verticals.\n\n## What this API does\n- Maps PAN → multiple GSTINs\n- Returns GST registrations across India linked to the PAN\n\n## Common Use Cases\n- Business group discovery\n- Risk profiling and underwriting\n- Vendor ecosystem mapping\n\n## Important Notes\n- PAN must be valid and active\n- Response may include multiple GSTINs across states\n\n## Failure Scenarios\n- Invalid PAN → error response\n- No GSTIN mapped → empty list\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/authenticate": {
+      "post": {
+        "tags": [
+          "Taxpayer APIs"
+        ],
+        "summary": "Taxpayer Authentication (OTP Based)",
+        "description": "Authenticates a GST taxpayer using an OTP-based consent mechanism.\n\n## GST Flow Context\nGST data is sensitive and requires explicit taxpayer consent. Authentication is mandatory before accessing any taxpayer-specific data.\n\n## Authentication Flow\n1. Initiate request with `action=OTPREQUEST`\n2. OTP is sent to registered mobile/email of taxpayer\n3. Submit OTP to complete authentication\n4. Session is established for subsequent API calls\n\n## What this enables\n- Access to taxpayer return data\n- Return downloads (GSTR-1, GSTR-2A, GSTR-3B)\n- Compliance and reconciliation workflows\n\n## Important Notes\n- OTP is time-bound (typically valid for a few minutes)\n- Session expires after inactivity\n- `app_key` must be securely encrypted using GSTN public key\n\n## Failure Scenarios\n- Incorrect OTP → authentication failure\n- Expired OTP → retry required\n- Invalid credentials → access denied\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/returns": {
+      "get": {
+        "tags": [
+          "Taxpayer APIs"
+        ],
+        "summary": "Taxpayer Returns Summary",
+        "description": "Retrieves summarized GST return data for an authenticated taxpayer.\n\n## Business Context\nThis API provides a consolidated view of a taxpayer’s GST compliance behavior.\n\n## What this API does\n- Lists returns filed across periods\n- Shows filing status and timestamps\n- Indicates which returns are available for download\n\n## Common Use Cases\n- Compliance monitoring\n- Credit underwriting and risk assessment\n- Financial reporting dashboards\n\n## Important Notes\n- Requires successful authentication\n- Data reflects GSTN system state and may have delays\n\n## Failure Scenarios\n- Session expired → re-authentication required\n- No returns filed → empty response\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/returns/gstr1": {
+      "get": {
+        "tags": [
+          "Taxpayer APIs"
+        ],
+        "summary": "GSTR-1 Returns",
+        "description": "Fetches GSTR-1 return data containing outward supply (sales) details.\n\n## Business Context\nGSTR-1 is the primary return where businesses report all sales transactions.\n\n## What this API includes\n- B2B invoices\n- B2C transactions\n- Export invoices\n- Credit/Debit notes and amendments\n\n## GST Flow Dependency\nData reported in GSTR-1 is used by buyers to generate their GSTR-2A/2B for ITC claims.\n\n## Use Cases\n- Sales analytics\n- Invoice reconciliation\n- GST compliance checks\n\n## Important Notes\n- High data volume possible\n- Prefer file download API for bulk data\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/returns/gstr2a": {
+      "get": {
+        "tags": [
+          "Taxpayer APIs"
+        ],
+        "summary": "GSTR-2A Returns",
+        "description": "Fetches GSTR-2A auto-drafted return reflecting inward supplies (purchases).\n\n## Business Context\nGSTR-2A is generated automatically based on suppliers’ GSTR-1 filings.\n\n## What this API includes\n- Supplier invoices\n- Input Tax Credit (ITC) eligibility data\n\n## Important Behavior\n- Dynamic in nature (updates as suppliers file returns)\n- Used for ITC reconciliation\n\n## Use Cases\n- ITC validation and reconciliation\n- Vendor compliance monitoring\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/returns/gstr3b": {
+      "get": {
+        "tags": [
+          "Taxpayer APIs"
+        ],
+        "summary": "GSTR-3B Returns",
+        "description": "Fetches GSTR-3B summary return used for tax declaration and payment.\n\n## Business Context\nGSTR-3B is a mandatory summary return filed for each tax period.\n\n## What this API includes\n- Total tax liability\n- Input Tax Credit (ITC) claimed\n- Net tax payable\n\n## GST Rule\nMust be filed even if there is no business activity in the period.\n\n## Use Cases\n- Financial analysis\n- Tax liability tracking\n- Compliance monitoring\n\n## Important Notes\n- Does not contain invoice-level data\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/returns/cmp": {
+      "get": {
+        "tags": [
+          "Taxpayer APIs"
+        ],
+        "summary": "CMP (Composition Scheme) Returns",
+        "description": "Fetches returns filed under the Composition Scheme.\n\n## Business Context\nComposition scheme is for small taxpayers who pay tax at a fixed rate on turnover.\n\n## What this API includes\n- Turnover details\n- Tax payable summary\n\n## Important Notes\n- Applicable only to composition taxpayers\n- Not relevant for regular GST filers\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/returns/gstr4": {
+      "get": {
+        "tags": [
+          "Taxpayer APIs"
+        ],
+        "summary": "GSTR-4 (Composition Annual Return - Table wise)",
+        "description": "Fetches GSTR-4 return table wise data filed by taxpayers under the Composition Scheme.\n\n## Business Context\nGSTR-4 is an **annual return** that must be filed by taxpayers registered under the Composition Scheme.\nIt provides a consolidated view of turnover, inward supplies, and tax liability for the entire financial year.\n\n## What this API includes\n- Annual aggregate turnover\n- Inward supplies (including purchases from registered and unregistered suppliers)\n- Tax liability and tax paid\n- Summary of amendments, if any\n\n## GST Rule\n- Filed **once per financial year**\n- Mandatory for all composition taxpayers\n- Late filing attracts penalties\n\n## Use Cases\n- Annual compliance validation\n- Financial and tax reporting\n- Risk assessment and underwriting for small businesses\n\n## Important Notes\n- Applicable only to composition taxpayers\n- Data is annual (not periodic like GSTR-1 or GSTR-3B)\n- Should be used for summary-level insights, not invoice-level analysis\n\n## Failure Scenarios\n- Taxpayer not under composition scheme → error response\n- Return not filed → empty or not available\n- Session expired → re-authentication required\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/returns/gstr4x": {
+      "get": {
+        "tags": [
+          "Taxpayer APIs"
+        ],
+        "summary": "GSTR-4X (Composition Annual Return - Summary Data)",
+        "description": "Fetches GSTR-4 return summary data for taxpayers registered under the Composition Scheme.\n\n## Business Context\nGSTR-4 is an **annual return** filed by composition taxpayers, providing a summarized\nview of their business activity for the financial year. Unlike regular taxpayers,\ncomposition dealers do not file detailed monthly returns.\n\n## What this API provides\n- Annual turnover summary\n- Consolidated inward supplies (registered & unregistered)\n- Tax liability and tax paid\n- Basic amendment summaries (if applicable)\n\n## What this API does NOT provide\n- Invoice-level details\n- Counterparty-level breakdown\n- Monthly or periodic granularity\n\n## GST Rule & Compliance\n- Filed **once per financial year**\n- Mandatory for all composition scheme taxpayers\n- Non-filing or delayed filing may attract penalties and compliance flags\n\n## Use Cases\n- Annual compliance verification\n- High-level business turnover assessment\n- Credit underwriting for small / composition businesses\n- Risk profiling where detailed GST data is unavailable\n\n## Important Considerations\n- Applicable **only for composition taxpayers**\n- Data is **aggregated annually**, hence not suitable for trend or cashflow analysis\n- Should be used in conjunction with banking or alternate data for deeper insights\n\n## Failure Scenarios\n- Taxpayer not registered under composition scheme → appropriate error response\n- Return not filed for the financial year → data unavailable / empty response\n- Invalid GSTIN or request parameters → validation error\n- Session expired or invalid token → re-authentication required\n",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/returns?gstin=xxxx&ret_period=xxxx&action=FILEDET&token=xxxxxxxxx": {
+      "get": {
+        "tags": [
+          "File Download"
+        ],
+        "summary": "GST Return – Get File Details",
+        "description": "This API returns the file path of the long data file. The returned `file url`\nmust be used in the next API to download the actual file.\n\n## Business Context\nGST returns like GSTR-1 and GSTR-2A contain large, invoice-level datasets required for reconciliation and analytics.\n\n## Supported Returns\n- GSTR-1 → Outward supplies (sales invoices)\n- GSTR-2A → Inward supplies (auto-drafted from suppliers)\n- GSTR-3B → Summary return for tax liability\n\n## How it works\n1. Call this API to retrieve file path (via FILEDET API)\n2. Pass above mentioned FILEDET token and other required parameter in {proxy_path}\n3. This will return the URL Details\n4. Pass these URL details in next API `GST Return – File Download` for downloading the file\n\n## Sample Response\n  ```json\n  {\n    \"urls\": [\n      {\n        \"ul\": \"\",\n        \"ic\": 121,\n        \"hash\": \"\"\n      }\n    ]\n  }\n  ```\n    \n\n## Important Notes\n- File path may expire → regenerate if needed\n- Response may contain multiple file chunks\n\n## Failure Scenarios\n- Invalid request → 400\n- Unauthorized → 401/403\n- File not ready → retry after some time\n",
+        "responses": {
+          "200": {
+            "description": "Success (returns file path / proxy_path)"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/basic/gstn/{finaggVersion}/taxpayerapi/{gspVersion}/document?action=DOCDOWNLOAD&doc_id=xxxxxxxxx": {
+      "get": {
+        "tags": [
+          "File Download"
+        ],
+        "summary": "GST Return – File Download",
+        "description": "Downloads detailed GST return file using the `proxy_path` received from the previous API.\n\n## Business Context\nGST returns like GSTR-1 and GSTR-2A contain large, invoice-level datasets required for reconciliation and analytics.\n\n## Supported Returns\n- GSTR-1 → Outward supplies (sales invoices)\n- GSTR-2A → Inward supplies (auto-drafted from suppliers)\n- GSTR-3B → Summary return for tax liability\n\n## How it works\n1. Pass File URL path here in `proxy_path`\n2. Download the file (tar.gz / JSON)\n\n## Important Notes\n- Supports large payload streaming\n- Avoid loading entire file into memory\n- Recommended to use streaming or chunk processing\n- File may be encrypted (requires decryption at client side)\n\n## Failure Scenarios\n- Invalid file path → 404\n- Expired file reference → regenerate via first API\n- Network interruption → retry supported\n",
+        "responses": {
+          "200": {
+            "description": "Success (returns file content)"
+          },
+          "400": {
+            "description": "Bad Request",
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    }
+  }
+}

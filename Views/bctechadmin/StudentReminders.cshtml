@@ -1,0 +1,682 @@
+@{
+    ViewBag.Title = "Student Reminders";
+    ViewData["PageTitle"] = "Student Reminders";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+    string activeTab = (ViewBag.ActiveTab as string) ?? "birthday";
+}
+
+<style>
+    /* CRITICAL OVERRIDES for global table-layout: fixed in style.css */
+    #tblBirthdayReminders, 
+    #tblFeesReminders,
+    table.table-pro {
+        table-layout: auto !important;
+        width: 100% !important;
+        min-width: 980px;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+    }
+
+    #tblBirthdayReminders th, 
+    #tblBirthdayReminders td,
+    #tblFeesReminders th, 
+    #tblFeesReminders td {
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: normal !important;
+        vertical-align: middle !important;
+        padding: 12px 14px;
+    }
+
+    .nowrap-cell {
+        white-space: nowrap !important;
+    }
+
+    .reminders-hero-card {
+        border-radius: 14px;
+        background: #ffffff;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .reminders-hero-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+    .icon-box-lg {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+    .nav-pills-reminders {
+        background: #f1f5f9;
+        padding: 5px;
+        border-radius: 40px;
+        display: inline-flex;
+    }
+    .nav-pills-reminders .nav-link {
+        font-weight: 600;
+        padding: 9px 24px;
+        border-radius: 30px;
+        color: #475569;
+        border: none;
+        background: transparent;
+        transition: all 0.25s ease;
+        font-size: 14px;
+    }
+    .nav-pills-reminders .nav-link.active#pills-birthday-tab {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .nav-pills-reminders .nav-link.active#pills-fees-tab {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+    }
+    .filter-btn-pill {
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 6px 16px;
+        transition: all 0.2s ease;
+    }
+    .student-avatar-thumb {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #e2e8f0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+    }
+    .table-pro thead th {
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.3px;
+        padding: 12px 14px;
+        vertical-align: middle;
+        border: none;
+    }
+    .table-pro-birthday thead th {
+        background: #2563eb !important;
+        color: #ffffff !important;
+    }
+    .table-pro-fees thead th {
+        background: #0f766e !important;
+        color: #ffffff !important;
+    }
+    .table-pro tbody td {
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 13px;
+    }
+    .table-pro tbody tr:hover {
+        background-color: #f8fafc;
+    }
+    .btn-whatsapp-action {
+        background: #25D366;
+        color: #fff !important;
+        border: none;
+        font-weight: 500;
+        font-size: 12px;
+        padding: 6px 14px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+        box-shadow: 0 2px 6px rgba(37, 211, 102, 0.25);
+        transition: background 0.2s;
+    }
+    .btn-whatsapp-action:hover {
+        background: #1eb857;
+    }
+    .badge-today-pill {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+        font-weight: 600;
+    }
+    .badge-upcoming-pill {
+        background: #fef3c7;
+        color: #b45309;
+        border: 1px solid #fde68a;
+        font-weight: 600;
+    }
+    .badge-overdue-pill {
+        background: #ffe4e6;
+        color: #e11d48;
+        border: 1px solid #fda4af;
+        font-weight: 600;
+    }
+    .badge-due-today-pill {
+        background: #ef4444;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    /* DataTables toolbar styling */
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 12px;
+    }
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 5px 12px;
+        font-size: 13px;
+        margin-left: 8px;
+        outline: none;
+    }
+    .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+    .dataTables_wrapper .dataTables_length {
+        margin-bottom: 12px;
+    }
+    .dataTables_wrapper .dataTables_length select {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 13px;
+        margin: 0 4px;
+        outline: none;
+    }
+</style>
+
+<div class="student-reminders-wrapper pb-5">
+    <!-- Page Header Bar -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4 bg-white">
+        <div class="card-body p-3 p-md-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h4 class="fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                    <i class="material-symbols-outlined text-primary fs-28">notifications_active</i>
+                    Student Reminders &amp; Alerts
+                </h4>
+                <p class="text-muted fs-13 mb-0">Monitor upcoming &amp; today's birthdays and remaining fee collection alerts (7-day window)</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm px-3 py-2 rounded-2 d-inline-flex align-items-center gap-1 shadow-sm" onclick="refreshCurrentTab()">
+                    <i class="material-symbols-outlined fs-18">refresh</i> Refresh Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 KPI Stat Summary Cards -->
+    <div class="row g-3 mb-4">
+        <!-- 1. Birthdays Today -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 reminders-hero-card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="fs-12 text-muted fw-semibold text-uppercase">Birthdays Today</span>
+                        <h2 class="fw-bold text-danger mb-0 mt-1" id="kpiBirthdaysToday">0</h2>
+                        <span class="text-muted fs-11">Celebrate today's students</span>
+                    </div>
+                    <div class="icon-box-lg" style="background-color: #fee2e2;">
+                        <i class="material-symbols-outlined fs-28 text-danger">cake</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Birthdays Upcoming -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 reminders-hero-card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="fs-12 text-muted fw-semibold text-uppercase">Upcoming (7 Days)</span>
+                        <h2 class="fw-bold text-primary mb-0 mt-1" id="kpiBirthdaysUpcoming">0</h2>
+                        <span class="text-muted fs-11">Next 7 days birthdays</span>
+                    </div>
+                    <div class="icon-box-lg" style="background-color: #dbeafe;">
+                        <i class="material-symbols-outlined fs-28 text-primary">celebration</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Overdue / 7 Days Ago Fees -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 reminders-hero-card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="fs-12 text-muted fw-semibold text-uppercase">Overdue / 7 Days Ago</span>
+                        <h2 class="fw-bold text-danger mb-0 mt-1" id="kpiFeesOverdue">0</h2>
+                        <span class="text-muted fs-11">Action required immediately</span>
+                    </div>
+                    <div class="icon-box-lg" style="background-color: #ffe4e6;">
+                        <i class="material-symbols-outlined fs-28 text-danger">history</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Fees Due in Next 7 Days -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 reminders-hero-card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="fs-12 text-muted fw-semibold text-uppercase">Fees Due Next 7 Days</span>
+                        <h2 class="fw-bold text-success mb-0 mt-1" id="kpiFeesUpcoming">0</h2>
+                        <span class="text-muted fs-11">Send reminder alert</span>
+                    </div>
+                    <div class="icon-box-lg" style="background-color: #d1fae5;">
+                        <i class="material-symbols-outlined fs-28 text-success">payments</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area with Navigation Tabs -->
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+        <!-- Tab Navigation Header -->
+        <div class="card-header bg-white border-bottom p-3 p-md-4">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <ul class="nav nav-pills-reminders" id="reminderTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(activeTab == "birthday" ? "active" : "") d-flex align-items-center gap-2" 
+                                id="pills-birthday-tab" data-bs-toggle="pill" data-bs-target="#pills-birthday" type="button" role="tab">
+                            <i class="material-symbols-outlined fs-18">cake</i>
+                            <span>Student Birthday Reminders</span>
+                            <span class="badge bg-white text-primary rounded-pill fs-11 ms-1 px-2 py-1 shadow-sm" id="tabBirthdayCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(activeTab == "fees" ? "active" : "") d-flex align-items-center gap-2" 
+                                id="pills-fees-tab" data-bs-toggle="pill" data-bs-target="#pills-fees" type="button" role="tab">
+                            <i class="material-symbols-outlined fs-18">payments</i>
+                            <span>Remaining Fees (7-Day Window)</span>
+                            <span class="badge bg-white text-success rounded-pill fs-11 ms-1 px-2 py-1 shadow-sm" id="tabFeesCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+                <div class="text-muted fs-13" id="lblGlobalSummary"></div>
+            </div>
+        </div>
+
+        <div class="card-body p-3 p-md-4">
+            <div class="tab-content" id="reminderTabsContent">
+
+                <!-- ================= TAB 1: STUDENT BIRTHDAY ================= -->
+                <div class="tab-pane fade @(activeTab == "birthday" ? "show active" : "")" id="pills-birthday" role="tabpanel">
+                    <!-- Filter Pill Buttons -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <div class="d-flex flex-wrap gap-2" id="birthdayFilterGroup">
+                            <button type="button" class="btn btn-primary filter-btn-pill active" data-filter="7days" onclick="filterBirthday('7days', this)">
+                                7-Day Window (Recent &amp; Upcoming)
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="today" onclick="filterBirthday('today', this)">
+                                Today's Birthdays
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="upcoming7" onclick="filterBirthday('upcoming7', this)">
+                                Next 7 Days
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="ago7" onclick="filterBirthday('ago7', this)">
+                                Past 7 Days
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="all" onclick="filterBirthday('all', this)">
+                                All Birthdays
+                            </button>
+                        </div>
+                        <div>
+                            <span class="text-muted fs-13" id="lblBirthdaySummary">Loading birthdays...</span>
+                        </div>
+                    </div>
+
+                    <!-- Birthday Table (Matching Screenshot 2) -->
+                    <div class="table-responsive rounded-3 border">
+                        <table id="tblBirthdayReminders" class="table table-pro table-pro-birthday align-middle w-100 mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center nowrap-cell" style="width: 45px;">#</th>
+                                    <th class="nowrap-cell" style="width: 140px;">Enrollment No.</th>
+                                    <th class="nowrap-cell" style="width: 120px;">Date Of Birth</th>
+                                    <th class="nowrap-cell text-center" style="width: 100px;">Age</th>
+                                    <th style="min-width: 220px;">Student Name</th>
+                                    <th class="nowrap-cell text-center" style="width: 85px;">Gender</th>
+                                    <th class="nowrap-cell" style="width: 130px;">Mobile</th>
+                                    <th class="nowrap-cell text-center" style="width: 120px;">Status</th>
+                                    <th class="nowrap-cell text-center" style="width: 160px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblBirthdayRemindersBody">
+                                <tr>
+                                    <td colspan="9" class="text-center py-4 text-muted">
+                                        <i class="ri-loader-4-line ri-spin fs-20 align-middle me-1 text-primary"></i> Loading Birthday Data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ================= TAB 2: REMAINING FEES ================= -->
+                <div class="tab-pane fade @(activeTab == "fees" ? "show active" : "")" id="pills-fees" role="tabpanel">
+                    <!-- Filter Pill Buttons -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <div class="d-flex flex-wrap gap-2" id="feesFilterGroup">
+                            <button type="button" class="btn btn-success filter-btn-pill active" data-filter="7days" onclick="filterFees('7days', this)">
+                                7-Day Window (Due 7 Days Ago &amp; Upcoming)
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="ago7" onclick="filterFees('ago7', this)">
+                                Due 7 Days Ago
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="today" onclick="filterFees('today', this)">
+                                Due Today
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="upcoming7" onclick="filterFees('upcoming7', this)">
+                                Due Next 7 Days
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="overdue" onclick="filterFees('overdue', this)">
+                                All Overdue
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary filter-btn-pill" data-filter="all" onclick="filterFees('all', this)">
+                                All Pending Fees
+                            </button>
+                        </div>
+                        <div>
+                            <span class="text-muted fs-13" id="lblFeesSummary">Loading fee dues...</span>
+                        </div>
+                    </div>
+
+                    <!-- Remaining Fees Table -->
+                    <div class="table-responsive rounded-3 border">
+                        <table id="tblFeesReminders" class="table table-pro table-pro-fees align-middle w-100 mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center nowrap-cell" style="width: 45px;">#</th>
+                                    <th class="nowrap-cell" style="width: 140px;">Enrollment No.</th>
+                                    <th style="min-width: 190px;">Student Name</th>
+                                    <th style="min-width: 180px;">Course</th>
+                                    <th class="text-end nowrap-cell" style="width: 110px;">Total Fee</th>
+                                    <th class="text-end nowrap-cell" style="width: 110px;">Paid Fee</th>
+                                    <th class="text-end nowrap-cell" style="width: 135px;">Remaining Balance</th>
+                                    <th class="nowrap-cell" style="width: 120px;">Due Date</th>
+                                    <th class="nowrap-cell text-center" style="width: 130px;">Status</th>
+                                    <th class="nowrap-cell text-center" style="width: 175px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblFeesRemindersBody">
+                                <tr>
+                                    <td colspan="10" class="text-center py-4 text-muted">
+                                        <i class="ri-loader-4-line ri-spin fs-20 align-middle me-1 text-success"></i> Loading Remaining Fees Data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var birthdayDataTable = null;
+        var feesDataTable = null;
+        var currentBirthdayFilter = "7days";
+        var currentFeesFilter = "7days";
+
+        $(document).ready(function () {
+            loadBirthdayReminders(currentBirthdayFilter);
+            loadRemainingFeesReminders(currentFeesFilter);
+
+            // Responsive DataTables on tab switch
+            $('button[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+                if (e.target.id === 'pills-birthday-tab') {
+                    if (birthdayDataTable) birthdayDataTable.columns.adjust().draw();
+                } else if (e.target.id === 'pills-fees-tab') {
+                    if (feesDataTable) feesDataTable.columns.adjust().draw();
+                }
+            });
+        });
+
+        function refreshCurrentTab() {
+            loadBirthdayReminders(currentBirthdayFilter);
+            loadRemainingFeesReminders(currentFeesFilter);
+            if (typeof loadHeaderReminderBadges === 'function') {
+                loadHeaderReminderBadges();
+            }
+        }
+
+        // ================= BIRTHDAYS LOGIC =================
+        function filterBirthday(filterType, btn) {
+            $("#birthdayFilterGroup button").removeClass("btn-primary active").addClass("btn-outline-secondary");
+            $(btn).removeClass("btn-outline-secondary").addClass("btn-primary active");
+            currentBirthdayFilter = filterType;
+            loadBirthdayReminders(filterType);
+        }
+
+        function loadBirthdayReminders(filterType) {
+            if (birthdayDataTable) {
+                birthdayDataTable.destroy();
+                birthdayDataTable = null;
+            }
+            $("#tblBirthdayRemindersBody").html('<tr><td colspan="9" class="text-center py-4 text-muted"><i class="ri-loader-4-line ri-spin fs-20 align-middle me-1 text-primary"></i> Loading Birthday Data...</td></tr>');
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetBirthdayRemindersList",
+                data: { filter: filterType },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.Status && res.Data) {
+                        var list = res.Data;
+                        $("#tabBirthdayCount").text(list.length);
+                        $("#lblBirthdaySummary").text("Found " + list.length + " students");
+
+                        // Update KPI counts if default filter
+                        var todayCount = 0;
+                        var upcomingCount = 0;
+                        $.each(list, function(i, item) {
+                            if (item.DaysDiff === 0) todayCount++;
+                            else if (item.DaysDiff > 0 && item.DaysDiff <= 7) upcomingCount++;
+                        });
+                        if (filterType === "7days" || filterType === "all") {
+                            $("#kpiBirthdaysToday").text(todayCount);
+                            $("#kpiBirthdaysUpcoming").text(upcomingCount);
+                        }
+
+                        if (list.length === 0) {
+                            $("#tblBirthdayRemindersBody").html('<tr><td colspan="9" class="text-center py-5 text-muted"><i class="material-symbols-outlined fs-36 text-secondary d-block mb-2">cake</i>No birthdays found for the selected filter.</td></tr>');
+                            return;
+                        }
+
+                        var rows = [];
+                        $.each(list, function (i, item) {
+                            var cleanPhone = (item.Mobile || "").replace(/\D/g, '');
+                            if (cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
+
+                            var wishMsg = encodeURIComponent("Dear " + item.StudentName + ", BC Tech Computer Education wishes you a very Happy Birthday! 🎂 May you achieve great success in your career and life!");
+                            var waLink = cleanPhone ? 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + wishMsg : '#';
+
+                            var studentCol = '<div class="d-flex align-items-center gap-2">' +
+                                             '<img src="' + item.Photo + '" class="student-avatar-thumb flex-shrink-0" onerror="this.onerror=null;this.src=\'/Content/Admin/assets/images/no-image.png\';" />' +
+                                             '<div>' +
+                                             '<div class="fw-bold text-dark fs-13">' + escapeHtml(item.StudentName) + '</div>' +
+                                             '<small class="text-muted">' + escapeHtml(item.CourseTitle) + '</small>' +
+                                             '</div>' +
+                                             '</div>';
+
+                            var badgeClass = item.DaysDiff === 0 ? 'badge-today-pill' : (item.DaysDiff > 0 ? 'badge-upcoming-pill' : 'bg-secondary text-white');
+                            var badgeHtml = '<span class="badge ' + badgeClass + ' px-2 py-1 fs-12 rounded-pill nowrap-cell">' +
+                                            (item.DaysDiff === 0 ? '🎂 ' : '') + escapeHtml(item.StatusText) +
+                                            '</span>';
+
+                            var actionHtml = cleanPhone
+                                ? '<a href="' + waLink + '" target="_blank" class="btn btn-whatsapp-action">' +
+                                  '<i class="ri-whatsapp-line fs-14"></i> Wish on WhatsApp' +
+                                  '</a>'
+                                : '<span class="text-muted fs-12">-</span>';
+
+                            var genderBadge = item.Gender === 'Female' 
+                                ? '<span class="badge bg-pink-subtle text-danger border border-danger-subtle nowrap-cell">Female</span>' 
+                                : '<span class="badge bg-primary-subtle text-primary border border-primary-subtle nowrap-cell">Male</span>';
+
+                            var ageText = (item.Age > 0) ? (item.Age + ' Year Old') : '-';
+
+                            rows.push('<tr>' +
+                                      '<td class="text-center text-muted fw-semibold nowrap-cell">' + (i + 1) + '</td>' +
+                                      '<td class="nowrap-cell"><span class="badge bg-light text-dark border fw-medium px-2 py-1">' + (escapeHtml(item.EnrollmentNo) || '-') + '</span></td>' +
+                                      '<td class="fw-semibold text-secondary nowrap-cell">' + item.DOBFormatted + '</td>' +
+                                      '<td class="text-center nowrap-cell"><span class="fw-bold text-dark">' + ageText + '</span></td>' +
+                                      '<td>' + studentCol + '</td>' +
+                                      '<td class="text-center nowrap-cell">' + genderBadge + '</td>' +
+                                      '<td class="nowrap-cell"><a href="tel:' + item.Mobile + '" class="text-decoration-none text-dark fw-medium"><i class="ri-phone-line text-muted me-1"></i>' + (escapeHtml(item.Mobile) || '-') + '</a></td>' +
+                                      '<td class="text-center nowrap-cell">' + badgeHtml + '</td>' +
+                                      '<td class="text-center nowrap-cell">' + actionHtml + '</td>' +
+                                      '</tr>');
+                        });
+
+                        $("#tblBirthdayRemindersBody").html(rows.join(""));
+                        birthdayDataTable = $("#tblBirthdayReminders").DataTable({
+                            pageLength: 20,
+                            ordering: true,
+                            autoWidth: false,
+                            language: {
+                                search: "Search Birthday:",
+                                emptyTable: "No students found."
+                            }
+                        });
+                    } else {
+                        $("#tblBirthdayRemindersBody").html('<tr><td colspan="9" class="text-center py-4 text-danger">' + (res.Message || 'Failed to load birthday data.') + '</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $("#tblBirthdayRemindersBody").html('<tr><td colspan="9" class="text-center py-4 text-danger">Error loading birthday data: ' + error + '</td></tr>');
+                }
+            });
+        }
+
+        // ================= REMAINING FEES LOGIC =================
+        function filterFees(filterType, btn) {
+            $("#feesFilterGroup button").removeClass("btn-success active").addClass("btn-outline-secondary");
+            $(btn).removeClass("btn-outline-secondary").addClass("btn-success active");
+            currentFeesFilter = filterType;
+            loadRemainingFeesReminders(filterType);
+        }
+
+        function loadRemainingFeesReminders(filterType) {
+            if (feesDataTable) {
+                feesDataTable.destroy();
+                feesDataTable = null;
+            }
+            $("#tblFeesRemindersBody").html('<tr><td colspan="10" class="text-center py-4 text-muted"><i class="ri-loader-4-line ri-spin fs-20 align-middle me-1 text-success"></i> Loading Remaining Fees Data...</td></tr>');
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetRemainingFeesRemindersList",
+                data: { filter: filterType },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.Status && res.Data) {
+                        var list = res.Data;
+                        $("#tabFeesCount").text(list.length);
+                        $("#lblFeesSummary").text("Found " + list.length + " pending installments");
+
+                        // Update KPI counts
+                        var overdueCount = 0;
+                        var upcomingFeesCount = 0;
+                        $.each(list, function(i, item) {
+                            if (item.DaysDiff <= 0) overdueCount++;
+                            else if (item.DaysDiff > 0 && item.DaysDiff <= 7) upcomingFeesCount++;
+                        });
+                        if (filterType === "7days" || filterType === "all") {
+                            $("#kpiFeesOverdue").text(overdueCount);
+                            $("#kpiFeesUpcoming").text(upcomingFeesCount);
+                        }
+
+                        if (list.length === 0) {
+                            $("#tblFeesRemindersBody").html('<tr><td colspan="10" class="text-center py-5 text-muted"><i class="material-symbols-outlined fs-36 text-success d-block mb-2">check_circle</i>No remaining fees pending for this filter.</td></tr>');
+                            return;
+                        }
+
+                        var rows = [];
+                        $.each(list, function (i, item) {
+                            var cleanPhone = (item.Mobile || "").replace(/\D/g, '');
+                            if (cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
+
+                            var feeMsg = encodeURIComponent("Dear " + item.StudentName + ", this is a friendly reminder from BC Tech Computer Education regarding your pending course fee installment of Rs." + item.BalanceFee + " for " + item.CourseTitle + ". Due Date: " + item.DueDateFormatted + ". Please clear it at the earliest.");
+                            var waLink = cleanPhone ? 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + feeMsg : '#';
+
+                            var studentCol = '<div class="d-flex align-items-center gap-2">' +
+                                             '<img src="' + item.Photo + '" class="student-avatar-thumb flex-shrink-0" onerror="this.onerror=null;this.src=\'/Content/Admin/assets/images/no-image.png\';" />' +
+                                             '<div>' +
+                                             '<div class="fw-bold text-dark fs-13">' + escapeHtml(item.StudentName) + '</div>' +
+                                             '<small class="text-muted"><i class="ri-phone-line"></i> ' + (escapeHtml(item.Mobile) || '-') + '</small>' +
+                                             '</div>' +
+                                             '</div>';
+
+                            var badgeClass = 'bg-secondary text-white';
+                            if (item.DaysDiff === 0) badgeClass = 'badge-due-today-pill';
+                            else if (item.DaysDiff < 0) badgeClass = 'badge-overdue-pill';
+                            else if (item.DaysDiff > 0 && item.DaysDiff <= 7) badgeClass = 'badge-upcoming-pill';
+
+                            var badgeHtml = '<span class="badge ' + badgeClass + ' px-2 py-1 fs-12 rounded-pill nowrap-cell">' +
+                                            escapeHtml(item.StatusText) +
+                                            '</span>';
+
+                            var waBtn = cleanPhone
+                                ? '<a href="' + waLink + '" target="_blank" class="btn btn-whatsapp-action" title="Send WhatsApp Fee Reminder">' +
+                                  '<i class="ri-whatsapp-line fs-14"></i> Remind' +
+                                  '</a>'
+                                : '';
+
+                            var collectBtn = '<a href="/bctechadmin/StudentFeeReceipt?StudentID=' + item.StudentID + '" class="btn btn-sm btn-outline-success d-inline-flex align-items-center gap-1 px-2 py-1 fs-12 rounded-2 nowrap-cell" title="Collect Fees">' +
+                                             '<i class="ri-money-dollar-circle-line fs-14"></i> Collect' +
+                                             '</a>';
+
+                            var actionHtml = '<div class="d-flex align-items-center justify-content-center gap-1 nowrap-cell">' + waBtn + collectBtn + '</div>';
+
+                            rows.push('<tr>' +
+                                      '<td class="text-center text-muted fw-semibold nowrap-cell">' + (i + 1) + '</td>' +
+                                      '<td class="nowrap-cell"><span class="badge bg-light text-dark border fw-medium px-2 py-1">' + (escapeHtml(item.EnrollmentNo) || '-') + '</span></td>' +
+                                      '<td>' + studentCol + '</td>' +
+                                      '<td><span class="badge bg-light text-dark border px-2 py-1">' + escapeHtml(item.CourseTitle) + '</span></td>' +
+                                      '<td class="text-end text-muted nowrap-cell">&#8377; ' + item.TotalFee.toLocaleString('en-IN') + '</td>' +
+                                      '<td class="text-end text-success fw-medium nowrap-cell">&#8377; ' + item.TotalPaid.toLocaleString('en-IN') + '</td>' +
+                                      '<td class="text-end fw-bold text-danger fs-14 nowrap-cell">&#8377; ' + item.BalanceFee.toLocaleString('en-IN') + '</td>' +
+                                      '<td class="fw-semibold text-secondary nowrap-cell">' + item.DueDateFormatted + '</td>' +
+                                      '<td class="text-center nowrap-cell">' + badgeHtml + '</td>' +
+                                      '<td class="text-center nowrap-cell">' + actionHtml + '</td>' +
+                                      '</tr>');
+                        });
+
+                        $("#tblFeesRemindersBody").html(rows.join(""));
+                        feesDataTable = $("#tblFeesReminders").DataTable({
+                            pageLength: 20,
+                            ordering: true,
+                            autoWidth: false,
+                            language: {
+                                search: "Search Fees:",
+                                emptyTable: "No pending fees found."
+                            }
+                        });
+                    } else {
+                        $("#tblFeesRemindersBody").html('<tr><td colspan="10" class="text-center py-4 text-danger">' + (res.Message || 'Failed to load fee data.') + '</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $("#tblFeesRemindersBody").html('<tr><td colspan="10" class="text-center py-4 text-danger">Error loading fee data: ' + error + '</td></tr>');
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+    </script>
+}

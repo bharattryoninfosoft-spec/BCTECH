@@ -1,0 +1,576 @@
+@{
+    Layout = null;
+    int urlBranchId = ViewBag.BranchID != null ? Convert.ToInt32(ViewBag.BranchID) : 0;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Student Enquiry | B.C.Tech Computer Education</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- RemixIcon & Material Symbols -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .public-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .brand-logo {
+            max-height: 50px;
+        }
+
+        .form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border: 1px solid #edf2f7;
+            overflow: hidden;
+        }
+
+        .card-section-title {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 12px 20px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 12px 36px;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+            color: #fff;
+        }
+
+        .branch-badge {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .success-card {
+            display: none;
+            text-align: center;
+            padding: 50px 30px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #dcfce7;
+            color: #16a34a;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Banner -->
+    <header class="public-header mb-4">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <img src="/Content/Admin/assets/Images/welcome2.png" id="imgOrgLogo" class="brand-logo" alt="Logo" onerror="this.style.display='none'" />
+                <div>
+                    <h4 class="mb-0 text-dark fw-bold" id="lblOrgName">B.C.Tech Computer Education</h4>
+                    <small class="text-muted">Student Online Registration & Enquiry Portal</small>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <!-- Form Card -->
+                <div class="form-card" id="cardFormContainer">
+                    
+                    <div class="p-4 bg-primary text-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h4 class="mb-1 text-white fw-bold"><i class="ri-survey-line me-2"></i> Student Enquiry Form</h4>
+                            <p class="mb-0 text-white-50 fs-14">Please fill out your details below to get course information and counseling.</p>
+                        </div>
+                        <div class="text-end" id="divBranchHeaderInfo">
+                            <!-- Branch Address / Contact Info dynamically inserted -->
+                        </div>
+                    </div>
+
+                    <form id="frmPublicEnquiry" autocomplete="off" class="p-4">
+                        <input type="hidden" id="hfUrlBranchID" value="@urlBranchId" />
+
+                        <!-- ================= Branch Details ================= -->
+                        <div class="card-section-title d-flex align-items-center justify-content-between">
+                            <span><i class="ri-building-line me-2"></i> 1. Branch Selection</span>
+                            <span class="badge bg-info text-white d-none" id="lblQrLocked"><i class="ri-lock-2-line me-1"></i> Branch Auto-Selected</span>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Branch <span class="text-danger">*</span></label>
+                                <select id="ddlBranch" class="form-select" onchange="OnBranchChange()">
+                                    <option value="0">Loading Branches...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 align-self-center">
+                                <div class="p-3 bg-light rounded border fs-14 text-secondary" id="divBranchAddressText">
+                                    <i class="ri-information-line text-primary me-1"></i> Select a branch to view address and contact information.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= Student Information ================= -->
+                        <div class="card-section-title"><i class="ri-user-line me-2"></i> 2. Student Information</div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Student Full Name <span class="text-danger">*</span></label>
+                                <input type="text" id="txtStudentName" class="form-control" placeholder="Enter Full Name" maxlength="150" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                                <input type="tel" id="txtStudentMobileNo" class="form-control" placeholder="10 Digit Mobile No" maxlength="10" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">WhatsApp Number</label>
+                                <input type="tel" id="txtWhatsAppNo" class="form-control" placeholder="WhatsApp No" maxlength="10" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" id="txtStudentEmail" class="form-control" placeholder="name@example.com" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Date of Birth</label>
+                                <input type="date" id="txtDOB" class="form-control" />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Gender</label>
+                                <select id="ddlGender" class="form-select">
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Educational Qualification</label>
+                                <input type="text" id="txtEducationQualification" class="form-control" placeholder="e.g. 10th, 12th, BCA, B.Tech" />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">School / College Name</label>
+                                <input type="text" id="txtSchoolCollegeName" class="form-control" placeholder="Enter School or College Name" />
+                            </div>
+                        </div>
+
+                        <!-- ================= Parent / Guardian Details ================= -->
+                        <div class="card-section-title"><i class="ri-user-shared-line me-2"></i> 3. Parent / Guardian Details</div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-5">
+                                <label class="form-label">Father's / Guardian's Name</label>
+                                <input type="text" id="txtFatherName" class="form-control" placeholder="Father Full Name" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Father's Mobile No</label>
+                                <input type="tel" id="txtFatherMobileNo" class="form-control" placeholder="Mobile Number" maxlength="10" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Father's Occupation</label>
+                                <input type="text" id="txtFatherOccupation" class="form-control" placeholder="e.g. Business, Job, Farmer" />
+                            </div>
+                        </div>
+
+                        <!-- Mother Details -->
+                        <h6 class="text-primary fw-bold mb-3"><i class="ri-heart-line me-1"></i> Mother Details</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <label class="form-label">Mother Name</label>
+                                <input type="text" id="txtMotherName" class="form-control" placeholder="Mother Name" maxlength="150" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Mother Mobile</label>
+                                <input type="tel" id="txtMotherMobile" class="form-control" placeholder="Mother Mobile" maxlength="10" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Occupation</label>
+                                <input type="text" id="txtMotherOccupation" class="form-control" placeholder="Mother Occupation" maxlength="100" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Mother Email</label>
+                                <input type="email" id="txtMotherEmail" class="form-control" placeholder="Mother Email" />
+                            </div>
+                        </div>
+
+                        <!-- ================= Course Interest ================= -->
+                        <div class="card-section-title"><i class="ri-book-open-line me-2"></i> 4. Course Interest</div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label">Course You Are Interested In <span class="text-danger">*</span></label>
+                                <select id="ddlCourse" class="form-select">
+                                    <option value="0">Select Course</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- ================= Address ================= -->
+                        <div class="card-section-title"><i class="ri-map-pin-line me-2"></i> 5. Location Information</div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Residential Address</label>
+                                <input type="text" id="txtAddress" class="form-control" placeholder="House No, Street, Area" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">City</label>
+                                <input type="text" id="txtCity" class="form-control" placeholder="Enter City" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">How Did You Hear About Us? (Enquiry Source)</label>
+                                <select id="ddlSource" class="form-select">
+                                    <option value="0">Select Source</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="text-center pt-3 border-top">
+                            <button type="button" class="btn-submit btn-lg" id="btnSubmitEnquiry" onclick="SubmitPublicEnquiry()">
+                                <i class="ri-send-plane-fill me-2"></i> Submit Enquiry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Success Confirmation Card -->
+                <div class="form-card success-card" id="cardSuccessContainer">
+                    <div class="success-icon">
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-2">Thank You for Your Enquiry!</h3>
+                    <p class="text-muted fs-16 mb-4">Your enquiry has been submitted successfully.</p>
+
+                    <div class="p-4 bg-light rounded-3 border d-inline-block text-start mb-4" style="max-width: 450px; width: 100%;">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Enquiry Number:</span>
+                            <span class="fw-bold text-primary fs-18" id="lblSuccessEnquiryNo">ENQ-00000</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Branch:</span>
+                            <span class="fw-bold text-dark" id="lblSuccessBranchName">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Contact Info:</span>
+                            <span class="fw-bold text-dark" id="lblSuccessBranchMobile">-</span>
+                        </div>
+                    </div>
+
+                    <p class="text-secondary fs-15 mb-4">Our academic counselor will get in touch with you shortly to assist with course selection and admission details.</p>
+
+                    <div>
+                        <button type="button" class="btn btn-outline-primary px-4 py-2" onclick="ResetFormAndShow()">
+                            <i class="ri-refresh-line me-1"></i> Submit Another Enquiry
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.min.js"></script>
+
+    <script>
+        var branchListGlobal = [];
+        var courseListGlobal = [];
+        var targetBranchID = parseInt($("#hfUrlBranchID").val()) || 0;
+
+        $(document).ready(function () {
+            LoadPublicData();
+        });
+
+        function LoadPublicData() {
+            var orgReq = $.ajax({ url: "/bctechadmin/GetPublicOrganization", type: "GET", dataType: "json" });
+            var branchReq = $.ajax({ url: "/bctechadmin/GetPublicBranchList", type: "GET", dataType: "json" });
+            var courseReq = $.ajax({ url: "/bctechadmin/GetPublicCourseList", type: "GET", dataType: "json" });
+            var sourceReq = $.ajax({ url: "/bctechadmin/GetPublicSourceList", type: "GET", dataType: "json" });
+
+            $.when(orgReq, branchReq, courseReq, sourceReq).done(function (orgRes, branchRes, courseRes, sourceRes) {
+                // Organization
+                if (orgRes && orgRes[0] && orgRes[0].Status && orgRes[0].Data) {
+                    var org = orgRes[0].Data;
+                    if (org.OrganizationName) {
+                        $("#lblOrgName").text(org.OrganizationName);
+                    }
+                    if (org.OrganizationLogo) {
+                        $("#imgOrgLogo").attr("src", "/Content/Admin/assets/Images/" + org.OrganizationLogo).show();
+                    }
+                }
+
+                // Branches
+                branchListGlobal = branchRes[0].Data || branchRes[0] || [];
+                var branchOptions = "<option value='0'>-- Select Branch --</option>";
+                if (branchListGlobal.length > 0) {
+                    $.each(branchListGlobal, function (i, item) {
+                        branchOptions += "<option value='" + item.BranchID + "'>" + item.BranchName + " (" + item.City + ")</option>";
+                    });
+                }
+                $("#ddlBranch").html(branchOptions);
+
+                // Check URL Branch Param
+                if (targetBranchID > 0) {
+                    $("#ddlBranch").val(targetBranchID);
+                    $("#ddlBranch").prop("disabled", true).addClass("bg-light");
+                    $("#lblQrLocked").removeClass("d-none");
+                }
+                OnBranchChange();
+
+                // Courses
+                courseListGlobal = courseRes[0].Data || courseRes[0] || [];
+                var courseOptions = "<option value='0'>-- Select Course --</option>";
+                if (courseListGlobal.length > 0) {
+                    $.each(courseListGlobal, function (i, item) {
+                        courseOptions += "<option value='" + item.CourseID + "'>" + item.CourseTitle + " (" + (item.Duration || '') + " " + (item.DurationType || '') + ")</option>";
+                    });
+                }
+                $("#ddlCourse").html(courseOptions);
+
+                // Sources
+                var sourceList = sourceRes[0].Data || sourceRes[0] || [];
+                var sourceOptions = "<option value='0'>-- Select Source --</option>";
+                if (sourceList.length > 0) {
+                    $.each(sourceList, function (i, item) {
+                        sourceOptions += "<option value='" + item.EnquirySourceID + "'>" + item.SourceTitle + "</option>";
+                    });
+                }
+                $("#ddlSource").html(sourceOptions);
+            });
+        }
+
+        function OnBranchChange() {
+            var selectedId = parseInt($("#ddlBranch").val()) || 0;
+            if (selectedId > 0) {
+                var found = branchListGlobal.find(x => x.BranchID === selectedId);
+                if (found) {
+                    if (found.OrganizationName) {
+                        $("#lblOrgName").text(found.OrganizationName);
+                    }
+                    if (found.OrganizationLogo) {
+                        $("#imgOrgLogo").attr("src", "/Content/Admin/assets/Images/" + found.OrganizationLogo).show();
+                    }
+                    $("#divBranchAddressText").html("<strong><i class='ri-map-pin-line text-primary me-1'></i> " + found.BranchName + "</strong><br/>" + found.Address + ", " + found.City + "<br/><i class='ri-phone-line text-success me-1'></i> " + (found.MobileNo || '-'));
+                } else {
+                    FetchBranchDetails(selectedId);
+                }
+            } else {
+                $("#divBranchAddressText").html("<i class='ri-information-line text-primary me-1'></i> Select a branch to view address and contact information.");
+            }
+        }
+
+        function FetchBranchDetails(id) {
+            $.ajax({
+                url: "/bctechadmin/GetPublicBranchDetails",
+                type: "GET",
+                data: { branchId: id },
+                dataType: "json",
+                success: function (res) {
+                    if (res.Status && res.Data) {
+                        var b = res.Data;
+                        if (b.OrganizationName) {
+                            $("#lblOrgName").text(b.OrganizationName);
+                        }
+                        if (b.OrganizationLogo) {
+                            $("#imgOrgLogo").attr("src", "/Content/Admin/assets/Images/" + b.OrganizationLogo).show();
+                        }
+                        $("#divBranchAddressText").html("<strong><i class='ri-map-pin-line text-primary me-1'></i> " + b.BranchName + "</strong><br/>" + b.Address + ", " + b.City + "<br/><i class='ri-phone-line text-success me-1'></i> " + (b.MobileNo || '-'));
+                    }
+                }
+            });
+        }
+
+        function OnCourseSelect() {
+            var courseId = parseInt($("#ddlCourse").val()) || 0;
+            if (courseId > 0) {
+                var found = courseListGlobal.find(x => x.CourseID === courseId);
+                if (found) {
+                    $("#lblCourseFee").html("&#8377; " + parseFloat(found.CourseFee || 0).toFixed(2));
+                } else {
+                    $("#lblCourseFee").html("&#8377; 0.00");
+                }
+            } else {
+                $("#lblCourseFee").html("&#8377; 0.00");
+            }
+        }
+
+        function SubmitPublicEnquiry() {
+            var branchId = parseInt($("#ddlBranch").val()) || targetBranchID || 0;
+            var studentName = $("#txtStudentName").val().trim();
+            var mobileNo = $("#txtStudentMobileNo").val().trim();
+            var courseId = parseInt($("#ddlCourse").val()) || 0;
+
+            if (branchId <= 0) {
+                toastr.warning("Please select a Branch.");
+                $("#ddlBranch").focus();
+                return;
+            }
+
+            if (studentName === "") {
+                toastr.warning("Please enter Student Full Name.");
+                $("#txtStudentName").focus();
+                return;
+            }
+
+            if (mobileNo === "" || mobileNo.length < 10) {
+                toastr.warning("Please enter a valid 10-digit Mobile Number.");
+                $("#txtStudentMobileNo").focus();
+                return;
+            }
+
+            if (courseId <= 0) {
+                toastr.warning("Please select a Course.");
+                $("#ddlCourse").focus();
+                return;
+            }
+
+            var courseFeeObj = courseListGlobal.find(x => x.CourseID === courseId);
+            var feeVal = courseFeeObj ? parseFloat(courseFeeObj.CourseFee || 0) : 0;
+
+            var model = {
+                BranchID: branchId,
+                StudentName: studentName,
+                StudentMobileNo: mobileNo,
+                WhatsAppNo: $("#txtWhatsAppNo").val().trim(),
+                StudentEmail: $("#txtStudentEmail").val().trim(),
+                DOB: $("#txtDOB").val(),
+                Gender: $("#ddlGender").val(),
+                EducationQualification: $("#txtEducationQualification").val().trim(),
+                SchoolCollegeName: $("#txtSchoolCollegeName").val().trim(),
+                FatherName: $("#txtFatherName").val().trim(),
+                FatherMobileNo: $("#txtFatherMobileNo").val().trim(),
+                FatherOccupation: $("#txtFatherOccupation").val().trim(),
+                MotherName: $("#txtMotherName").val().trim(),
+                MotherMobileNo: $("#txtMotherMobile").val().trim(),
+                MotherOccupation: $("#txtMotherOccupation").val().trim(),
+                MotherEmail: $("#txtMotherEmail").val().trim(),
+                Address: $("#txtAddress").val().trim(),
+                City: $("#txtCity").val().trim(),
+                EnquirySourceID: parseInt($("#ddlSource").val()) || 0,
+                ExpectedJoiningDate: null,
+                Remarks: "",
+                CourseList: [
+                    {
+                        CourseID: courseId,
+                        CourseFee: feeVal,
+                        Discount: 0,
+                        FinalFee: feeVal,
+                        Remarks: ""
+                    }
+                ]
+            };
+
+            $.ajax({
+                url: "/bctechadmin/SavePublicStudentEnquiry",
+                type: "POST",
+                data: JSON.stringify(model),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                beforeSend: function () {
+                    $("#btnSubmitEnquiry").prop("disabled", true).html("<i class='ri-loader-4-line spin me-2'></i> Submitting...");
+                },
+                success: function (res) {
+                    $("#btnSubmitEnquiry").prop("disabled", false).html("<i class='ri-send-plane-fill me-2'></i> Submit Enquiry");
+
+                    if (res.IsSuccess) {
+                        var enqNo = res.Message || "ENQ-SUCCESS";
+                        $("#lblSuccessEnquiryNo").text(enqNo);
+
+                        var selectedBranchObj = branchListGlobal.find(x => x.BranchID === branchId);
+                        if (selectedBranchObj) {
+                            $("#lblSuccessBranchName").text(selectedBranchObj.BranchName);
+                            $("#lblSuccessBranchMobile").text(selectedBranchObj.MobileNo || '-');
+                        } else {
+                            $("#lblSuccessBranchName").text($("#ddlBranch option:selected").text());
+                        }
+
+                        $("#cardFormContainer").slideUp(400, function () {
+                            $("#cardSuccessContainer").slideDown(400);
+                        });
+                    } else {
+                        toastr.error(res.Message || "Error submitting enquiry.");
+                    }
+                },
+                error: function (err) {
+                    $("#btnSubmitEnquiry").prop("disabled", false).html("<i class='ri-send-plane-fill me-2'></i> Submit Enquiry");
+                    console.error("Submit error:", err);
+                    toastr.error("Server error occurred. Please try again.");
+                }
+            });
+        }
+
+        function ResetFormAndShow() {
+            $("#frmPublicEnquiry")[0].reset();
+            if (targetBranchID > 0) {
+                $("#ddlBranch").val(targetBranchID).prop("disabled", true);
+            }
+            OnBranchChange();
+
+            $("#cardSuccessContainer").slideUp(400, function () {
+                $("#cardFormContainer").slideDown(400);
+            });
+        }
+    </script>
+</body>
+</html>

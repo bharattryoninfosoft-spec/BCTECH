@@ -1,0 +1,2397 @@
+
+@{
+    ViewBag.Title = "CoursequestionView";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<style>
+    #tblDisplayMCQ, #tblDisplayMCQExcel {
+        font-size: 13.5px;
+    }
+
+    #mcqStatusFilterContainer {
+        border-color: #e2e8f0;
+    }
+
+    body[data-theme="dark"] #mcqStatusFilterContainer {
+        background-color: #1e293b !important;
+        border-color: #334155 !important;
+    }
+
+    body[data-theme="dark"] #mcqStatusFilterContainer label.text-secondary {
+        color: #94a3b8 !important;
+    }
+
+    /* Practical Exam Table Overrides for style.css */
+    #tblPracticalList {
+        table-layout: auto !important;
+        width: 100% !important;
+    }
+
+    #tblPracticalList th,
+    #tblPracticalList td {
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: normal !important;
+        vertical-align: middle !important;
+        padding: 10px 12px !important;
+    }
+
+    #tblPracticalList th.nowrap-cell,
+    #tblPracticalList td.nowrap-cell {
+        white-space: nowrap !important;
+    }
+
+    /* Fix style.css line 16339 .btn padding: 14px 35px */
+    #tblPracticalList .btn-action-view {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+        font-weight: 500 !important;
+        border-radius: 6px !important;
+        white-space: nowrap !important;
+        height: auto !important;
+    }
+
+    #tblPracticalList .btn-action-del {
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+        line-height: 1.2 !important;
+        border-radius: 6px !important;
+        white-space: nowrap !important;
+        height: auto !important;
+    }
+
+    #tblPracticalList .btn-status-toggle {
+        padding: 4px 10px !important;
+        font-size: 11px !important;
+        line-height: 1.2 !important;
+        font-weight: 500 !important;
+        border-radius: 20px !important;
+        white-space: nowrap !important;
+        height: auto !important;
+    }
+
+        #tblDisplayMCQ th, #tblDisplayMCQExcel th {
+            font-weight: 600;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        #tblDisplayMCQ td, #tblDisplayMCQ th, #tblDisplayMCQExcel td, #tblDisplayMCQExcel th {
+            vertical-align: top !important;
+            padding: 10px 12px;
+        }
+
+        #tblDisplayMCQ img, #tblDisplayMCQExcel img {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+    .mcq-question-cell p, .mcq-answer-cell p {
+        margin-bottom: 4px;
+    }
+
+    .mcq-objectives-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .mcq-objectives-cell .mcq-opt-item {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .mcq-objectives-cell .mcq-opt-label {
+            font-weight: 700;
+            color: #1e293b;
+            flex-shrink: 0;
+            min-width: 18px;
+        }
+
+        .mcq-objectives-cell .mcq-opt-text {
+            flex: 1;
+            min-width: 0;
+            word-break: break-word;
+        }
+
+            .mcq-objectives-cell .mcq-opt-text p {
+                display: inline !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                text-indent: 0 !important;
+            }
+
+                .mcq-objectives-cell .mcq-opt-text p + p {
+                    display: block !important;
+                    margin-top: 2px !important;
+                }
+
+    #tblDisplayMCQ_wrapper, #tblDisplayMCQExcel_wrapper {
+        padding-top: 4px;
+    }
+
+        #tblDisplayMCQ_wrapper .dataTables_filter, #tblDisplayMCQExcel_wrapper .dataTables_filter {
+            margin-bottom: 12px;
+        }
+
+            #tblDisplayMCQ_wrapper .dataTables_filter label, #tblDisplayMCQExcel_wrapper .dataTables_filter label {
+                font-weight: 500;
+                color: #475569;
+            }
+
+            #tblDisplayMCQ_wrapper .dataTables_filter input, #tblDisplayMCQExcel_wrapper .dataTables_filter input {
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                padding: 5px 12px;
+                margin-left: 8px;
+                outline: none;
+                font-size: 13.5px;
+            }
+
+                #tblDisplayMCQ_wrapper .dataTables_filter input:focus, #tblDisplayMCQExcel_wrapper .dataTables_filter input:focus {
+                    border-color: #4f46e5;
+                    box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+                }
+
+        #tblDisplayMCQ_wrapper .dataTables_length, #tblDisplayMCQExcel_wrapper .dataTables_length {
+            margin-bottom: 12px;
+        }
+
+            #tblDisplayMCQ_wrapper .dataTables_length label, #tblDisplayMCQExcel_wrapper .dataTables_length label {
+                font-weight: 500;
+                color: #475569;
+            }
+
+            #tblDisplayMCQ_wrapper .dataTables_length select, #tblDisplayMCQExcel_wrapper .dataTables_length select {
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                padding: 5px 10px;
+                margin: 0 4px;
+                outline: none;
+                font-size: 13.5px;
+            }
+
+        #tblDisplayMCQ_wrapper .dataTables_info, #tblDisplayMCQExcel_wrapper .dataTables_info {
+            font-size: 13px;
+            color: #64748b;
+            padding-top: 10px;
+        }
+
+        #tblDisplayMCQ_wrapper .dataTables_paginate, #tblDisplayMCQExcel_wrapper .dataTables_paginate {
+            padding-top: 8px;
+        }
+
+            #tblDisplayMCQ_wrapper .dataTables_paginate .paginate_button, #tblDisplayMCQExcel_wrapper .dataTables_paginate .paginate_button {
+                padding: 4px 10px !important;
+                border-radius: 5px !important;
+                font-size: 13px !important;
+                cursor: pointer;
+            }
+
+                #tblDisplayMCQ_wrapper .dataTables_paginate .paginate_button.current, #tblDisplayMCQExcel_wrapper .dataTables_paginate .paginate_button.current {
+                    background: #16a34a !important;
+                    border-color: #16a34a !important;
+                    color: #fff !important;
+                }
+</style>
+
+<!-- Start Main Content Area -->
+
+<div class="main-content-container overflow-hidden">
+
+
+    <div class="row">
+
+
+
+        <!-- Button trigger modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdrop3Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdrop3Label" style="font-size: 1.20rem !important;"></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="txtCourseID" name="txtCourseID" value="0" />
+                        <input type="hidden" id="hfQuestionID" name="hfQuestionID" value="0" />
+
+                        <div class="card-body">
+
+
+                            <div id="divMCQQuestions">
+                                <!-- Nav Tabs -->
+                                <ul class="nav nav-tabs mb-4" id="mcqModalTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active fw-medium fs-15" id="tab-displaymcq" data-bs-toggle="tab" data-bs-target="#tab-pane-displaymcq" type="button" role="tab" aria-controls="tab-pane-displaymcq" aria-selected="true">
+                                            <i class="ri-checkbox-circle-line me-1"></i> Display MCQ Questions
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link fw-medium fs-15" id="tab-question" data-bs-toggle="tab" data-bs-target="#tab-pane-question" type="button" role="tab" aria-controls="tab-pane-question" aria-selected="false">
+                                            <i class="ri-question-line me-1"></i> Question
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link fw-medium fs-15" id="tab-objective" data-bs-toggle="tab" data-bs-target="#tab-pane-objective" type="button" role="tab" aria-controls="tab-pane-objective" aria-selected="false">
+                                            <i class="ri-list-check-2 me-1"></i> Objective
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link fw-medium fs-15" id="tab-answer" data-bs-toggle="tab" data-bs-target="#tab-pane-answer" type="button" role="tab" aria-controls="tab-pane-answer" aria-selected="false">
+                                            <i class="ri-checkbox-circle-line me-1"></i> Answer
+                                        </button>
+                                    </li>
+
+                                </ul>
+
+                                <!-- Tab Contents -->
+                                <div class="tab-content" id="mcqModalTabsContent">
+                                    <!-- 0 Tab: Display MCQ -->
+                                    <div class="tab-pane fade show active" id="tab-pane-displaymcq" role="tabpanel" aria-labelledby="tab-displaymcq" tabindex="0">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                                                    <div>
+                                                        <h6 class="mb-0 fw-semibold text-secondary fs-16">
+                                                            <i class="ri-questionnaire-line me-1 text-primary"></i> MCQ Questions List
+                                                        </h6>
+                                                        <small class="text-muted" id="lblCourseQuestionCount">Total Questions: 0</small>
+                                                    </div>
+
+                                                    <!-- MCQ Status Filter (Active / Deactive) Radio Buttons -->
+                                                    <div class="d-flex align-items-center bg-light px-3 py-1 rounded-3 border" id="mcqStatusFilterContainer" style="height: 38px;">
+                                                        <div class="form-check form-check-inline m-0 me-3 d-flex align-items-center">
+                                                            <input class="form-check-input cursor-pointer me-1" type="radio" name="rdoMCQStatusFilter" id="rdoMCQActive" value="active" checked style="cursor: pointer;">
+                                                            <label class="form-check-label fw-semibold text-success fs-13" for="rdoMCQActive" style="cursor: pointer;">
+                                                                <i class="ri-checkbox-circle-line me-1"></i>Active
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline m-0 d-flex align-items-center">
+                                                            <input class="form-check-input cursor-pointer me-1" type="radio" name="rdoMCQStatusFilter" id="rdoMCQDeactive" value="deactive" style="cursor: pointer;">
+                                                            <label class="form-check-label fw-semibold text-secondary fs-13" for="rdoMCQDeactive" style="cursor: pointer;">
+                                                                <i class="ri-close-circle-line me-1"></i>Deactive
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="d-flex gap-2">
+                                                        <button type="button" class="btn btn-primary btn-sm text-white" onclick="addNewMCQQuestion()">
+                                                            <i class="ri-add-line me-1"></i> Add New Question
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshMCQGrid()" title="Reload Questions">
+                                                            <i class="ri-refresh-line"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="table-responsive">
+                                                    <table id="tblDisplayMCQ" class="table table-bordered table-hover align-middle w-100" style="width: 100%;">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th class="text-center" style="width: 60px; min-width: 50px;">SR. No.</th>
+                                                                <th class="text-center" style="width: 125px; min-width: 110px;">Operation</th>
+                                                                <th style="width: 35%; min-width: 220px;">Question</th>
+                                                                <th style="width: 30%; min-width: 220px;">Objectives</th>
+                                                                <th style="width: 25%; min-width: 180px;">Answer</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tblDisplayMCQBody">
+                                                            <tr>
+                                                                <td colspan="5" class="text-center py-4 text-muted">
+                                                                    <i class="ri-loader-4-line ri-spin fs-20 align-middle me-1"></i> Loading MCQ Questions...
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 1st Tab: Question -->
+                                    <div class="tab-pane fade" id="tab-pane-question" role="tabpanel" aria-labelledby="tab-question" tabindex="0">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mb-20">
+                                                    <label class="label fs-16 mb-2">Question <span class="text-danger">*</span></label>
+                                                    <div class="position-relative">
+                                                        <textarea id="txtQuestion" name="txtQuestion" class="form-control" rows="5" placeholder="Enter Question"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 2nd Tab: Objective -->
+                                    <div class="tab-pane fade" id="tab-pane-objective" role="tabpanel" aria-labelledby="tab-objective" tabindex="0">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="mb-20">
+                                                    <label class="label fs-16 mb-2">Option A <span class="text-danger">*</span></label>
+                                                    <div class="position-relative">
+                                                        <textarea id="txtOBA" name="txtOBA" class="form-control" rows="3" placeholder="Enter Option A"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="mb-20">
+                                                    <label class="label fs-16 mb-2">Option B <span class="text-danger">*</span></label>
+                                                    <div class="position-relative">
+                                                        <textarea id="txtOBB" name="txtOBB" class="form-control" rows="3" placeholder="Enter Option B"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="mb-20">
+                                                    <label class="label fs-16 mb-2">Option C <span class="text-muted fs-13">(Optional)</span></label>
+                                                    <div class="position-relative">
+                                                        <textarea id="txtOBC" name="txtOBC" class="form-control" rows="3" placeholder="Enter Option C"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="mb-20">
+                                                    <label class="label fs-16 mb-2">Option D <span class="text-muted fs-13">(Optional)</span></label>
+                                                    <div class="position-relative">
+                                                        <textarea id="txtOBD" name="txtOBD" class="form-control" rows="3" placeholder="Enter Option D"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3rd Tab: Answer -->
+                                    <div class="tab-pane fade" id="tab-pane-answer" role="tabpanel" aria-labelledby="tab-answer" tabindex="0">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-6">
+                                                <div class="mb-20">
+                                                    <label class="label fs-16 mb-2">Correct Objective / Answer <span class="text-danger">*</span></label>
+                                                    <div class="position-relative">
+                                                        <select id="DDLobjectives" name="DDLobjectives" class="form-select">
+                                                            <option value="">-- Select Answer --</option>
+                                                            <option value="A">A</option>
+                                                            <option value="B">B</option>
+                                                            <option value="C">C</option>
+                                                            <option value="D">D</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-20">
+                                                    <label class="label fs-16 mb-2">Answer Description</label>
+                                                    <div class="position-relative">
+                                                        <textarea id="txtansdesc" name="txtansdesc" class="form-control" rows="4" placeholder="Enter Answer Description"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div id="divMCQExcel" style="display: none;">
+                                <div class="card border-0 shadow-sm rounded-3">
+                                    <div class="card-body p-4">
+
+                                        <!-- Header section -->
+                                        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                                            <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0" style="width: 50px; height: 50px; background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+                                                <i class="ri-file-excel-2-fill fs-24" style="color: #16a34a;"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-1 fw-bold text-dark">Bulk Upload MCQ Questions via Excel</h5>
+                                                <p class="text-muted mb-0 fs-13">Upload an Excel (.xlsx, .xls) file to automatically import and save multiple choice questions for this course.</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- File Upload Box / Dropzone -->
+                                        <div class="mb-4">
+                                            <label for="fuMCQExcel" id="mcqExcelDropZone" class="d-block border border-2 border-dashed rounded-3 p-4 text-center m-0"
+                                                   style="background-color: #fafafa; border-color: #cbd5e1; cursor: pointer; transition: all 0.2s ease-in-out;">
+                                                <div class="py-3">
+                                                    <i class="ri-upload-cloud-2-line fs-48" style="color: #16a34a; pointer-events: none;"></i>
+                                                    <h6 class="mt-3 mb-1 fw-semibold text-secondary" style="pointer-events: none;">Click here to browse or drag &amp; drop Excel file</h6>
+                                                    <p class="text-muted fs-13 mb-2" style="pointer-events: none;">Supported format: <strong>.xlsx, .xls</strong></p>
+                                                    <span class="btn btn-outline-success btn-sm px-3 py-1 fw-medium" style="pointer-events: none;">
+                                                        <i class="ri-folder-open-line me-1"></i> Browse Excel File
+                                                    </span>
+                                                </div>
+                                            </label>
+                                            <input type="file" id="fuMCQExcel" name="fuMCQExcel" accept=".xlsx, .xls" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; opacity: 0;" onchange="onMCQExcelSelected(this)" />
+
+                                            <!-- Selected file info bar (hidden initially) -->
+                                            <div id="divSelectedFileInfo" class="mt-3 p-3 bg-light rounded-3 border d-flex justify-content-between align-items-center d-none">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="ri-file-excel-2-line fs-24 text-success"></i>
+                                                    <div>
+                                                        <div class="fw-semibold text-dark fs-14" id="lblSelectedFileName">filename.xlsx</div>
+                                                        <div class="text-muted fs-12" id="lblSelectedFileSize">0 KB</div>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-outline-danger btn-sm py-1 px-2" onclick="clearMCQExcelFile(event)" title="Remove file">
+                                                    <i class="ri-close-line"></i> Remove
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Download Sample Excel Section (Directly under Excel upload) -->
+                                        <div class="p-3 rounded-3 border mb-4" style="background-color: #f0fdf4; border-color: #bbf7d0;">
+                                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background-color: #dcfce7;">
+                                                        <i class="ri-file-download-line fs-20" style="color: #15803d;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-semibold text-dark fs-14">Download Sample Excel Template</div>
+                                                        <div class="text-muted fs-12">Download the demo Excel file with sample questions &amp; predefined columns.</div>
+                                                    </div>
+                                                </div>
+                                                <a href="/Content/MCQ-Demo.xlsx" download="MCQ-Demo.xlsx" class="btn btn-sm text-white fw-medium d-inline-flex align-items-center gap-1 px-3 py-2 rounded-2" style="background-color: #16a34a; border-color: #16a34a;">
+                                                    <i class="ri-download-2-line"></i> Download Sample Excel
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <!-- Back button when no file is previewed -->
+                                        <div class="d-flex justify-content-end align-items-center pt-3 border-top mt-3" id="divMCQExcelTopBackBtn">
+                                            <button type="button" class="btn btn-outline-secondary px-3 py-2" onclick="cancelMCQExcelUpload()">
+                                                <i class="ri-arrow-left-line me-1"></i> Back to Questions List
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+
+
+
+                                <div class="card border-0 shadow-sm rounded-3 mt-4 d-none" id="cardMCQExcelTable">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                                            <div>
+                                                <h6 class="mb-0 fw-semibold text-secondary fs-16" id="lblMCQExcelTableTitle">
+                                                    <i class="ri-questionnaire-line me-1 text-success"></i> Course MCQ Questions List
+                                                </h6>
+                                                <small class="text-muted" id="lblMCQExcelQuestionCount">Total Questions: 0</small>
+                                            </div>
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <span class="badge bg-light text-dark border px-2 py-1 fs-12" id="badgeMCQExcelTableStatus">
+                                                    <i class="ri-database-2-line me-1 text-primary"></i> Saved Course Questions
+                                                </span>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshMCQExcelGrid()" title="Reload Questions">
+                                                    <i class="ri-refresh-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <table id="tblDisplayMCQExcel" class="table table-bordered table-hover align-middle w-100" style="width: 100%;">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th class="text-center" style="width: 60px; min-width: 50px;">SR. No.</th>
+                                                        <th class="text-center" style="width: 125px; min-width: 110px;" id="thMCQExcelOperation">Operation</th>
+                                                        <th style="width: 35%; min-width: 220px;">Question</th>
+                                                        <th style="width: 30%; min-width: 220px;">Objectives</th>
+                                                        <th style="width: 25%; min-width: 180px;">Answer</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tblDisplayMCQExcelBody">
+                                                    <tr>
+                                                        <td colspan="5" class="text-center py-4 text-muted">
+                                                            <i class="ri-loader-4-line ri-spin fs-20 align-middle me-1"></i> Loading MCQ Questions...
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Upload progress bar (at bottom) -->
+                                        <div id="mcqExcelProgress" class="mt-3 mb-2 d-none">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="fs-13 fw-medium text-secondary"><i class="ri-loader-4-line ri-spin me-1"></i> Saving MCQ questions into database...</span>
+                                                <span class="fs-13 text-muted">Please wait...</span>
+                                            </div>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 100%;"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Upload Action Buttons (at bottom) -->
+                                        <div class="d-flex justify-content-end align-items-center gap-2 pt-3 mt-3 border-top">
+                                            <button type="button" class="btn btn-outline-secondary px-3 py-2" onclick="cancelMCQExcelUpload()">
+                                                <i class="ri-arrow-left-line me-1"></i> Back to Questions List
+                                            </button>
+                                            <button type="button" class="btn btn-success px-4 py-2 text-white fw-medium d-inline-flex align-items-center gap-2" id="btnUploadMCQExcel" onclick="uploadMCQExcelFile()">
+                                                <i class="ri-upload-cloud-line fs-18"></i> Upload &amp; Save Questions
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div id="divPracticalExcel" style="display: none;">
+                                <!-- Practical PDF Upload Card -->
+                                <div class="card border-0 shadow-sm rounded-3 mb-4" style="background: #ffffff; border: 1px solid #fee2e2 !important;">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex align-items-center gap-2 mb-3">
+                                            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background-color: #fef2f2; width: 44px; height: 44px;">
+                                                <i class="material-symbols-outlined fs-24 text-danger">picture_as_pdf</i>
+                                            </div>
+                                            <div>
+                                                <h5 class="fw-bold text-dark mb-0 fs-16">Upload Practical Exam PDF</h5>
+                                                <p class="text-muted fs-12 mb-0">Upload course practical question paper / exam material (.PDF format).</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Drag & Drop Zone -->
+                                        <div id="dropZonePracticalPdf" class="border border-2 border-dashed rounded-3 p-4 text-center position-relative mb-3"
+                                             style="background-color: #fffaf0; border-color: #fca5a5 !important; cursor: pointer; transition: all 0.2s ease;">
+                                            <input type="file" id="fuPracticalPdf" accept=".pdf,application/pdf" style="display: none;" onchange="onPracticalPdfSelected(this)" />
+                                            <div id="dropZonePracticalPdfPrompt">
+                                                <i class="ri-file-pdf-2-line fs-42 text-danger d-block mb-2"></i>
+                                                <h6 class="fw-semibold text-dark fs-14 mb-1">Click to browse or Drag &amp; Drop Practical PDF here</h6>
+                                                <p class="text-muted fs-12 mb-0">Accepted format: <strong>.PDF only</strong> (Max size: 30MB)</p>
+                                            </div>
+                                            <!-- Selected file info preview -->
+                                            <div id="divPracticalSelectedFileInfo" class="d-none">
+                                                <div class="d-flex align-items-center justify-content-center gap-3 p-3 bg-white rounded-2 border">
+                                                    <i class="ri-file-pdf-fill fs-36 text-danger"></i>
+                                                    <div class="text-start">
+                                                        <div class="fw-bold text-dark fs-14" id="lblPracticalPdfName">filename.pdf</div>
+                                                        <small class="text-muted fs-12" id="lblPracticalPdfSize">0 KB</small>
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger ms-3 py-1 px-2" onclick="clearPracticalPdfFile(event)" title="Remove file">
+                                                        <i class="ri-close-line"></i> Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Description -->
+                                        <div class="mb-3">
+                                            <label for="txtPracticalDescription" class="form-label fs-13 fw-semibold text-secondary mb-1">
+                                                Exam Description / Instructions <span class="text-muted fw-normal">(Optional)</span>
+                                            </label>
+                                            <textarea id="txtPracticalDescription" class="form-control fs-13" rows="2" placeholder="e.g. Practical Exam Task Paper - 100 Marks (Time: 2 Hours)"></textarea>
+                                        </div>
+
+                                        <!-- Status isActive Toggle -->
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="chkPracticalIsActive" checked style="cursor: pointer;">
+                                            <label class="form-check-label fs-13 fw-semibold text-secondary" for="chkPracticalIsActive" style="cursor: pointer;">
+                                                Status: <span class="text-success fw-bold" id="lblPracticalStatusTxt">Active</span> <span class="text-muted fw-normal">(isActive in database)</span>
+                                            </label>
+                                        </div>
+
+                                        <!-- Progress bar -->
+                                        <div id="practicalUploadProgress" class="d-none mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-1 fs-12">
+                                                <span class="text-danger fw-semibold"><i class="ri-loader-4-line ri-spin me-1"></i> Uploading &amp; Saving PDF to database...</span>
+                                                <span class="text-muted">Please wait...</span>
+                                            </div>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" style="width: 100%;"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Action buttons -->
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top">
+                                            <small class="text-muted fs-12"><i class="ri-shield-check-line text-success me-1"></i> PDF is saved to server and linked into database</small>
+                                            <button type="button" class="btn btn-danger px-4 py-2 text-white fw-medium d-inline-flex align-items-center gap-2" id="btnUploadPracticalPdf" onclick="uploadPracticalPdfFile()">
+                                                <i class="ri-upload-cloud-line fs-18"></i> Upload &amp; Save PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Uploaded Practical PDFs List -->
+                                <div class="card border-0 shadow-sm rounded-3">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <h6 class="mb-0 fw-bold text-dark fs-15">
+                                                    <i class="ri-folder-pdf-line text-danger me-1"></i> Uploaded Practical PDFs
+                                                </h6>
+                                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill fs-11" id="badgePracticalCount">0 Files</span>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadPracticalExamList()" title="Refresh List">
+                                                <i class="ri-refresh-line"></i> Refresh
+                                            </button>
+                                        </div>
+
+                                        <div class="table-responsive rounded-2 border">
+                                            <table class="table table-hover align-middle mb-0" id="tblPracticalList">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th class="text-center" style="width: 50px;">#</th>
+                                                        <th style="min-width: 200px;">PDF Document</th>
+                                                        <th style="min-width: 180px;">Description</th>
+                                                        <th class="text-center nowrap-cell" style="width: 105px;">Status</th>
+                                                        <th class="nowrap-cell" style="width: 170px;">Uploaded On</th>
+                                                        <th class="text-center nowrap-cell" style="width: 160px; min-width: 155px;">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tblPracticalListBody">
+                                                    <tr>
+                                                        <td colspan="6" class="text-center py-4 text-muted">
+                                                            <i class="ri-loader-4-line ri-spin fs-20 align-middle me-1 text-danger"></i> Loading practical exam documents...
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary text-white" id="btnSaveQuestion" onclick="SaveMCQQuestion()"><i class="ri-save-line me-1"></i> Save Question</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-md-12 col-lg-12">
+            <div class="row justify-content-center" id="divCourselist">
+
+
+
+
+
+
+
+
+
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card bg-white rounded-10 border-0 mb-4 shadow-sm">
+                        <div class="position-relative">
+                            <a href="product-details.html" class="text-decoration-none d-block">
+                                <img src="assets/images/product1.jpg" class="w-100 rounded-10" alt="product1">
+                            </a>
+                        </div>
+
+                        <div class="p-20 text-center">
+                            <h3 class="mb-10">
+                                <a href="product-details.html" class="text-decoration-none text-secondary hover-text">Luxury Rendering</a>
+                            </h3>
+
+                            <!-- Action Buttons Container -->
+                            <div class="d-flex flex-column gap-2">
+                                <!-- Row 1: MCQ (Blue/Indigo) & Excel (Green) -->
+                                <div class="d-flex gap-2">
+                                    <!-- MCQ Button -->
+                                    <button type="button" class="btn w-50 d-flex align-items-center justify-content-center gap-2 fw-medium rounded-2"
+                                            style="padding: 10px; color: #4f46e5; background-color: #eef2ff; border: 1px solid #c7d2fe;" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" onclick="getmcqmodel(1)">
+                                        <i class="material-symbols-outlined fs-20">quiz</i>
+                                        <span class="fs-15">MCQ</span>
+                                    </button>
+
+                                    <!-- Excel Button -->
+                                    <button type="button" class="btn w-50 d-flex align-items-center justify-content-center gap-2 fw-medium rounded-2"
+                                            style="padding: 10px; color: #15803d; background-color: #f0fdf4; border: 1px solid #bbf7d0;" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" onclick="getexcelmodel(1)">
+                                        <i class="material-symbols-outlined fs-20">description</i>
+                                        <span class="fs-15">Excel</span>
+                                    </button>
+                                </div>
+
+                                <!-- Row 2: Practical (PDF Red - Centered) -->
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn w-50 d-flex align-items-center justify-content-center gap-2 fw-medium rounded-2"
+                                            style="padding: 10px; color: #dc2626; background-color: #fef2f2; border: 1px solid #fecaca;" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" onclick="getpracticlemodel(1)">
+                                        <i class="material-symbols-outlined fs-20">computer</i>
+                                        <span class="fs-15">Practical</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+
+
+        var CourseID = '@(ViewBag.CourseID ?? "")';
+        var mode = '@(ViewBag.mode ?? "")';
+
+        function initCKEditors() {
+            var editors = ['#txtQuestion', '#txtOBA', '#txtOBB', '#txtOBC', '#txtOBD', '#txtansdesc'];
+
+            editors.forEach(function (sel) {
+                var elemId = sel.replace('#', '');
+                var isLarge = (sel === '#txtQuestion' || sel === '#txtansdesc');
+                var h = isLarge ? 160 : 100;
+
+                if (typeof CKEDITOR !== 'undefined') {
+                    if (!CKEDITOR.instances[elemId]) {
+                        CKEDITOR.replace(elemId, {
+                            height: h
+                        });
+                    }
+                } else if ($.fn.summernote) {
+                    if (!$(sel).next('.note-editor').length) {
+                        $(sel).summernote({
+                            height: h,
+                            placeholder: 'Type here...'
+                        });
+                    }
+                }
+            });
+        }
+
+        $(function () {
+            if (typeof EditCourse === "function" && CourseID != "" && CourseID != "0") {
+                EditCourse(CourseID);
+            }
+
+            if (mode == "E") {
+                $("#btnSave").html('<i class="ri-save-line me-2"></i> Update Course');
+            } else {
+                $("#btnSave").html('<i class="ri-save-line me-2"></i> Save Course');
+            }
+
+            if (mode == "V") {
+                $("input,select,textarea").prop("disabled", true);
+                $(".chkMasterCourse").prop("disabled", true);
+                if ($.fn.summernote) {
+                    $('#txtQuestion, #txtOBA, #txtOBB, #txtOBC, #txtOBD, #txtansdesc').summernote("disable");
+                }
+                $("#btnSave").hide();
+                $("#fuCourseImage").hide();
+                if (typeof ToggleMasterCourse === "function") {
+                    ToggleMasterCourse();
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            if ($.fn.dataTable) {
+                $.fn.dataTable.ext.errMode = 'none';
+            }
+            GetCourseList();
+            initCKEditors();
+
+            $('#staticBackdrop3').on('shown.bs.modal', function () {
+                initCKEditors();
+                if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tblDisplayMCQ')) {
+                    $('#tblDisplayMCQ').DataTable().columns.adjust().draw();
+                }
+                if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tblDisplayMCQExcel')) {
+                    $('#tblDisplayMCQExcel').DataTable().columns.adjust().draw();
+                }
+            });
+
+            $('#mcqModalTabs button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                initCKEditors();
+                if ($(e.target).attr('id') === 'tab-displaymcq') {
+                    if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tblDisplayMCQ')) {
+                        $('#tblDisplayMCQ').DataTable().columns.adjust().draw();
+                    }
+                }
+            });
+
+            initMCQExcelDropZone();
+        });
+
+        var CourseListArray = [];
+        var CourseArray = [];
+
+
+        function GetCourseList() {
+
+            $.ajax({
+                url: "/bctechadmin/GetCourseGridList",
+                type: "GET",
+                dataType: "json",
+
+                success: function (res) {
+                    CourseArray = Array.isArray(res) ? res : (res.data || []);
+
+                    console.log(CourseArray);
+
+
+                    var $courseList = $("#divCourselist");
+                    $courseList.empty();
+
+                    // Support both direct array and { data: [...] } response
+                    var courses = Array.isArray(res) ? res : (res.data || []);
+
+                    if (!courses.length) {
+                        $courseList.html(
+                            '<div class="col-12 text-center">' +
+                            '<p class="text-muted">No courses available.</p>' +
+                            '</div>'
+                        );
+                        return;
+                    }
+
+                    var html = [];
+
+                    $.each(courses, function (i, item) {
+
+                        var courseId = Number(item.CourseID) || 0;
+
+                        var courseTitle = $("<div>")
+                            .text(item.CourseTitle || "Untitled Course")
+                            .html();
+                        //"/Content/Upload/CourseImage/" +
+                        var imageUrl = item.CourseImage
+                            ? "/Content/Upload/CourseImage/" + item.CourseImage
+                            : "/Content/Admin/assets/images/no-image.png";
+
+
+
+                        //alert(imageUrl);
+                        var safeImageUrl = $("<div>")
+                            .text(imageUrl)
+                            .html();
+
+                        html.push(
+                            '<div class="col-sm-6 col-lg-3">' +
+                            '<div class="card bg-white rounded-10 border-0 mb-4 shadow-sm">' +
+
+                            '<div class="position-relative">' +
+                            '<img src="https://erp.bctech.org.in/' + safeImageUrl + '"' +
+                            ' class="w-100 rounded-10"' +
+                            ' alt="' + courseTitle + '"' +
+                            ' style="height:180px; object-fit:cover;"' +
+                            ' onerror="this.onerror=null;this.src=\'/Content/images/no-image.png\';">' +
+                            '</div>' +
+
+                            '<div class="p-20 text-center">' +
+
+                            '<h3 class="mb-10">' +
+                            '<a href="javascript:void(0)"' +
+                            ' class="text-decoration-none text-secondary hover-text">' +
+                            courseTitle +
+                            '</a>' +
+                            '</h3>' +
+
+                            '<div class="d-flex flex-column gap-2">' +
+
+                            '<div class="d-flex gap-2">' +
+                            '<button type="button" class="btn w-50 d-flex align-items-center justify-content-center gap-2 fw-medium rounded-2" style="padding: 10px; color: #4f46e5; background-color: #eef2ff; border: 1px solid #c7d2fe;" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" onclick="getmcqmodel(' + courseId + ')">' +
+                            '<i class="material-symbols-outlined fs-20">quiz</i>' +
+                            '<span class="fs-15">MCQ</span>' +
+                            '</button>' +
+
+                            '<button type="button" class="btn w-50 d-flex align-items-center justify-content-center gap-2 fw-medium rounded-2" style="padding: 10px; color: #15803d; background-color: #f0fdf4; border: 1px solid #bbf7d0;" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" onclick="getexcelmodel(' + courseId + ')">' +
+                            '<i class="material-symbols-outlined fs-20">description</i>' +
+                            '<span class="fs-15">Excel</span>' +
+                            '</button>' +
+
+                            '</div>' +
+
+                            '<div class="d-flex justify-content-center">' +
+                            '<button type="button"' +
+                            ' class="btn w-100 d-flex align-items-center justify-content-center gap-2 fw-medium rounded-2"' +
+                            ' style="padding:10px;color:#dc2626;background-color:#fef2f2;border:1px solid #fecaca;"' +
+                            ' data-bs-toggle="modal"' +
+                            ' data-bs-target="#staticBackdrop3"' +
+                            ' onclick="getpracticlemodel(' + courseId + ')">' +
+                            '<i class="material-symbols-outlined fs-20">computer</i>' +
+                            '<span class="fs-15">Practical</span>' +
+                            '</button>' +
+                            '</div>' +
+
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>'
+                        );
+
+                    });
+
+                    // Append all course cards at once
+                    $courseList.html(html.join(""));
+
+                },
+
+                error: function (xhr, status, error) {
+
+                    console.error("GetCourseList Error:", error);
+                    console.error("Response:", xhr.responseText);
+
+                    $("#divCourselist").html(
+                        '<div class="col-12 text-center">' +
+                        '<p class="text-danger">Unable to load courses. Please try again.</p>' +
+                        '</div>'
+                    );
+                }
+            });
+
+        }
+
+
+
+        function getEditorValue(sel) {
+            var elemId = sel.replace('#', '');
+            if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[elemId]) {
+                return CKEDITOR.instances[elemId].getData();
+            } else if ($.fn.summernote && $(sel).next('.note-editor').length) {
+                return $(sel).summernote('code');
+            }
+            return $(sel).val();
+        }
+
+        function setEditorValue(sel, val) {
+            var elemId = sel.replace('#', '');
+            if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances[elemId]) {
+                CKEDITOR.instances[elemId].setData(val || '');
+            } else if ($.fn.summernote && $(sel).next('.note-editor').length) {
+                $(sel).summernote('code', val || '');
+            } else {
+                $(sel).val(val || '');
+            }
+        }
+
+        function resetMCQForm(switchTabToDisplay) {
+            $('#hfQuestionID').val('0');
+            setEditorValue('#txtQuestion', '');
+            setEditorValue('#txtOBA', '');
+            setEditorValue('#txtOBB', '');
+            setEditorValue('#txtOBC', '');
+            setEditorValue('#txtOBD', '');
+            $('#DDLobjectives').val('');
+            setEditorValue('#txtansdesc', '');
+            $("#btnSaveQuestion").html('<i class="ri-save-line me-1"></i> Save Question');
+
+            if (switchTabToDisplay !== false) {
+                var firstTab = document.querySelector('#tab-displaymcq');
+                if (firstTab && typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+                    var tabTrigger = new bootstrap.Tab(firstTab);
+                    tabTrigger.show();
+                }
+            }
+        }
+
+        function addNewMCQQuestion() {
+            resetMCQForm(false);
+            var qTab = document.querySelector('#tab-question');
+            if (qTab && typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+                var tabTrigger = new bootstrap.Tab(qTab);
+                tabTrigger.show();
+            }
+        }
+
+        function refreshMCQGrid() {
+            var courseId = parseInt($("#txtCourseID").val()) || 0;
+            if (courseId) {
+                LoadMCQQuestionGrid(courseId);
+            }
+        }
+
+        function getmcqmodel(courseID) {
+            var courses = (typeof CourseArray !== 'undefined' && CourseArray.length) ? CourseArray : (typeof CourseListArray !== 'undefined' ? CourseListArray : []);
+            var CourseData = courses.find(function (item) {
+                return item.CourseID == courseID;
+            });
+
+            $("#divMCQQuestions").show();
+            $("#divMCQExcel").hide();
+            $("#divPracticalExcel").hide();
+            $("#btnSaveQuestion").show();
+
+            var courseTitle = CourseData ? CourseData.CourseTitle : ("Course #" + courseID);
+            resetMCQForm(true);
+            $("#staticBackdrop3Label").html("MCQ Question - " + courseTitle);
+            $("#txtCourseID").val(courseID);
+            $("#btnSaveQuestion").html('<i class="ri-save-line me-1"></i> Save Question');
+
+            $("#rdoMCQActive").prop("checked", true);
+
+            LoadMCQQuestionGrid(courseID);
+        }
+
+        // Register custom DataTable filter for MCQ Active/Deactive status
+        if ($.fn.dataTable && $.fn.dataTable.ext && !window.mcqStatusFilterRegistered) {
+            $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                if (!settings || !settings.nTable || settings.nTable.id !== 'tblDisplayMCQ') {
+                    return true;
+                }
+                var filterVal = $('input[name="rdoMCQStatusFilter"]:checked').val();
+                if (!filterVal || filterVal === 'all') {
+                    return true;
+                }
+                var rowNode = settings.aoData[dataIndex] ? settings.aoData[dataIndex].nTr : null;
+                if (!rowNode) return true;
+                var rowIsActive = $(rowNode).attr('data-isactive');
+                if (filterVal === 'active' || filterVal === '1') {
+                    return rowIsActive === '1';
+                }
+                if (filterVal === 'deactive' || filterVal === '0') {
+                    return rowIsActive === '0';
+                }
+                return true;
+            });
+            window.mcqStatusFilterRegistered = true;
+        }
+
+        $(document).on('change', 'input[name="rdoMCQStatusFilter"]', function () {
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tblDisplayMCQ')) {
+                $('#tblDisplayMCQ').DataTable().draw();
+            }
+        });
+
+        function destroyDisplayMCQDataTable() {
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tblDisplayMCQ')) {
+                try {
+                    $('#tblDisplayMCQ').DataTable().destroy();
+                } catch (e) {
+                    console.warn("DataTable destroy warning:", e);
+                }
+            }
+        }
+
+        function initDisplayMCQDataTable() {
+            destroyDisplayMCQDataTable();
+
+            // Safety check: ensure table body has rows and that rows have 5 columns
+            var $rows = $('#tblDisplayMCQBody tr');
+            if ($rows.length === 0) {
+                return;
+            }
+            var $firstRowCells = $rows.first().children('td');
+            if ($firstRowCells.length !== 5) {
+                // Not a valid 5-column data row (e.g. colspan message row), do not initialize DataTable
+                return;
+            }
+
+            if ($.fn.DataTable) {
+                try {
+                    $('#tblDisplayMCQ').DataTable({
+                        pageLength: 20,
+                        lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]],
+                        ordering: false,
+                        autoWidth: false,
+                        responsive: true,
+                        drawCallback: function (settings) {
+                            var api = this.api();
+                            var startIndex = api.context[0]._iDisplayStart;
+                            api.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                                cell.innerHTML = (startIndex + i + 1);
+                            });
+
+                            var info = api.page.info();
+                            $("#lblCourseQuestionCount").text("Total Questions: " + info.recordsDisplay);
+                        },
+                        language: {
+                            search: "Search:",
+                            searchPlaceholder: "Search Question, Objective, Answer...",
+                            lengthMenu: "Show _MENU_ questions",
+                            info: "Showing _START_ to _END_ of _TOTAL_ questions",
+                            infoEmpty: "Showing 0 to 0 of 0 questions",
+                            infoFiltered: "(filtered from _MAX_ total questions)",
+                            emptyTable: "No MCQ questions available for this filter.",
+                            paginate: {
+                                previous: '<i class="ri-arrow-left-s-line"></i> Prev',
+                                next: 'Next <i class="ri-arrow-right-s-line"></i>'
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.warn("DataTable init warning:", e);
+                }
+            }
+        }
+
+        function hasOptionValue(val) {
+            if (!val) return false;
+            if (typeof val !== 'string') val = String(val);
+            if (/<img/i.test(val)) return true;
+            var clean = val.replace(/<[^>]*>/g, '').replace(/&nbsp;|&#160;/gi, '').trim();
+            return clean.length > 0;
+        }
+
+        function cleanOptionHtml(html) {
+            if (!html) return '';
+            var trimmed = html.trim();
+            var match = trimmed.match(/^<p(?:\s+[^>]*)?>([\s\S]*?)<\/p>$/i);
+            if (match && !/<p(?:\s+[^>]*)?>/i.test(match[1])) {
+                trimmed = match[1].trim();
+            }
+            return trimmed;
+        }
+
+        function renderOptionItem(label, val) {
+            return '<div class="mcq-opt-item">' +
+                   '<strong class="mcq-opt-label">' + label + '.</strong> ' +
+                   '<div class="mcq-opt-text">' + cleanOptionHtml(val) + '</div>' +
+                   '</div>';
+        }
+
+        function LoadMCQQuestionGrid(courseId) {
+            if (!courseId) {
+                courseId = parseInt($("#txtCourseID").val()) || 0;
+            }
+            if (!courseId) return;
+            
+            destroyDisplayMCQDataTable();
+
+            $("#tblDisplayMCQBody").html('<tr><td colspan="5" class="text-center py-4 text-muted"><i class="ri-loader-4-line ri-spin fs-22 align-middle me-2"></i> Loading MCQ Questions...</td></tr>');
+
+            $.ajax({
+                url: "/bctechadmin/GetMCQQuestionList",
+                type: "GET",
+                data: { course_id: courseId },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.Status) {
+                        var list = res.Data || [];
+                        $("#lblCourseQuestionCount").text("Total Questions: " + list.length);
+
+                        if (list.length === 0) {
+                            destroyDisplayMCQDataTable();
+                            $("#tblDisplayMCQBody").html('<tr><td colspan="5" class="text-center py-4 text-muted"><i class="ri-information-line fs-18 align-middle me-1"></i> No MCQ Questions found for this course. Click <a href="javascript:void(0)" class="fw-semibold text-primary text-decoration-underline" onclick="addNewMCQQuestion()">"Add New Question"</a> to create one.</td></tr>');
+                            return;
+                        }
+
+                        var rowsHtml = [];
+                        $.each(list, function (i, item) {
+                            var qId = item.question_id;
+                            var isActive = (item.ISActive === 1 || item.ISActive === "1" || item.ISActive === true);
+
+                            var srNoCol = '<td class="text-center align-top fw-semibold text-secondary">' + (i + 1) + '</td>';
+
+                            var activeBtn = isActive
+                                ? '<button type="button" class="btn btn-sm btn-success w-100 d-flex align-items-center justify-content-center gap-1 py-1" title="Click to Deactivate" onclick="ToggleMCQStatus(' + qId + ', 0, this)"><i class="ri-checkbox-circle-line"></i> <span>Active</span></button>'
+                                : '<button type="button" class="btn btn-sm btn-secondary w-100 d-flex align-items-center justify-content-center gap-1 py-1" title="Click to Activate" onclick="ToggleMCQStatus(' + qId + ', 1, this)"><i class="ri-close-circle-line"></i> <span>Deactive</span></button>';
+
+                            var opCol = '<div class="d-flex flex-column gap-1" style="min-width: 110px;">' +
+                                        '<button type="button" class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-1 py-1" title="Edit Question" onclick="EditMCQQuestion(' + qId + ')"><i class="ri-edit-line"></i> <span>Edit</span></button>' +
+                                        '<button type="button" class="btn btn-sm btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-1 py-1" title="Delete Question" onclick="DeleteMCQQuestion(' + qId + ', this)"><i class="ri-delete-bin-line"></i> <span>Delete</span></button>' +
+                                        activeBtn +
+                                        '</div>';
+
+                            var qCol = '<div class="mcq-question-cell" style="max-height: 250px; overflow-y: auto;">' + (item.questions || '') + '</div>';
+
+                            var objItems = [];
+                            if (hasOptionValue(item.OptionA)) {
+                                objItems.push(renderOptionItem('A', item.OptionA));
+                            } else if (item.OptionA && item.OptionA.trim() !== '') {
+                                objItems.push(renderOptionItem('A', item.OptionA));
+                            }
+
+                            if (hasOptionValue(item.OptionB)) {
+                                objItems.push(renderOptionItem('B', item.OptionB));
+                            } else if (item.OptionB && item.OptionB.trim() !== '') {
+                                objItems.push(renderOptionItem('B', item.OptionB));
+                            }
+
+                            if (hasOptionValue(item.OptionC)) {
+                                objItems.push(renderOptionItem('C', item.OptionC));
+                            }
+
+                            if (hasOptionValue(item.OptionD)) {
+                                objItems.push(renderOptionItem('D', item.OptionD));
+                            }
+
+                            var objCol = '<div class="mcq-objectives-cell">' + objItems.join('') + '</div>';
+
+                            var descHtml = '';
+                            if (item.answer_description && item.answer_description.trim() !== '') {
+                                descHtml = '<div class="mt-2 p-2 bg-light rounded border text-muted small"><strong class="text-secondary">Desc:</strong> <div>' + item.answer_description + '</div></div>';
+                            }
+
+                            var ansCol = '<div class="mcq-answer-cell">' +
+                                         '<div><span class="badge bg-success-subtle text-success fs-13 border border-success px-2 py-1"><i class="ri-check-line fw-bold me-1"></i>Option <strong>' + (item.CorrectOption || 'N/A') + '</strong></span></div>' +
+                                         descHtml +
+                                         '</div>';
+
+                            rowsHtml.push('<tr data-isactive="' + (isActive ? '1' : '0') + '">' +
+                                          srNoCol +
+                                          '<td class="text-center align-top">' + opCol + '</td>' +
+                                          '<td class="align-top">' + qCol + '</td>' +
+                                          '<td class="align-top">' + objCol + '</td>' +
+                                          '<td class="align-top">' + ansCol + '</td>' +
+                                          '</tr>');
+                        });
+
+                        destroyDisplayMCQDataTable();
+                        $("#tblDisplayMCQBody").html(rowsHtml.join(""));
+                        initDisplayMCQDataTable();
+                    } else {
+                        destroyDisplayMCQDataTable();
+                        $("#tblDisplayMCQBody").html('<tr><td colspan="5" class="text-center py-4 text-danger">' + (res.Message || 'Failed to load MCQ questions.') + '</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    destroyDisplayMCQDataTable();
+                    $("#tblDisplayMCQBody").html('<tr><td colspan="5" class="text-center py-4 text-danger">Error loading questions: ' + error + '</td></tr>');
+                }
+            });
+        }
+
+        function SaveMCQQuestion() {
+            var courseId = parseInt($("#txtCourseID").val()) || 0;
+            var questionId = parseInt($("#hfQuestionID").val()) || 0;
+            var questions = getEditorValue('#txtQuestion');
+            var oba = getEditorValue('#txtOBA');
+            var obb = getEditorValue('#txtOBB');
+            var obc = getEditorValue('#txtOBC');
+            var obd = getEditorValue('#txtOBD');
+            var ddlAns = $("#DDLobjectives").val();
+            var ansDesc = getEditorValue('#txtansdesc');
+
+            if (!courseId) {
+                toastr.warning("Course ID is missing. Please select course again.");
+                return;
+            }
+
+            var qText = $("<div>").html(questions).text().trim();
+            if (!qText && !questions.includes('<img')) {
+                toastr.warning("Please enter Question.");
+                var qTab = new bootstrap.Tab(document.querySelector('#tab-question'));
+                qTab.show();
+                return;
+            }
+
+            var obaText = $("<div>").html(oba).text().trim();
+            var obbText = $("<div>").html(obb).text().trim();
+            var obcText = $("<div>").html(obc).text().trim();
+            var obdText = $("<div>").html(obd).text().trim();
+
+            if (!obaText || !obbText) {
+                toastr.warning("Please provide Option A and Option B.");
+                var objTab = new bootstrap.Tab(document.querySelector('#tab-objective'));
+                objTab.show();
+                return;
+            }
+
+            if (!ddlAns) {
+                toastr.warning("Please select Correct Answer Option in Answer tab.");
+                var ansTab = new bootstrap.Tab(document.querySelector('#tab-answer'));
+                ansTab.show();
+                return;
+            }
+
+            if (ddlAns === "C" && !obcText) {
+                toastr.warning("Option C cannot be empty when selected as correct answer.");
+                var objTab = new bootstrap.Tab(document.querySelector('#tab-objective'));
+                objTab.show();
+                return;
+            }
+
+            if (ddlAns === "D" && !obdText) {
+                toastr.warning("Option D cannot be empty when selected as correct answer.");
+                var objTab = new bootstrap.Tab(document.querySelector('#tab-objective'));
+                objTab.show();
+                return;
+            }
+
+            var isUpdate = (questionId > 0);
+            var btnText = isUpdate ? 'Updating...' : 'Saving...';
+            var defaultBtnHtml = isUpdate ? '<i class="ri-save-line me-1"></i> Update Question' : '<i class="ri-save-line me-1"></i> Save Question';
+
+            if (!hasOptionValue(obc)) {
+                obc = '';
+            }
+            if (!hasOptionValue(obd)) {
+                obd = '';
+            }
+
+            var postData = {
+                question_id: questionId,
+                course_id: courseId,
+                questions: questions,
+                txtOBA: oba,
+                txtOBB: obb,
+                txtOBC: obc,
+                txtOBD: obd,
+                DDLobjectives: ddlAns,
+                txtansdesc: ansDesc
+            };
+
+            $("#btnSaveQuestion").prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> ' + btnText);
+
+            $.ajax({
+                url: "/bctechadmin/SaveMCQQuestion",
+                type: "POST",
+                data: postData,
+                dataType: "json",
+                success: function (res) {
+                    $("#btnSaveQuestion").prop("disabled", false).html(defaultBtnHtml);
+                    if (res && res.Status) {
+                        toastr.success(res.Message || (isUpdate ? "MCQ Question updated successfully!" : "MCQ Question saved successfully!"));
+                        resetMCQForm(true);
+                        LoadMCQQuestionGrid(courseId);
+                    } else {
+                        toastr.error(res && res.Message ? res.Message : "Failed to save Question.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $("#btnSaveQuestion").prop("disabled", false).html(defaultBtnHtml);
+                    toastr.error("Server error occurred while saving: " + error);
+                }
+            });
+        }
+
+        function EditMCQQuestion(questionId) {
+            $.ajax({
+                url: "/bctechadmin/GetMCQQuestionByID",
+                type: "GET",
+                data: { question_id: questionId },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.Status && res.Data) {
+                        var d = res.Data;
+                        $("#hfQuestionID").val(d.question_id);
+                        $("#txtCourseID").val(d.course_id);
+                        $("#staticBackdrop3Label").html("Edit MCQ Question - " + (d.CourseTitle || ""));
+                        setEditorValue('#txtQuestion', d.questions);
+                        setEditorValue('#txtOBA', d.OptionA_Text);
+                        setEditorValue('#txtOBB', d.OptionB_Text);
+                        setEditorValue('#txtOBC', d.OptionC_Text);
+                        setEditorValue('#txtOBD', d.OptionD_Text);
+                        $("#DDLobjectives").val(d.CorrectOption || "");
+                        setEditorValue('#txtansdesc', d.answer_description);
+                        $("#btnSaveQuestion").html('<i class="ri-save-line me-1"></i> Update Question');
+
+                        // Switch to Question tab
+                        var qTab = document.querySelector('#tab-question');
+                        if (qTab && typeof bootstrap !== 'undefined' && bootstrap.Tab) {
+                            var tabTrigger = new bootstrap.Tab(qTab);
+                            tabTrigger.show();
+                        }
+
+                        toastr.info("Question loaded for editing. Make your changes and click 'Update Question'.");
+                    } else {
+                        toastr.error(res && res.Message ? res.Message : "Question not found.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error fetching Question: " + error);
+                }
+            });
+        }
+
+        function escapeMCQHtml(text) {
+            if (!text) return '';
+            return $('<div>').text(String(text)).html();
+        }
+
+        function DeleteMCQQuestion(questionId, btn) {
+            if (!confirm("Are you sure you want to permanently delete this MCQ Question? This will delete the Question, Objectives, and Answer records.")) {
+                return;
+            }
+
+            $.ajax({
+                url: "/bctechadmin/DeleteMCQQuestion",
+                type: "POST",
+                data: { question_id: questionId },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.Status) {
+                        toastr.success(res.Message || "Question deleted successfully.");
+
+                        var tableId = btn ? $(btn).closest('table').attr('id') : null;
+                        if (tableId && $.fn.DataTable && $.fn.DataTable.isDataTable('#' + tableId)) {
+                            var dt = $('#' + tableId).DataTable();
+                            var $tr = $(btn).closest('tr');
+                            dt.row($tr).remove().draw(false);
+                        }
+
+                        var currentCount = parseInt($("#lblCourseQuestionCount").text().replace(/\D/g, '')) || 0;
+                        if (currentCount > 0) {
+                            $("#lblCourseQuestionCount").text("Total Questions: " + (currentCount - 1));
+                        }
+
+                        var excelCount = parseInt($("#lblMCQExcelQuestionCount").text().replace(/\D/g, '')) || 0;
+                        if (excelCount > 0) {
+                            $("#lblMCQExcelQuestionCount").text("Total Questions: " + (excelCount - 1));
+                        }
+
+                        if (parseInt($("#hfQuestionID").val()) === questionId) {
+                            resetMCQForm(false);
+                        }
+                    } else {
+                        toastr.error(res && res.Message ? res.Message : "Failed to delete Question.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error deleting Question: " + error);
+                }
+            });
+        }
+
+        function ToggleMCQStatus(questionId, status, btn) {
+            var $btn = $(btn);
+            var originalHtml = $btn.html();
+            $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
+
+            $.ajax({
+                url: "/bctechadmin/ToggleMCQQuestionStatus",
+                type: "POST",
+                data: { question_id: questionId, status: status },
+                dataType: "json",
+                success: function (res) {
+                    $btn.prop('disabled', false);
+                    if (res && res.Status) {
+                        toastr.success(res.Message || "Question status updated.");
+
+                        if (status === 1) {
+                            $btn.removeClass('btn-secondary').addClass('btn-success')
+                                .attr('title', 'Click to Deactivate')
+                                .attr('onclick', 'ToggleMCQStatus(' + questionId + ', 0, this)')
+                                .html('<i class="ri-checkbox-circle-line"></i> <span>Active</span>');
+                            $btn.closest('tr').attr('data-isactive', '1');
+                        } else {
+                            $btn.removeClass('btn-success').addClass('btn-secondary')
+                                .attr('title', 'Click to Activate')
+                                .attr('onclick', 'ToggleMCQStatus(' + questionId + ', 1, this)')
+                                .html('<i class="ri-close-circle-line"></i> <span>Deactive</span>');
+                            $btn.closest('tr').attr('data-isactive', '0');
+                        }
+
+                        // Update DataTables internal cache without resetting page or clearing search filter
+                        var tableId = $btn.closest('table').attr('id');
+                        if (tableId && $.fn.DataTable && $.fn.DataTable.isDataTable('#' + tableId)) {
+                            var dt = $('#' + tableId).DataTable();
+                            var $tr = $btn.closest('tr');
+                            dt.row($tr).invalidate().draw(false);
+                        }
+                    } else {
+                        $btn.html(originalHtml);
+                        toastr.error(res && res.Message ? res.Message : "Failed to update status.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $btn.prop('disabled', false).html(originalHtml);
+                    toastr.error("Error updating status: " + error);
+                }
+            });
+        }
+
+        function destroyDisplayMCQExcelDataTable() {
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tblDisplayMCQExcel')) {
+                try {
+                    $('#tblDisplayMCQExcel').DataTable().destroy();
+                } catch (e) {
+                    console.warn("DataTable destroy warning:", e);
+                }
+            }
+        }
+
+        function initDisplayMCQExcelDataTable() {
+            destroyDisplayMCQExcelDataTable();
+
+            var $rows = $('#tblDisplayMCQExcelBody tr');
+            if ($rows.length === 0) {
+                return;
+            }
+            var $firstRowCells = $rows.first().children('td');
+            if ($firstRowCells.length !== 5) {
+                return;
+            }
+
+            if ($.fn.DataTable) {
+                try {
+                    $('#tblDisplayMCQExcel').DataTable({
+                        pageLength: 20,
+                        lengthMenu: [[20, 50, 100, -1], [20, 50, 100, "All"]],
+                        ordering: false,
+                        autoWidth: false,
+                        responsive: true,
+                        drawCallback: function (settings) {
+                            var api = this.api();
+                            var startIndex = api.context[0]._iDisplayStart;
+                            api.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                                cell.innerHTML = (startIndex + i + 1);
+                            });
+                        },
+                        language: {
+                            search: "Search:",
+                            searchPlaceholder: "Search Question, Objective, Answer...",
+                            lengthMenu: "Show _MENU_ questions",
+                            info: "Showing _START_ to _END_ of _TOTAL_ questions",
+                            infoEmpty: "Showing 0 to 0 of 0 questions",
+                            infoFiltered: "(filtered from _MAX_ total questions)",
+                            emptyTable: "No MCQ questions available.",
+                            paginate: {
+                                previous: '<i class="ri-arrow-left-s-line"></i> Prev',
+                                next: 'Next <i class="ri-arrow-right-s-line"></i>'
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.warn("DataTable init warning:", e);
+                }
+            }
+        }
+
+        function LoadMCQExcelQuestionGrid(courseId) {
+            if (!courseId) {
+                courseId = parseInt($("#txtCourseID").val()) || 0;
+            }
+            if (!courseId) return;
+
+            destroyDisplayMCQExcelDataTable();
+
+            $("#lblMCQExcelTableTitle").html('<i class="ri-questionnaire-line me-1 text-success"></i> Course MCQ Questions List');
+            $("#badgeMCQExcelTableStatus").removeClass().addClass("badge bg-light text-dark border px-2 py-1 fs-12")
+                .html('<i class="ri-database-2-line me-1 text-primary"></i> Saved Course Questions');
+            $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-muted"><i class="ri-loader-4-line ri-spin fs-22 align-middle me-2 text-success"></i> Loading Course MCQ Questions...</td></tr>');
+
+            $.ajax({
+                url: "/bctechadmin/GetMCQQuestionList",
+                type: "GET",
+                data: { course_id: courseId },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.Status) {
+                        var list = res.Data || [];
+                        $("#lblMCQExcelQuestionCount").text("Total Questions: " + list.length);
+
+                        if (list.length === 0) {
+                            destroyDisplayMCQExcelDataTable();
+                            $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-muted"><i class="ri-information-line fs-18 align-middle me-1"></i> No MCQ Questions found in this course yet. Select or drag &amp; drop an Excel file above to preview and import questions.</td></tr>');
+                            return;
+                        }
+
+                        var rowsHtml = [];
+                        $.each(list, function (i, item) {
+                            var qId = item.question_id;
+                            var isActive = (item.ISActive === 1 || item.ISActive === "1" || item.ISActive === true);
+
+                            var srNoCol = '<td class="text-center align-top fw-semibold text-secondary">' + (i + 1) + '</td>';
+
+                            var activeBtn = isActive
+                                ? '<button type="button" class="btn btn-sm btn-success w-100 d-flex align-items-center justify-content-center gap-1 py-1" title="Click to Deactivate" onclick="ToggleMCQStatus(' + qId + ', 0, this)"><i class="ri-checkbox-circle-line"></i> <span>Active</span></button>'
+                                : '<button type="button" class="btn btn-sm btn-secondary w-100 d-flex align-items-center justify-content-center gap-1 py-1" title="Click to Activate" onclick="ToggleMCQStatus(' + qId + ', 1, this)"><i class="ri-close-circle-line"></i> <span>Deactive</span></button>';
+
+                            var opCol = '<div class="d-flex flex-column gap-1" style="min-width: 110px;">' +
+                                        '<button type="button" class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-1 py-1" title="Edit Question" onclick="EditMCQQuestion(' + qId + ')"><i class="ri-edit-line"></i> <span>Edit</span></button>' +
+                                        '<button type="button" class="btn btn-sm btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-1 py-1" title="Delete Question" onclick="DeleteMCQQuestion(' + qId + ', this)"><i class="ri-delete-bin-line"></i> <span>Delete</span></button>' +
+                                        activeBtn +
+                                        '</div>';
+
+                            var qCol = '<div class="mcq-question-cell" style="max-height: 250px; overflow-y: auto;">' + (item.questions || '') + '</div>';
+
+                            var objItems = [];
+                            if (hasOptionValue(item.OptionA)) {
+                                objItems.push(renderOptionItem('A', item.OptionA));
+                            } else if (item.OptionA && item.OptionA.trim() !== '') {
+                                objItems.push(renderOptionItem('A', item.OptionA));
+                            }
+
+                            if (hasOptionValue(item.OptionB)) {
+                                objItems.push(renderOptionItem('B', item.OptionB));
+                            } else if (item.OptionB && item.OptionB.trim() !== '') {
+                                objItems.push(renderOptionItem('B', item.OptionB));
+                            }
+
+                            if (hasOptionValue(item.OptionC)) {
+                                objItems.push(renderOptionItem('C', item.OptionC));
+                            }
+
+                            if (hasOptionValue(item.OptionD)) {
+                                objItems.push(renderOptionItem('D', item.OptionD));
+                            }
+
+                            var objCol = '<div class="mcq-objectives-cell">' + objItems.join('') + '</div>';
+
+                            var descHtml = '';
+                            if (item.answer_description && item.answer_description.trim() !== '') {
+                                descHtml = '<div class="mt-2 p-2 bg-light rounded border text-muted small"><strong class="text-secondary">Desc:</strong> <div>' + item.answer_description + '</div></div>';
+                            }
+
+                            var ansCol = '<div class="mcq-answer-cell">' +
+                                         '<div><span class="badge bg-success-subtle text-success fs-13 border border-success px-2 py-1"><i class="ri-check-line fw-bold me-1"></i>Option <strong>' + (item.CorrectOption || 'N/A') + '</strong></span></div>' +
+                                         descHtml +
+                                         '</div>';
+
+                            rowsHtml.push('<tr data-isactive="' + (isActive ? '1' : '0') + '">' +
+                                          srNoCol +
+                                          '<td class="text-center align-top">' + opCol + '</td>' +
+                                          '<td class="align-top">' + qCol + '</td>' +
+                                          '<td class="align-top">' + objCol + '</td>' +
+                                          '<td class="align-top">' + ansCol + '</td>' +
+                                          '</tr>');
+                        });
+
+                        destroyDisplayMCQExcelDataTable();
+                        $("#tblDisplayMCQExcelBody").html(rowsHtml.join(""));
+                        initDisplayMCQExcelDataTable();
+                    } else {
+                        destroyDisplayMCQExcelDataTable();
+                        $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-danger">' + (res.Message || 'Failed to load MCQ questions.') + '</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    destroyDisplayMCQExcelDataTable();
+                    $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-danger">Error loading questions: ' + error + '</td></tr>');
+                }
+            });
+        }
+
+        function refreshMCQExcelGrid() {
+            var fileInput = document.getElementById('fuMCQExcel');
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                loadMCQExcelPreview(fileInput.files[0]);
+            } else {
+                var courseId = parseInt($("#txtCourseID").val()) || 0;
+                if (courseId) {
+                    LoadMCQExcelQuestionGrid(courseId);
+                }
+            }
+        }
+
+        function getexcelmodel(courseID) {
+            var courses = (typeof CourseArray !== 'undefined' && CourseArray.length) ? CourseArray : (typeof CourseListArray !== 'undefined' ? CourseListArray : []);
+            var CourseData = courses.find(function (item) {
+                return item.CourseID == courseID;
+            });
+
+            var courseTitle = CourseData ? CourseData.CourseTitle : ("Course #" + courseID);
+
+            $("#divMCQQuestions").hide();
+            $("#divMCQExcel").show();
+            $("#divPracticalExcel").hide();
+            $("#btnSaveQuestion").hide();
+
+            $("#staticBackdrop3Label").html("Excel Upload - " + courseTitle);
+            $("#txtCourseID").val(courseID);
+
+            clearMCQExcelFile();
+            initMCQExcelDropZone();
+
+            // Do not load old questions; keep table hidden until an Excel file is selected
+            $("#cardMCQExcelTable").addClass("d-none");
+            $("#divMCQExcelTopBackBtn").removeClass("d-none");
+            destroyDisplayMCQExcelDataTable();
+            $("#tblDisplayMCQExcelBody").empty();
+        }
+
+        var currentSelectedPracticalPdf = null;
+        var currentPracticalCourseID = 0;
+
+        function getpracticlemodel(courseID) {
+            var courses = (typeof CourseArray !== 'undefined' && CourseArray.length) ? CourseArray : (typeof CourseListArray !== 'undefined' ? CourseListArray : []);
+            var CourseData = courses.find(function (item) {
+                return item.CourseID == courseID;
+            });
+            var courseTitle = CourseData ? CourseData.CourseTitle : ("Course #" + courseID);
+
+            currentPracticalCourseID = courseID;
+
+            $("#divMCQQuestions").hide();
+            $("#divMCQExcel").hide();
+            $("#divPracticalExcel").show();
+            $("#btnSaveQuestion").hide();
+
+            $("#staticBackdrop3Label").html("Practical .Pdf Upload - " + courseTitle);
+            $("#txtCourseID").val(courseID);
+
+            clearPracticalPdfFile();
+            $("#txtPracticalDescription").val("");
+            $("#chkPracticalIsActive").prop("checked", true);
+            $("#lblPracticalStatusTxt").text("Active").removeClass("text-secondary").addClass("text-success");
+            $("#chkPracticalIsActive").off("change").on("change", function () {
+                if (this.checked) {
+                    $("#lblPracticalStatusTxt").text("Active").removeClass("text-secondary").addClass("text-success");
+                } else {
+                    $("#lblPracticalStatusTxt").text("Inactive").removeClass("text-success").addClass("text-secondary");
+                }
+            });
+            initPracticalPdfDropZone();
+            loadPracticalExamList();
+        }
+
+        function initPracticalPdfDropZone() {
+            var dropZone = document.getElementById("dropZonePracticalPdf");
+            if (!dropZone) return;
+
+            dropZone.onclick = function (e) {
+                if (e.target.closest('button')) return;
+                var fileInput = document.getElementById("fuPracticalPdf");
+                if (fileInput) fileInput.click();
+            };
+
+            dropZone.ondragover = function (e) {
+                e.preventDefault();
+                dropZone.style.backgroundColor = "#fee2e2";
+                dropZone.style.borderColor = "#dc2626";
+            };
+
+            dropZone.ondragleave = function (e) {
+                e.preventDefault();
+                dropZone.style.backgroundColor = "#fffaf0";
+                dropZone.style.borderColor = "#fca5a5";
+            };
+
+            dropZone.ondrop = function (e) {
+                e.preventDefault();
+                dropZone.style.backgroundColor = "#fffaf0";
+                dropZone.style.borderColor = "#fca5a5";
+                if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    handlePracticalPdfFile(e.dataTransfer.files[0]);
+                }
+            };
+        }
+
+        function onPracticalPdfSelected(input) {
+            if (input && input.files && input.files.length > 0) {
+                handlePracticalPdfFile(input.files[0]);
+            }
+        }
+
+        function handlePracticalPdfFile(file) {
+            if (!file) return;
+
+            var ext = (file.name || "").split('.').pop().toLowerCase();
+            if (ext !== 'pdf') {
+                toastr.warning("Please select a valid PDF file (.pdf).");
+                clearPracticalPdfFile();
+                return;
+            }
+
+            if (file.size > 30 * 1024 * 1024) {
+                toastr.warning("File is too large! Maximum allowed size is 30MB.");
+                clearPracticalPdfFile();
+                return;
+            }
+
+            currentSelectedPracticalPdf = file;
+
+            var sizeFormatted = "";
+            if (file.size < 1024) sizeFormatted = file.size + " bytes";
+            else if (file.size < 1048576) sizeFormatted = (file.size / 1024).toFixed(1) + " KB";
+            else sizeFormatted = (file.size / 1048576).toFixed(2) + " MB";
+
+            $("#lblPracticalPdfName").text(file.name);
+            $("#lblPracticalPdfSize").text(sizeFormatted);
+            $("#dropZonePracticalPdfPrompt").addClass("d-none");
+            $("#divPracticalSelectedFileInfo").removeClass("d-none");
+        }
+
+        function clearPracticalPdfFile(e) {
+            if (e) e.stopPropagation();
+            currentSelectedPracticalPdf = null;
+            $("#fuPracticalPdf").val("");
+            $("#lblPracticalPdfName").text("");
+            $("#lblPracticalPdfSize").text("");
+            $("#divPracticalSelectedFileInfo").addClass("d-none");
+            $("#dropZonePracticalPdfPrompt").removeClass("d-none");
+        }
+
+        function uploadPracticalPdfFile() {
+            if (!currentSelectedPracticalPdf) {
+                toastr.warning("Please select or drop a PDF file first.");
+                return;
+            }
+
+            var courseID = currentPracticalCourseID || $("#txtCourseID").val();
+            if (!courseID || Number(courseID) <= 0) {
+                toastr.error("Invalid Course selected.");
+                return;
+            }
+
+            var desc = $("#txtPracticalDescription").val() || "";
+            var isActive = $("#chkPracticalIsActive").is(":checked");
+
+            var formData = new FormData();
+            formData.append("course_id", courseID);
+            formData.append("description", desc);
+            formData.append("isActive", isActive);
+            formData.append("pdfFile", currentSelectedPracticalPdf);
+
+            $("#btnUploadPracticalPdf").prop("disabled", true).html('<i class="ri-loader-4-line ri-spin fs-18"></i> Uploading...');
+            $("#practicalUploadProgress").removeClass("d-none");
+
+            $.ajax({
+                url: "/bctechadmin/UploadPracticalExamPdf",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    $("#btnUploadPracticalPdf").prop("disabled", false).html('<i class="ri-upload-cloud-line fs-18"></i> Upload &amp; Save PDF');
+                    $("#practicalUploadProgress").addClass("d-none");
+
+                    if (res && res.Status) {
+                        toastr.success(res.Message || "Practical PDF uploaded and saved successfully!");
+                        clearPracticalPdfFile();
+                        $("#txtPracticalDescription").val("");
+                        $("#chkPracticalIsActive").prop("checked", true);
+                        $("#lblPracticalStatusTxt").text("Active").removeClass("text-secondary").addClass("text-success");
+                        loadPracticalExamList();
+                    } else {
+                        toastr.error((res && res.Message) || "Failed to upload Practical PDF.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $("#btnUploadPracticalPdf").prop("disabled", false).html('<i class="ri-upload-cloud-line fs-18"></i> Upload &amp; Save PDF');
+                    $("#practicalUploadProgress").addClass("d-none");
+                    toastr.error("Upload error: " + error);
+                }
+            });
+        }
+
+        function loadPracticalExamList() {
+            var courseID = currentPracticalCourseID || $("#txtCourseID").val();
+            if (!courseID || Number(courseID) <= 0) return;
+
+            $("#tblPracticalListBody").html('<tr><td colspan="6" class="text-center py-4 text-muted"><i class="ri-loader-4-line ri-spin fs-20 align-middle me-1 text-danger"></i> Loading practical exam documents...</td></tr>');
+
+            $.ajax({
+                url: "/bctechadmin/GetPracticalExamList?course_id=" + courseID,
+                type: "GET",
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.Status) {
+                        var list = res.Data || [];
+                        $("#badgePracticalCount").text(list.length + (list.length === 1 ? " File" : " Files"));
+
+                        if (list.length === 0) {
+                            $("#tblPracticalListBody").html('<tr><td colspan="6" class="text-center py-4 text-muted"><i class="ri-file-pdf-line fs-32 text-secondary d-block mb-1"></i>No practical exam PDFs uploaded for this course yet.</td></tr>');
+                            return;
+                        }
+
+                        var rows = [];
+                        $.each(list, function (i, item) {
+                            var viewBtn = '<a href="' + item.PracticalExampdf + '" target="_blank" class="btn btn-outline-danger btn-action-view d-inline-flex align-items-center gap-1" title="View / Download PDF">' +
+                                          '<i class="ri-eye-line fs-14"></i> View PDF</a>';
+                            var delBtn = '<button type="button" class="btn btn-outline-danger btn-action-del d-inline-flex align-items-center" onclick="deletePracticalExam(' + item.PracticalExamID + ')" title="Delete">' +
+                                         '<i class="ri-delete-bin-line fs-14"></i></button>';
+
+                            var statusBtn = item.isActive
+                                ? '<button type="button" class="btn btn-outline-success btn-status-toggle d-inline-flex align-items-center gap-1" onclick="togglePracticalStatus(' + item.PracticalExamID + ', false)" title="Click to Deactivate">' +
+                                  '<i class="ri-checkbox-circle-fill text-success fs-13"></i> Active</button>'
+                                : '<button type="button" class="btn btn-outline-secondary btn-status-toggle d-inline-flex align-items-center gap-1" onclick="togglePracticalStatus(' + item.PracticalExamID + ', true)" title="Click to Activate">' +
+                                  '<i class="ri-close-circle-line text-muted fs-13"></i> Inactive</button>';
+
+                            rows.push('<tr>' +
+                                '<td class="text-center fw-semibold text-muted nowrap-cell">' + item.SrNo + '</td>' +
+                                '<td>' +
+                                    '<div class="d-flex align-items-center gap-2">' +
+                                        '<i class="ri-file-pdf-fill fs-24 text-danger flex-shrink-0"></i>' +
+                                        '<div class="overflow-hidden">' +
+                                            '<a href="' + item.PracticalExampdf + '" target="_blank" class="fw-semibold text-dark text-truncate d-block fs-13" title="' + escapeHtml(item.FileName) + '">' +
+                                                escapeHtml(item.FileName) +
+                                            '</a>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</td>' +
+                                '<td class="fs-13 text-secondary">' + (item.PracticalExamDescription ? escapeHtml(item.PracticalExamDescription) : '<span class="text-muted fst-italic">No description</span>') + '</td>' +
+                                '<td class="text-center nowrap-cell">' + statusBtn + '</td>' +
+                                '<td class="fs-12 text-muted nowrap-cell">' + item.CreatedDateFormatted + '</td>' +
+                                '<td class="text-center nowrap-cell">' +
+                                    '<div class="d-inline-flex align-items-center gap-1">' + viewBtn + delBtn + '</div>' +
+                                '</td>' +
+                            '</tr>');
+                        });
+
+                        $("#tblPracticalListBody").html(rows.join(""));
+                    } else {
+                        $("#tblPracticalListBody").html('<tr><td colspan="6" class="text-center py-4 text-danger">' + ((res && res.Message) || 'Failed to load list.') + '</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $("#tblPracticalListBody").html('<tr><td colspan="6" class="text-center py-4 text-danger">Error: ' + error + '</td></tr>');
+                }
+            });
+        }
+
+        function togglePracticalStatus(id, newStatus) {
+            if (!id || id <= 0) return;
+            $.ajax({
+                url: "/bctechadmin/TogglePracticalExamStatus",
+                type: "POST",
+                data: { practicalExamID: id, isActive: newStatus },
+                success: function (res) {
+                    if (res && res.Status) {
+                        toastr.success(res.Message || "Status updated.");
+                        loadPracticalExamList();
+                    } else {
+                        toastr.error((res && res.Message) || "Failed to update status.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error updating status: " + error);
+                }
+            });
+        }
+
+        function deletePracticalExam(id) {
+            if (!id || id <= 0) return;
+            if (!confirm("Are you sure you want to delete this Practical Exam PDF?")) return;
+
+            $.ajax({
+                url: "/bctechadmin/DeletePracticalExam",
+                type: "POST",
+                data: { practicalExamID: id },
+                success: function (res) {
+                    if (res && res.Status) {
+                        toastr.success(res.Message || "Practical PDF deleted.");
+                        loadPracticalExamList();
+                    } else {
+                        toastr.error((res && res.Message) || "Failed to delete.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error deleting: " + error);
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        var currentSelectedMCQExcelFile = null;
+
+        function handleMCQExcelFile(file) {
+            if (!file) return;
+
+            var fileName = file.name || "";
+            var ext = fileName.split('.').pop().toLowerCase();
+
+            if (ext !== 'xlsx' && ext !== 'xls') {
+                toastr.warning("Please select a valid Excel file (.xlsx, .xls).");
+                clearMCQExcelFile();
+                return;
+            }
+
+            currentSelectedMCQExcelFile = file;
+
+            var fileSizeFormatted = "";
+            if (file.size < 1024) {
+                fileSizeFormatted = file.size + " bytes";
+            } else if (file.size < 1048576) {
+                fileSizeFormatted = (file.size / 1024).toFixed(1) + " KB";
+            } else {
+                fileSizeFormatted = (file.size / 1048576).toFixed(2) + " MB";
+            }
+
+            $("#lblSelectedFileName").text(fileName);
+            $("#lblSelectedFileSize").text(fileSizeFormatted);
+            $("#divSelectedFileInfo").removeClass("d-none");
+
+            // Preview Excel data directly in table below
+            loadMCQExcelPreview(file);
+        }
+
+        function onMCQExcelSelected(input) {
+            if (input && input.files && input.files[0]) {
+                handleMCQExcelFile(input.files[0]);
+            }
+        }
+
+        function loadMCQExcelPreview(file) {
+            if (!file) return;
+
+            $("#cardMCQExcelTable").removeClass("d-none");
+            $("#divMCQExcelTopBackBtn").addClass("d-none");
+
+            destroyDisplayMCQExcelDataTable();
+            $("#lblMCQExcelTableTitle").html('<i class="ri-file-excel-2-line text-success me-1"></i> Excel File Preview: <span class="text-primary">' + escapeMCQHtml(file.name) + '</span>');
+            $("#badgeMCQExcelTableStatus").removeClass().addClass("badge bg-warning-subtle text-warning border border-warning px-2 py-1 fs-12")
+                .html('<i class="ri-eye-line me-1"></i> Excel Preview (Unsaved)');
+            $("#lblMCQExcelQuestionCount").text("Reading Excel file...");
+            $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-muted"><i class="ri-loader-4-line ri-spin fs-22 align-middle me-2 text-success"></i> Reading Excel questions...</td></tr>');
+
+            if (typeof XLSX !== 'undefined') {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        var data = new Uint8Array(e.target.result);
+                        var workbook = XLSX.read(data, { type: 'array' });
+                        var sheetName = workbook.SheetNames[0];
+                        var worksheet = workbook.Sheets[sheetName];
+                        var rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+
+                        if (!rawRows || rawRows.length <= 1) {
+                            destroyDisplayMCQExcelDataTable();
+                            $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-warning"><i class="ri-alert-line fs-20 me-1"></i> No questions found in the Excel file. Please ensure data starts from Row 2.</td></tr>');
+                            $("#lblMCQExcelQuestionCount").text("0 Questions detected");
+                            return;
+                        }
+
+                        var parsedRows = [];
+                        for (var i = 1; i < rawRows.length; i++) {
+                            var r = rawRows[i];
+                            if (!r || r.length === 0) continue;
+
+                            var q = String(r[0] || '').trim();
+                            var a = String(r[1] || '').trim();
+                            var b = String(r[2] || '').trim();
+                            var c = String(r[3] || '').trim();
+                            var d = String(r[4] || '').trim();
+                            var ans = String(r[5] || '').trim();
+                            var desc = String(r[6] || '').trim();
+
+                            if (!q && !a && !b && !c && !d && !ans) continue;
+
+                            var normAns = ans.toUpperCase();
+                            if (normAns === '1') normAns = 'A';
+                            else if (normAns === '2') normAns = 'B';
+                            else if (normAns === '3') normAns = 'C';
+                            else if (normAns === '4') normAns = 'D';
+
+                            if (normAns !== 'A' && normAns !== 'B' && normAns !== 'C' && normAns !== 'D') {
+                                if (a && normAns === a.toUpperCase()) normAns = 'A';
+                                else if (b && normAns === b.toUpperCase()) normAns = 'B';
+                                else if (c && normAns === c.toUpperCase()) normAns = 'C';
+                                else if (d && normAns === d.toUpperCase()) normAns = 'D';
+                                else normAns = normAns || 'A';
+                            }
+
+                            parsedRows.push({
+                                rowIndex: i + 1,
+                                Question: q,
+                                OptionA: a,
+                                OptionB: b,
+                                OptionC: c,
+                                OptionD: d,
+                                Answer: normAns,
+                                Describe: desc
+                            });
+                        }
+
+                        if (parsedRows.length === 0) {
+                            destroyDisplayMCQExcelDataTable();
+                            $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-warning"><i class="ri-alert-line fs-20 me-1"></i> No valid questions found in Excel file.</td></tr>');
+                            $("#lblMCQExcelQuestionCount").text("0 Questions detected");
+                            return;
+                        }
+
+                        renderMCQExcelPreviewRows(parsedRows);
+                    } catch (err) {
+                        console.error("XLSX parse error:", err);
+                        fallbackServerPreview(file);
+                    }
+                };
+                reader.onerror = function () {
+                    fallbackServerPreview(file);
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                fallbackServerPreview(file);
+            }
+        }
+
+        function renderMCQExcelPreviewRows(parsedRows) {
+            window.currentMCQParsedExcelRows = parsedRows;
+            $("#cardMCQExcelTable").removeClass("d-none");
+            $("#divMCQExcelTopBackBtn").addClass("d-none");
+            destroyDisplayMCQExcelDataTable();
+            $("#lblMCQExcelQuestionCount").text("Preview: " + parsedRows.length + " Questions Found in Excel (Ready to Upload)");
+
+            var rowsHtml = [];
+            $.each(parsedRows, function (i, item) {
+                var isValid = item.Question && item.OptionA && item.OptionB && item.Answer;
+                var statusBadge = isValid
+                    ? '<span class="badge bg-success-subtle text-success border border-success px-2 py-1"><i class="ri-check-line"></i> Row #' + item.rowIndex + '</span>'
+                    : '<span class="badge bg-danger-subtle text-danger border border-danger px-2 py-1" title="Question, Option A, Option B, and Answer are required"><i class="ri-error-warning-line"></i> Row #' + item.rowIndex + ' (Incomplete)</span>';
+
+                var opCol = '<div class="d-flex flex-column align-items-center gap-1" style="min-width: 110px;">' +
+                            statusBadge +
+                            '<span class="badge bg-primary-subtle text-primary border border-primary px-2 py-1 fs-11">Ready to Save</span>' +
+                            '</div>';
+
+                var qCol = '<div class="mcq-question-cell fw-medium" style="max-height: 250px; overflow-y: auto;">' + escapeMCQHtml(item.Question) + '</div>';
+
+                var objItems = [];
+                if (item.OptionA) objItems.push(renderOptionItem('A', escapeMCQHtml(item.OptionA)));
+                if (item.OptionB) objItems.push(renderOptionItem('B', escapeMCQHtml(item.OptionB)));
+                if (item.OptionC) objItems.push(renderOptionItem('C', escapeMCQHtml(item.OptionC)));
+                if (item.OptionD) objItems.push(renderOptionItem('D', escapeMCQHtml(item.OptionD)));
+
+                var objCol = '<div class="mcq-objectives-cell">' + objItems.join('') + '</div>';
+
+                var descHtml = '';
+                if (item.Describe) {
+                    descHtml = '<div class="mt-2 p-2 bg-light rounded border text-muted small"><strong class="text-secondary">Desc:</strong> <div>' + escapeMCQHtml(item.Describe) + '</div></div>';
+                }
+
+                var ansCol = '<div class="mcq-answer-cell">' +
+                             '<div><span class="badge bg-success-subtle text-success fs-13 border border-success px-2 py-1"><i class="ri-check-line fw-bold me-1"></i>Option <strong>' + (item.Answer || 'A') + '</strong></span></div>' +
+                             descHtml +
+                             '</div>';
+
+                rowsHtml.push('<tr>' +
+                              '<td class="text-center align-top fw-semibold text-secondary">' + (i + 1) + '</td>' +
+                              '<td class="text-center align-top">' + opCol + '</td>' +
+                              '<td class="align-top">' + qCol + '</td>' +
+                              '<td class="align-top">' + objCol + '</td>' +
+                              '<td class="align-top">' + ansCol + '</td>' +
+                              '</tr>');
+            });
+
+            $("#tblDisplayMCQExcelBody").html(rowsHtml.join(""));
+            initDisplayMCQExcelDataTable();
+            toastr.info("Excel file loaded! Showing " + parsedRows.length + " questions in preview below.");
+        }
+
+        function fallbackServerPreview(file) {
+            $("#cardMCQExcelTable").removeClass("d-none");
+            $("#divMCQExcelTopBackBtn").addClass("d-none");
+
+            var formData = new FormData();
+            formData.append("excelFile", file);
+
+            $.ajax({
+                url: "/bctechadmin/PreviewMCQExcel",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res && res.Status && res.Data) {
+                        var parsed = res.Data.map(function (item) {
+                            return {
+                                rowIndex: item.RowIndex,
+                                Question: item.Question,
+                                OptionA: item.A,
+                                OptionB: item.B,
+                                OptionC: item.C,
+                                OptionD: item.D,
+                                Answer: item.Answer,
+                                Describe: item.Describe
+                            };
+                        });
+                        renderMCQExcelPreviewRows(parsed);
+                    } else {
+                        destroyDisplayMCQExcelDataTable();
+                        $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-danger"><i class="ri-error-warning-line me-1"></i> ' + (res.Message || 'Failed to parse Excel file.') + '</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    destroyDisplayMCQExcelDataTable();
+                    $("#tblDisplayMCQExcelBody").html('<tr><td colspan="5" class="text-center py-4 text-danger">Error reading Excel file: ' + error + '</td></tr>');
+                }
+            });
+        }
+
+        function clearMCQExcelFile(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            window.currentMCQParsedExcelRows = null;
+            currentSelectedMCQExcelFile = null;
+            var fileInput = document.getElementById('fuMCQExcel');
+            if (fileInput) {
+                fileInput.value = '';
+            }
+            $("#divSelectedFileInfo").addClass("d-none");
+            $("#mcqExcelProgress").addClass("d-none");
+            $("#btnUploadMCQExcel").prop("disabled", false).html('<i class="ri-upload-cloud-line fs-18"></i> Upload &amp; Save Questions');
+
+            // Do not load old questions; hide table and show top back button
+            $("#cardMCQExcelTable").addClass("d-none");
+            $("#divMCQExcelTopBackBtn").removeClass("d-none");
+            destroyDisplayMCQExcelDataTable();
+            $("#tblDisplayMCQExcelBody").empty();
+        }
+
+        function cancelMCQExcelUpload() {
+            var courseId = parseInt($("#txtCourseID").val()) || 0;
+            if (courseId) {
+                getmcqmodel(courseId);
+            } else {
+                $("#staticBackdrop3").modal('hide');
+            }
+        }
+
+        function uploadMCQExcelFile() {
+            var courseId = parseInt($("#txtCourseID").val()) || 0;
+            if (!courseId) {
+                toastr.warning("Course ID is missing. Please select the course again.");
+                return;
+            }
+
+            var fileInput = document.getElementById('fuMCQExcel');
+            var file = (fileInput && fileInput.files && fileInput.files.length > 0) ? fileInput.files[0] : currentSelectedMCQExcelFile;
+            if (!file && (!window.currentMCQParsedExcelRows || window.currentMCQParsedExcelRows.length === 0)) {
+                toastr.warning("Please choose an Excel file to upload.");
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append("course_id", courseId);
+            if (file) {
+                formData.append("excelFile", file);
+            }
+            if (window.currentMCQParsedExcelRows && window.currentMCQParsedExcelRows.length > 0) {
+                formData.append("excelQuestionsJson", JSON.stringify(window.currentMCQParsedExcelRows));
+            }
+
+            $("#btnUploadMCQExcel").prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Saving Questions...');
+            $("#mcqExcelProgress").removeClass("d-none");
+
+            $.ajax({
+                url: "/bctechadmin/UploadMCQExcel",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    $("#btnUploadMCQExcel").prop("disabled", false).html('<i class="ri-upload-cloud-line fs-18"></i> Upload &amp; Save Questions');
+                    $("#mcqExcelProgress").addClass("d-none");
+
+                    if (res && res.Status) {
+                        toastr.success(res.Message || "MCQ Questions saved successfully into database!");
+
+                        // Clear file input and cache
+                        window.currentMCQParsedExcelRows = null;
+                        currentSelectedMCQExcelFile = null;
+                        if (fileInput) fileInput.value = '';
+                        $("#divSelectedFileInfo").addClass("d-none");
+
+                        // Reload Tab 0 course questions grid
+                        LoadMCQQuestionGrid(courseId);
+
+                        // Update badge
+                        $("#badgeMCQExcelTableStatus").removeClass().addClass("badge bg-success-subtle text-success border border-success px-2 py-1 fs-12")
+                            .html('<i class="ri-checkbox-circle-line me-1"></i> Questions Saved Successfully');
+
+                        // Automatically close modal after upload
+                        setTimeout(function () {
+                            var modalEl = document.getElementById('staticBackdrop3');
+                            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                                var modalInst = bootstrap.Modal.getInstance(modalEl);
+                                if (modalInst) {
+                                    modalInst.hide();
+                                    return;
+                                }
+                            }
+                            $('#staticBackdrop3').modal('hide');
+                        }, 700);
+                    } else {
+                        toastr.error(res && res.Message ? res.Message : "Failed to upload and save Excel questions.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $("#btnUploadMCQExcel").prop("disabled", false).html('<i class="ri-upload-cloud-line fs-18"></i> Upload &amp; Save Questions');
+                    $("#mcqExcelProgress").addClass("d-none");
+                    toastr.error("Error occurred during upload: " + (xhr.responseText || error));
+                }
+            });
+        }
+
+        function initMCQExcelDropZone() {
+            var dropZone = document.getElementById('mcqExcelDropZone');
+            if (!dropZone || dropZone._hasDropInit) return;
+            dropZone._hasDropInit = true;
+
+            // Global window drag protection to prevent browser from navigating away on dropped files
+            window.addEventListener('dragover', function (e) {
+                if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+                    e.preventDefault();
+                }
+            }, false);
+
+            window.addEventListener('drop', function (e) {
+                if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+                    e.preventDefault();
+                }
+            }, false);
+
+            dropZone.addEventListener('dragenter', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.borderColor = '#16a34a';
+                dropZone.style.backgroundColor = '#f0fdf4';
+            }, false);
+
+            dropZone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.dataTransfer) {
+                    e.dataTransfer.dropEffect = 'copy';
+                }
+                dropZone.style.borderColor = '#16a34a';
+                dropZone.style.backgroundColor = '#f0fdf4';
+            }, false);
+
+            dropZone.addEventListener('dragleave', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.borderColor = '#cbd5e1';
+                dropZone.style.backgroundColor = '#fafafa';
+            }, false);
+
+            dropZone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.borderColor = '#cbd5e1';
+                dropZone.style.backgroundColor = '#fafafa';
+
+                var dt = e.dataTransfer;
+                var files = dt ? dt.files : null;
+                if (files && files.length > 0) {
+                    var file = files[0];
+                    currentSelectedMCQExcelFile = file;
+
+                    var fileInput = document.getElementById('fuMCQExcel');
+                    if (fileInput) {
+                        try {
+                            var dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            fileInput.files = dataTransfer.files;
+                        } catch (ex) {
+                            try { fileInput.files = files; } catch (e2) {}
+                        }
+                    }
+
+                    handleMCQExcelFile(file);
+                }
+            }, false);
+        }
+    </script>
+}
+
+
+
+<!-- Start Main Content Area -->

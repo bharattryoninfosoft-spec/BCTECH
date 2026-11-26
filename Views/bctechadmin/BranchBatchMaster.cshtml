@@ -1,0 +1,456 @@
+﻿@{
+    ViewBag.Title = "Branch Batch Master";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+
+    ViewData["ParentMenu"] = "Utility";
+    ViewData["PageTitle"] = "Branch Batch List";
+}
+
+<input type="hidden" id="hfPageNumber" value="1" />
+<input type="hidden" id="hfPageSize" value="10" />
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <!-- Header & Search Controls -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0" onsubmit="return false;">
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Branch Name, Batch Title..." />
+
+            <button type="button"
+                    id="btnSearch"
+                    class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent border-0">
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+            </button>
+        </form>
+
+        <button type="button" class="btn btn-primary text-white" onclick="OpenBatchModal(0, 'add')">
+            <i class="ri-add-line me-1"></i> New Batch
+        </button>
+
+    </div>
+
+    <!-- Pure HTML Table -->
+    <div class="table-responsive p-3 pt-0">
+        <table class="table table-hover align-middle border-bottom mb-0" id="tblBranchBatch">
+            <thead class="bg-light">
+                <tr class="text-secondary fs-13">
+                    <th width="40" class="text-center">SR</th>
+                    <th>Branch Name</th>
+                    <th>Batch Title</th>
+                    <th width="130">Start Time</th>
+                    <th width="130">End Time</th>
+                    <th width="130">Duration</th>
+                    <th width="110" class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody id="tblBranchBatchBody">
+                <!-- Dynamic Data Rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Custom Pagination -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3 border-top">
+        <span id="lblShowing" class="text-muted fs-14">
+            Showing 0 to 0 of 0 entries
+        </span>
+
+        <nav>
+            <ul class="pagination pagination-sm mb-0 gap-1" id="pagination">
+                <!-- Dynamic Pagination Buttons -->
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+<!-- ================= Single Modal for Insert / Edit / View ================= -->
+<div class="modal fade" id="BranchBatchModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white py-2">
+                <h6 class="modal-title text-white mb-0" id="lblModalTitle">Add New Branch Batch</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-3">
+                <form id="frmBranchBatch" onsubmit="return false;">
+                    <input type="hidden" id="hfBatchID" value="0" />
+
+                    <div class="row g-3">
+                        <!-- Branch Dropdown -->
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary fs-13 fw-medium">Branch <span class="text-danger">*</span></label>
+                            <select id="ddlBranch" class="form-select form-select-sm" required>
+                                <option value="">-- Select Branch --</option>
+                            </select>
+                        </div>
+
+                        <!-- Batch Title -->
+                        <div class="col-md-6">
+                            <label class="form-label text-secondary fs-13 fw-medium">Batch Title <span class="text-danger">*</span></label>
+                            <input type="text" id="txtBatchTitle" class="form-control form-control-sm" placeholder="e.g. Morning Batch A" required />
+                        </div>
+
+                        <!-- Start Time -->
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fs-13 fw-medium">Start Time</label>
+                            <input type="time" id="txtBatchTimeStart" class="form-control form-control-sm" />
+                        </div>
+
+                        <!-- End Time -->
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fs-13 fw-medium">End Time</label>
+                            <input type="time" id="txtBatchTimeEnd" class="form-control form-control-sm" />
+                        </div>
+
+                        <!-- Duration (Auto Calculated) -->
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary fs-13 fw-medium">Duration</label>
+                            <input type="text" id="txtBatchTimeDuration" class="form-control form-control-sm bg-light" placeholder="e.g. 2 Hours" readonly />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer py-2">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm btn-primary text-white" id="btnSaveBatch">
+                    <i class="ri-save-line me-1"></i> Save Batch
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            // 1. Initial Data & Dropdown Fetch
+            LoadBranchDropdown();
+            GetBatchList(1);
+
+            // 2. Search Events
+            $("#btnSearch").click(function () {
+                GetBatchList(1);
+            });
+
+            var searchTimeout = null;
+            $("#txtSearch").keyup(function () {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function () {
+                    GetBatchList(1);
+                }, 400);
+            });
+
+            // 3. Time Duration Auto Calculation
+            $("#txtBatchTimeStart, #txtBatchTimeEnd").on("change", function () {
+                CalculateDuration();
+            });
+
+            // 4. Save Button Event
+            $("#btnSaveBatch").click(function () {
+                SaveBatch();
+            });
+
+        });
+        // Load Branch List into Dropdown
+        function LoadBranchDropdown(callback) {
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetBranchListDropdown",
+                dataType: "json",
+                success: function (res) {
+                    var options = '<option value="">-- Select Branch --</option>';
+                    if (res && res.length > 0) {
+                        $.each(res, function (i, item) {
+                            options += '<option value="' + item.BranchID + '">' + item.BranchName + '</option>';
+                        });
+                    }
+                    $("#ddlBranch").html(options);
+                    if (callback) callback();
+                },
+                error: function () {
+                    toastr.error("Failed to load branches dropdown.");
+                }
+            });
+        }
+
+        // Fetch List Records
+        function GetBatchList(pageNumber) {
+            $("#hfPageNumber").val(pageNumber);
+
+            var param = {
+                SearchText: $("#txtSearch").val().trim(),
+                PageNumber: parseInt($("#hfPageNumber").val()),
+                PageSize: parseInt($("#hfPageSize").val())
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetBranchBatchList",
+                data: param,
+                dataType: "json",
+                beforeSend: function () {
+                    $("#tblBranchBatchBody").html("<tr><td colspan='7' class='text-center py-4'><div class='spinner-border spinner-border-sm text-primary' role='status'></div></td></tr>");
+                },
+                success: function (response) {
+                    var html = "";
+                    var totalRecords = response.TotalRecords || 0;
+                    var data = response.Data || [];
+
+                    if (data.length > 0) {
+                        var srNo = (param.PageNumber - 1) * param.PageSize;
+
+                        $.each(data, function (i, item) {
+                            srNo++;
+
+                            html += "<tr>";
+                            html += "<td class='text-center fw-bold text-muted fs-13'>" + srNo + "</td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.BranchName || '-') + "</td>";
+                            html += "<td><strong class='text-dark fs-13'>" + (item.BatchTitle || '-') + "</strong></td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.BatchTimeStartStr || '-') + "</td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.BatchTimeEndStr || '-') + "</td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.BatchTimeDuration || '-') + "</td>";
+
+                            // Action Icons (View, Edit, Delete)
+                            html += "<td class='text-center'>";
+                            html += "<a href='javascript:void(0)' onclick='OpenBatchModal(" + item.BatchID + ", \"view\")' class='me-2' title='View'><i class='ri-eye-line text-info fs-16'></i></a>";
+                            html += "<a href='javascript:void(0)' onclick='OpenBatchModal(" + item.BatchID + ", \"edit\")' class='me-2' title='Edit'><i class='ri-edit-box-line text-primary fs-16'></i></a>";
+                            html += "<a href='javascript:void(0)' onclick='DeleteBatch(" + item.BatchID + ")' title='Delete'><i class='ri-delete-bin-line text-danger fs-16'></i></a>";
+                            html += "</td>";
+
+                            html += "</tr>";
+                        });
+
+                        $("#tblBranchBatchBody").html(html);
+                        RenderPagination(totalRecords, param.PageNumber, param.PageSize);
+                    } else {
+                        $("#tblBranchBatchBody").html("<tr><td colspan='7' class='text-center text-muted py-4'>No records found.</td></tr>");
+                        $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+                        $("#pagination").empty();
+                    }
+                },
+                error: function () {
+                    $("#tblBranchBatchBody").html("<tr><td colspan='7' class='text-center text-danger py-4'>Failed to load data. Please try again.</td></tr>");
+                }
+            });
+        }
+
+        // Open Modal for Add / Edit / View Mode
+        function OpenBatchModal(batchId, mode) {
+            $("#hfBatchID").val(batchId);
+
+            // Enable form controls by default
+            $("#frmBranchBatch input, #frmBranchBatch select").prop("disabled", false);
+            $("#btnSaveBatch").show();
+
+            if (mode === "add") {
+                $("#lblModalTitle").text("Add New Branch Batch");
+                $("#frmBranchBatch")[0].reset();
+                $("#txtBatchTimeDuration").val("");
+                $("#BranchBatchModal").modal("show");
+            } else if (mode === "edit" || mode === "view") {
+                if (mode === "edit") {
+                    $("#lblModalTitle").text("Edit Branch Batch");
+                } else {
+                    $("#lblModalTitle").text("View Branch Batch Details");
+                    // Disable inputs for view mode
+                    $("#frmBranchBatch input, #frmBranchBatch select").prop("disabled", true);
+                    $("#btnSaveBatch").hide();
+                }
+
+                // Fetch details via AJAX
+                $.ajax({
+                    type: "GET",
+                    url: "/bctechadmin/GetBranchBatchByID",
+                    data: { id: batchId },
+                    dataType: "json",
+                    success: function (res) {
+                        var data = res.Data || res;
+                        if (data && data.BatchID) {
+                            $("#ddlBranch").val(data.BranchID);
+                            $("#txtBatchTitle").val(data.BatchTitle);
+                            $("#txtBatchTimeStart").val(data.BatchTimeStartStr || data.BatchTimeStart);
+                            $("#txtBatchTimeEnd").val(data.BatchTimeEndStr || data.BatchTimeEnd);
+                            $("#txtBatchTimeDuration").val(data.BatchTimeDuration);
+                            $("#BranchBatchModal").modal("show");
+                        } else {
+                            toastr.error("Record details not found.");
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Failed to load record details.");
+                    }
+                });
+            }
+        }
+
+        // Calculate Duration Automatically
+        function CalculateDuration() {
+            var startTime = $("#txtBatchTimeStart").val();
+            var endTime = $("#txtBatchTimeEnd").val();
+
+            if (startTime && endTime) {
+                var start = new Date("1970-01-01T" + startTime + "Z");
+                var end = new Date("1970-01-01T" + endTime + "Z");
+
+                var diffMs = end - start;
+                if (diffMs < 0) {
+                    diffMs += 24 * 60 * 60 * 1000;
+                }
+
+                var diffMins = Math.floor(diffMs / 1000 / 60);
+                var hours = Math.floor(diffMins / 60);
+                var minutes = diffMins % 60;
+
+                var durationStr = "";
+                if (hours > 0) durationStr += hours + (hours === 1 ? " Hour " : " Hours ");
+                if (minutes > 0) durationStr += minutes + " Mins";
+
+                $("#txtBatchTimeDuration").val(durationStr.trim() || "0 Mins");
+            } else {
+                $("#txtBatchTimeDuration").val("");
+            }
+        }
+
+        // Save / Update Record
+        function SaveBatch() {
+            var branchId = $("#ddlBranch").val();
+            var batchTitle = $("#txtBatchTitle").val().trim();
+
+            if (!branchId) {
+                toastr.warning("Please select a Branch.");
+                $("#ddlBranch").focus();
+                return;
+            }
+
+            if (!batchTitle) {
+                toastr.warning("Please enter Batch Title.");
+                $("#txtBatchTitle").focus();
+                return;
+            }
+
+            var model = {
+                BatchID: parseInt($("#hfBatchID").val()) || 0,
+                BranchID: parseInt(branchId),
+                BatchTitle: batchTitle,
+                BatchTimeStart: $("#txtBatchTimeStart").val() || null,
+                BatchTimeEnd: $("#txtBatchTimeEnd").val() || null,
+                BatchTimeDuration: $("#txtBatchTimeDuration").val().trim()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/SaveBranchBatch",
+                data: JSON.stringify(model),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                beforeSend: function () {
+                    $("#btnSaveBatch").prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
+                },
+                success: function (res) {
+                    $("#btnSaveBatch").prop("disabled", false).html('<i class="ri-save-line me-1"></i> Save Batch');
+                    if (res.success) {
+                        toastr.success(res.message);
+                        $("#BranchBatchModal").modal("hide");
+                        GetBatchList(parseInt($("#hfPageNumber").val()));
+                    } else {
+                        toastr.error(res.message || "Failed to save record.");
+                    }
+                },
+                error: function () {
+                    $("#btnSaveBatch").prop("disabled", false).html('<i class="ri-save-line me-1"></i> Save Batch');
+                    toastr.error("An error occurred while saving.");
+                }
+            });
+        }
+
+        // Pagination Controls
+        function RenderPagination(totalRecords, currentPage, pageSize) {
+            var totalPages = Math.ceil(totalRecords / pageSize);
+            if (totalPages === 0) totalPages = 1;
+
+            var startEntry = (currentPage - 1) * pageSize + 1;
+            var endEntry = Math.min(currentPage * pageSize, totalRecords);
+
+            if (totalRecords === 0) {
+                $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+            } else {
+                $("#lblShowing").text("Showing " + startEntry + " to " + endEntry + " of " + totalRecords + " entries");
+            }
+
+            var paginationHtml = "";
+
+            if (currentPage > 1) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetBatchList(" + (currentPage - 1) + ")'>Previous</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Previous</a></li>";
+            }
+
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(totalPages, currentPage + 2);
+
+            for (var i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationHtml += "<li class='page-item active'><a class='page-link' href='javascript:void(0);'>" + i + "</a></li>";
+                } else {
+                    paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetBatchList(" + i + ")'>" + i + "</a></li>";
+                }
+            }
+
+            if (currentPage < totalPages) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetBatchList(" + (currentPage + 1) + ")'>Next</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Next</a></li>";
+            }
+
+            $("#pagination").html(paginationHtml);
+        }
+
+        // Delete Function
+        function DeleteBatch(batchId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/bctechadmin/DeleteBranchBatch",
+                        data: { id: batchId },
+                        success: function (res) {
+                            if (res.success) {
+                                toastr.success(res.message);
+
+                                var rowCount = $("#tblBranchBatchBody tr").length;
+                                var currentPage = parseInt($("#hfPageNumber").val()) || 1;
+
+                                if (rowCount === 1 && currentPage > 1) {
+                                    currentPage--;
+                                }
+
+                                GetBatchList(currentPage);
+                            } else {
+                                Swal.fire('Error', res.message || 'Failed to delete record.', 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'An error occurred while deleting the record.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

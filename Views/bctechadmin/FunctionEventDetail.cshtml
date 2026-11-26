@@ -1,0 +1,278 @@
+﻿
+@{
+    ViewBag.Title = "Function Event Detail";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<input type="hidden" id="hfPageNumber" value="1" />
+<input type="hidden" id="hfPageSize" value="10" />
+
+<style>
+    .dataTables_length {
+        display: none;
+    }
+
+
+    #tblStudentEnquiry th,
+    #tblStudentEnquiry td {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        vertical-align: middle;
+    }
+</style>
+<div class="card bg-white rounded-10 border border-white mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+        <form class="table-src-form position-relative m-0">
+            <input type="text" id="txtSearch" class="form-control w-350" placeholder="Search Function / Event ...">
+            <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                <span class="material-symbols-outlined">search</span>
+            </div>
+        </form>
+
+
+        <a href="/bctechadmin/CreateFunctionEvent" class="btn btn-primary text-white">
+            <i class="ri-add-line"></i> Add Function / Event
+        </a>
+
+
+    </div>
+
+
+    <!--
+    <div class="default-table-area mx-minus-1 table-contact-list">
+        <div class="table-responsive p-3 pt-0">
+            <table class="table table-hover align-middle border-bottom mb-0" id="tblFunctionEvents">
+                <thead class="text-center">
+                    <tr>
+                        <th>Sr.</th>
+                        <th>Operation</th>
+                        <th>Event Thumbnail <br /> Type Of Event</th>
+                        <th>Branch</th>
+                        <th>Event Title <br /> Code</th>
+                        <th>Event Date & Times</th>
+                        <th>Event Venue</th>
+                        <th>Event Description</th>
+                        <th>Is Published</th>
+                        <th>Is Active</th>
+                    </tr>
+                </thead>
+                <tbody id="tblFunctionEvent"></tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+            <span class="fs-15" id="lblShowing"></span>
+
+            <nav class="custom-pagination" aria-label="Page navigation example">
+                <ul class="pagination mb-0 justify-content-center" id="pagination">
+                </ul>
+            </nav>
+        </div>
+    </div>-->
+    <!-- Custom HTML Table -->
+    <div class="table-responsive p-3 pt-0">
+        <table class="table table-hover align-middle border-bottom mb-0" id="tblStudentEnquiry">
+            <thead class="text-center">
+                <tr>
+                    <th style="width: 5%;">Sr.</th>
+                    <th>Operation</th>
+                    <th>Event Thumbnail <br /> Type Of Event</th>
+                    <th>Branch</th>
+                    <th>Event Title <br /> Code</th>
+                    <th>Event Date & Times</th>
+                    <th>Event Venue</th>
+                    <th>Event Description</th>
+                    <th>Is Published</th>
+                    <th>Is Active</th>
+                </tr>
+            </thead>
+            <tbody id="tblFunctionEvent"></tbody>
+        </table>
+    </div>
+
+    <!-- Custom Pagination -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3 border-top">
+        <span id="lblShowing" class="text-muted fs-14">
+            Showing 0 to 0 of 0 entries
+        </span>
+
+        <nav>
+            <ul class="pagination pagination-sm mb-0 gap-1" id="pagination">
+                <!-- Dynamic Pagination Buttons -->
+            </ul>
+        </nav>
+    </div>
+
+
+
+
+</div>
+@section Scripts{
+    <script>
+        var currentPage = 1;
+        var pageSize = 10;
+
+        $(document).ready(function () {
+            GetFunctionEventList(currentPage);
+        });
+
+        $("#txtSearch").on("keyup", function () {
+            currentPage = 1;
+            GetFunctionEventList(currentPage);
+        });
+
+        function GetFunctionEventList(pageNumber) {
+            currentPage = pageNumber;
+            $("#hfPageNumber").val(pageNumber);
+
+            var param = {
+                search: $("#txtSearch").val().trim(),
+                page: currentPage,
+                pageSize: pageSize
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetFunctionEventList",
+                data: param,
+                dataType: "json",
+                beforeSend: function () {
+                    $("#tblFunctionEvent").html(
+                        "<tr><td colspan='10' class='text-center py-4'>" +
+                        "<div class='spinner-border spinner-border-sm text-primary' role='status'></div>" +
+                        "</td></tr>"
+                    );
+                },
+                success: function (response) {
+                    var html = "";
+                    var totalRecords = response.totalRecords || 0;
+                    var data = response.data || [];
+
+                    if (data.length > 0) {
+                        var srNo = (currentPage - 1) * pageSize;
+
+                        $.each(data, function (i, item) {
+                            srNo++;
+                            var recordId = item.FunctionEventID;
+
+                            var isPublishedBadge = item.IsPublished
+                                ? "<span class='badge bg-success'>Published</span>"
+                                : "<span class='badge bg-danger'>Unpublished</span>";
+
+                            var isActiveBadge = item.IsActive
+                                ? "<span class='badge bg-success'>Active</span>"
+                                : "<span class='badge bg-danger'>Inactive</span>";
+
+                            html += "<tr>";
+                            html += "<td class='text-center'>" + srNo + "</td>";
+                            html += "<td class='text-center'>" +
+                                "<a href='/bctechadmin/CreateFunctionEvent?id=" + item.ViewEncryptedID + "' class='text-success me-2' title='View'><i class='ri-eye-line fs-18'></i></a>" +
+                                "<a href='/bctechadmin/CreateFunctionEvent?id=" + item.EditEncryptedID + "' class='text-primary me-2' title='Edit'><i class='ri-edit-line fs-18'></i></a>" +
+                                "<a href='javascript:DeleteFunctionEvent(" + recordId + ")' class='text-danger' title='Delete'><i class='ri-delete-bin-line fs-18'></i></a>" +
+                                "</td>";
+                            html += "<td class='text-center'><span class='badge bg-info mt-1'>" + (item.EventTypeName || "") + "</span><br/><img src='" + (item.EventthumbnailImage || "") + "' width='120' height='70' style='object-fit:cover; border-radius:5px; margin-top:5px;'/></td>";
+                            html += "<td class='text-center'>" + (item.BranchName || "") + "</td>";
+                            html += "<td class='text-center'>" + (item.EventTitle || "") + "<br/><small class='text-muted'>" + (item.EventCode || "") + "</small></td>";
+                            html += "<td class='text-center'>" + (item.EventDates || "") + "<br/>" + (item.EventStartTimes || "") + " - " + (item.EventEndTimes || "") + "</td>";
+                            html += "<td class='text-center'>" + (item.EventVenue || "") + "</td>";
+                            html += "<td>" + (item.EventDescription || "") + "</td>";
+                            html += "<td class='text-center'>" + isPublishedBadge + "</td>";
+                            html += "<td class='text-center'>" + isActiveBadge + "</td>";
+                            html += "</tr>";
+                        });
+
+                        $("#tblFunctionEvent").html(html);
+                        RenderPagination(totalRecords, currentPage, pageSize);
+                    } else {
+                        $("#tblFunctionEvent").html("<tr><td colspan='10' class='text-center text-muted py-4'>No records found.</td></tr>");
+                        $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+                        $("#pagination").empty();
+                    }
+                },
+                error: function () {
+                    $("#tblFunctionEvent").html("<tr><td colspan='10' class='text-center text-danger py-4'>Failed to load data.</td></tr>");
+                }
+            });
+        }
+
+        function RenderPagination(totalRecords, currentPage, pageSize) {
+            var totalPages = Math.ceil(totalRecords / pageSize);
+            if (totalPages === 0) totalPages = 1;
+
+            var startEntry = (currentPage - 1) * pageSize + 1;
+            var endEntry = Math.min(currentPage * pageSize, totalRecords);
+
+            $("#lblShowing").text("Showing " + startEntry + " to " + endEntry + " of " + totalRecords + " entries");
+
+            var paginationHtml = "";
+
+            // Previous Button
+            if (currentPage > 1) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetFunctionEventList(" + (currentPage - 1) + ")'>Previous</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Previous</a></li>";
+            }
+
+            // Numbered Pages
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(totalPages, currentPage + 2);
+
+            for (var i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationHtml += "<li class='page-item active'><a class='page-link' href='javascript:void(0);'>" + i + "</a></li>";
+                } else {
+                    paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetFunctionEventList(" + i + ")'>" + i + "</a></li>";
+                }
+            }
+
+            // Next Button
+            if (currentPage < totalPages) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetFunctionEventList(" + (currentPage + 1) + ")'>Next</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Next</a></li>";
+            }
+
+            $("#pagination").html(paginationHtml);
+        }
+
+        function DeleteFunctionEvent(id) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to recover this event!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Yes, Delete",
+                cancelButtonText: "Cancel",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/bctechadmin/DeleteFunctionEvent",
+                        type: "POST",
+                        data: { CourseID: id }, // Keep parameter name matching controller
+                        success: function (response) {
+                            if (response.Status === 1) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Deleted!",
+                                    text: response.Message,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                GetFunctionEventList(currentPage);
+                            } else {
+                                Swal.fire({ icon: "error", title: "Error", text: response.Message });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({ icon: "error", title: "Oops...", text: "Something went wrong!" });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

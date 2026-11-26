@@ -190,52 +190,34 @@
 </div>
 @section Scripts{
     <script>
+        $(document).ready(function () {
+            GetOrganization();
+        });
 
-        GetOrganization();
         $("#txtOwnerMobileNo").on("input", function () {
             this.value = this.value.replace(/[^0-9]/g, "").slice(0, 10);
         });
+
         $("#txtOfficeMobileNo").on("input", function () {
             this.value = this.value.replace(/\D/g, "").slice(0, 10);
         });
 
-            $("#txtOwnerEmail").on("blur", function () {
-
-                var email = $(this).val().trim();
-                var emailRegex = /^[^@@\s]+@@[^@@\s]+\.[^@@\s]+$/;
-
-                if (email === "")
-                    return;
-
-                if (!emailRegex.test(email)) {
-                    toastr.error("Please enter a valid Owner Email.");
-                    $(this).focus();
-                }
-
-            });
-        $("#txtOfficialEmail").on("blur", function () {
-
+        $("#txtOwnerEmail, #txtOfficialEmail").on("blur", function () {
             var email = $(this).val().trim();
-
-            if (email === "")
-                return;
-
+            if (email === "") return;
             var emailRegex = /^[^@@\s]+@@[^@@\s]+\.[^@@\s]+$/;
-
             if (!emailRegex.test(email)) {
-                toastr.error("Please enter a valid Official Email.");
+                toastr.error("Please enter a valid email address.");
                 $(this).focus();
             }
-
         });
-        function GetOrganization() {
 
+        function GetOrganization() {
             $.ajax({
                 type: "GET",
                 url: "/bctechadmin/GetOrganization",
                 success: function (res) {
-
-                    if (res != null) {
+                    if (res != null && res.OrganizationID > 0) {
                         $("#hfOrganizationID").val(res.OrganizationID);
                         $("#txtOrganizationName").val(res.OrganizationName);
                         $("#txtRegistrationNo").val(res.RegistrationNo);
@@ -247,117 +229,98 @@
                         $("#txtOwnerName").val(res.OwnerName);
                         $("#txtOwnerMobileNo").val(res.OwnerMobileNo);
                         $("#txtOwnerEmail").val(res.OwnerEmail);
-                        if (res.OrganizationLogo != "") {
+
+                        if (res.OrganizationLogo && res.OrganizationLogo !== "") {
                             $("#hfOrganizationLogo").val(res.OrganizationLogo);
                             $("#imgLogo").attr("src", "/Content/Admin/assets/Images/" + res.OrganizationLogo);
+                            // If logo exists, file input is not mandatory for edit mode
+                            $("#fuOrganizationLogo").removeAttr("required");
                         }
                     }
                 },
                 error: function () {
-                    alert("Error loading organization.");
+                    toastr.error("Error loading organization details.");
                 }
             });
-
         }
+
         $("#fuOrganizationLogo").change(function () {
-
             if (this.files.length > 0) {
-
                 var file = this.files[0];
-
                 $("#hfOrganizationLogo").val(file.name);
 
                 var reader = new FileReader();
-
                 reader.onload = function (e) {
                     $("#imgLogo").attr("src", e.target.result);
                 };
-
                 reader.readAsDataURL(file);
             }
-
         });
-        $("#btnSave").click(function () {
 
+        $("#btnSave").click(function () {
             var form = document.querySelector(".needs-validation");
 
             if (!form.checkValidity()) {
                 form.classList.add("was-validated");
+                toastr.warning("Please fill all required fields.");
                 return;
             }
-
-            $("#btnSave").prop("disabled", true);
-            $("#btnText").text("Saving...");
-            $("#btnLoader").removeClass("d-none");
 
             SaveOrganization();
         });
 
-        // Remove validation while typing
+        // Remove validation error on typing
         $(".form-control, textarea").on("keyup change", function () {
             $(this).removeClass("is-invalid");
         });
-        function SaveBranchMaster() {
 
-            var valid = true;
-
-            valid &= ValidateDropdown("#ddlOrganization");
-            valid &= ValidateControl("#txtBranchCode");
-            valid &= ValidateControl("#txtBranchName");
-            valid &= ValidateControl("#txtAddress");
-            valid &= ValidateControl("#txtState");
-            valid &= ValidateControl("#txtCity");
-            valid &= ValidateControl("#txtPincode");
-            valid &= ValidateControl("#txtMobileNo");
-            valid &= ValidateDropdown("#ddlBranchHeadUser");
-
-            if (!valid) {
-                toastr.warning("Please fill all required fields.");
-                return false;
-            }
-
-            // Show Loader
+        function SaveOrganization() {
             $("#btnSave").prop("disabled", true);
             $("#btnLoader").removeClass("d-none");
             $("#btnText").text("Saving...");
 
+            var orgId = $("#hfOrganizationID").val();
+
             var obj = {
-                // Your Object
+                OrganizationID: orgId ? parseInt(orgId) : 0,
+                OrganizationName: $("#txtOrganizationName").val().trim(),
+                RegistrationNo: $("#txtRegistrationNo").val().trim(),
+                OfficeAddress: $("#txtOfficeAddress").val().trim(),
+                OfficeState: $("#txtOfficeState").val().trim(),
+                OfficeCity: $("#txtOfficeCity").val().trim(),
+                OfficeMobileNo: $("#txtOfficeMobileNo").val().trim(),
+                OfficialEmail: $("#txtOfficialEmail").val().trim(),
+                OrganizationLogo: $("#hfOrganizationLogo").val(),
+                OwnerName: $("#txtOwnerName").val().trim(),
+                OwnerMobileNo: $("#txtOwnerMobileNo").val().trim(),
+                OwnerEmail: $("#txtOwnerEmail").val().trim()
             };
 
             $.ajax({
-                url: "/bctechadmin/SaveBranchMaster",
+                url: "/bctechadmin/SaveOrganization",
                 type: "POST",
                 data: obj,
-
                 success: function (res) {
-
                     $("#btnSave").prop("disabled", false);
                     $("#btnLoader").addClass("d-none");
-                    $("#btnText").text("Save Branch");
+                    $("#btnText").text("Save Organization");
 
                     if (res.Status == 1) {
                         toastr.success(res.Message);
-
                         setTimeout(function () {
-                            window.location.href = "/bctechadmin/BranchMaster";
+                            window.location.reload();
                         }, 1000);
-                    }
-                    else {
+                    } else {
                         toastr.error(res.Message);
                     }
                 },
-
                 error: function () {
-
                     $("#btnSave").prop("disabled", false);
                     $("#btnLoader").addClass("d-none");
-                    $("#btnText").text("Save Branch");
-
+                    $("#btnText").text("Save Organization");
                     toastr.error("Something went wrong.");
                 }
             });
         }
-
     </script>
-    }
+}

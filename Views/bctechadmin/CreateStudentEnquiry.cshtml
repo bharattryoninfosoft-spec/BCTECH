@@ -1,0 +1,1042 @@
+@{
+    ViewBag.Title = ViewBag.PageTitle ?? "Create Student Enquiry";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<input type="hidden" id="hfStudentEnquiryID" value="@ViewBag.StudentEnquiryID" />
+<input type="hidden" id="hfMode" value="@ViewBag.Mode" />
+<input type="hidden" id="hfLoggedInUserID" value="@ViewBag.LoggedInUserID" />
+
+<form id="frmStudentEnquiry" autocomplete="off">
+
+    <!-- ================= Enquiry Details ================= -->
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="card-header bg-transparent border-bottom">
+            <h5 class="mb-0 text-dark font-weight-bold">Enquiry Details</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Enquiry No <span class="text-danger">*</span></label>
+                    <input type="text" id="txtEnquiryNo" class="form-control" readonly placeholder="Auto Generated" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Enquiry Date <span class="text-danger">*</span></label>
+                    <input type="date" id="txtEnquiryDate" class="form-control" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Branch <span class="text-danger">*</span></label>
+                    <select id="ddlBranch" class="form-select select2">
+                        <option value="">Select Branch</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Enquiry Taken By <span class="text-danger">*</span></label>
+                    <select id="ddlTakenBy" class="form-select select2">
+                        <option value="">Select User</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Student Information ================= -->
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="card-header bg-transparent border-bottom">
+            <h5 class="mb-0 text-dark font-weight-bold">Student Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Student Name <span class="text-danger">*</span></label>
+                    <input type="text" id="txtStudentName" maxlength="150" class="form-control" placeholder="Student Full Name" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Mobile No <span class="text-danger">*</span></label>
+                    <input type="text" id="txtMobileNo" maxlength="10" class="form-control" placeholder="10 Digit Mobile Number" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">WhatsApp No</label>
+                    <input type="text" id="txtWhatsappNo" maxlength="10" class="form-control" placeholder="WhatsApp Number" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="txtEmail" class="form-control" placeholder="Email Address" />
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">DOB</label>
+                    <input type="date" id="txtDOB" class="form-control" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Gender</label>
+                    <select id="ddlGender" class="form-select select2">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Blood Group</label>
+                    <select id="ddlBloodGroup" class="form-select select2">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Qualification</label>
+                    <input type="text" id="txtQualification" list="dlQualification" class="form-control" placeholder="Qualification" autocomplete="off" />
+                    <datalist id="dlQualification"></datalist>
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">School / College Name</label>
+                    <input type="text" id="txtSchoolCollege" list="dlSchoolCollege" class="form-control" placeholder="School / College Name" autocomplete="off" />
+                    <datalist id="dlSchoolCollege"></datalist>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Parent Information ================= -->
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="card-header bg-transparent border-bottom">
+            <h5 class="mb-0 text-dark font-weight-bold">Parent Information</h5>
+        </div>
+        <div class="card-body">
+            <h6 class="text-primary mb-3">Father Details</h6>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Father Name</label>
+                    <input type="text" id="txtFatherName" class="form-control" maxlength="150" placeholder="Father Name" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Father Mobile</label>
+                    <input type="text" id="txtFatherMobile" class="form-control" maxlength="10" placeholder="Father Mobile" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Alternate Mobile</label>
+                    <input type="text" id="txtFatherAlternateMobile" class="form-control" maxlength="10" placeholder="Alternate Mobile" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Occupation</label>
+                    <input type="text" id="txtFatherOccupation" class="form-control" maxlength="100" placeholder="Father Occupation" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Father Email</label>
+                    <input type="email" id="txtFatherEmail" class="form-control" placeholder="Father Email" />
+                </div>
+            </div>
+
+            <hr />
+
+            <h6 class="text-primary mb-3">Mother Details</h6>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Mother Name</label>
+                    <input type="text" id="txtMotherName" class="form-control" maxlength="150" placeholder="Mother Name" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Mother Mobile</label>
+                    <input type="text" id="txtMotherMobile" class="form-control" maxlength="10" placeholder="Mother Mobile" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Occupation</label>
+                    <input type="text" id="txtMotherOccupation" class="form-control" maxlength="100" placeholder="Mother Occupation" />
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Mother Email</label>
+                    <input type="email" id="txtMotherEmail" class="form-control" placeholder="Mother Email" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Address Information ================= -->
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="card-header bg-transparent border-bottom">
+            <h5 class="mb-0 text-dark font-weight-bold">Address Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Address</label>
+                    <textarea id="txtAddress" rows="2" class="form-control" placeholder="Residential Address"></textarea>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Area / Location</label>
+                    <select id="ddlArea" class="form-select select2">
+                        <option value="">Select Area</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">City</label>
+                    <input type="text" id="txtCity" class="form-control" placeholder="City" readonly>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">State</label>
+                    <input type="text" id="txtState" class="form-control" placeholder="State" readonly>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Pincode</label>
+                    <input type="text" id="txtPincode" maxlength="6" class="form-control" placeholder="Pincode" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Course Details ================= -->
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-dark font-weight-bold">Course Details</h5>
+            <button type="button" id="btnAddCourse" class="btn btn-primary btn-sm">
+                <i class="ri-add-line"></i> Add Course
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="tblCourse">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="50" class="text-center">#</th>
+                            <th width="25%">Course <span class="text-danger">*</span></th>
+                            <th width="15%">Course Fee</th>
+                            <th width="12%">Discount (%)</th>
+                            <th width="15%">Discount (Rs.)</th>
+                            <th width="15%">Final Fee</th>
+                            <th>Remarks</th>
+                            <th width="70" class="text-center action-col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Other Information ================= -->
+    <div class="card bg-white rounded-10 border border-white mb-4">
+        <div class="card-header bg-transparent border-bottom">
+            <h5 class="mb-0 text-dark font-weight-bold">Other Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Enquiry Source</label>
+                    <select id="ddlEnquirySource" class="form-select select2">
+                        <option value="">Select Source</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Reference Person</label>
+                    <input type="text" id="txtReferencePerson" class="form-control" maxlength="150" placeholder="Reference Person" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Expected Joining Date</label>
+                    <input type="date" id="txtExpectedJoiningDate" class="form-control" />
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Remarks</label>
+                    <textarea id="txtRemarks" rows="3" class="form-control" placeholder="Remarks"></textarea>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="chkFollowUpRequired" />
+                        <label class="form-check-label fw-bold text-primary" for="chkFollowUpRequired">
+                            Follow Up Required
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<!-- ================= Follow Up Modal ================= -->
+<div class="modal fade" id="FollowUpModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-white">Student Follow Up Details</h5>
+                <button type="button" class="btn-close btn-close-white" id="btnCloseFollowUpModalHeader"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Follow Up Date <span class="text-danger">*</span></label>
+                        <input type="datetime-local" id="txtFollowUpDate" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Next Follow Up Date</label>
+                        <input type="datetime-local" id="txtNextFollowUpDate" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Follow Up Type <span class="text-danger">*</span></label>
+                        <select id="ddlFollowUpType" class="form-select select2">
+                            <option value="">Select Follow Up Type</option>
+                            <option value="Call">Call</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="Visit">Visit</option>
+                            <option value="Email">Email</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Follow Up By <span class="text-danger">*</span></label>
+                        <select id="ddlFollowUpBy" class="form-select select2">
+                            <option value="">Select User</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Discussion <span class="text-danger">*</span></label>
+                        <textarea id="txtDiscussion" rows="3" class="form-control" placeholder="Enter Discussion details..."></textarea>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Next Action / Remark</label>
+                        <textarea id="txtNextAction" rows="2" class="form-control" placeholder="Enter Next Action or Remarks..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="btnSaveFollowUp">
+                    <i class="ri-check-line"></i> Confirm Follow Up
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnCloseFollowUpModal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= Footer Buttons ================= -->
+<div class="card bg-white rounded-10 border border-white mb-4">
+    <div class="card-body text-end">
+        <a href="@Url.Action("StudentEnquiryMaster", "bctechadmin")" class="btn btn-secondary me-2">
+            <i class="ri-arrow-left-line"></i> Back
+        </a>
+        <button type="button" id="btnSaveAndForward" class="btn btn-success me-2">
+            <i class="ri-user-add-line"></i> Save Enquiry &amp; Forward to Admission
+        </button>
+        <button type="button" id="btnSave" class="btn btn-primary">
+            <i class="ri-save-line"></i> Save Enquiry
+        </button>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var CourseRow = 0;
+        var globalCourseList = [];
+        var globalLocationList = [];
+        var followUpDetailsObj = null;
+
+        $(document).ready(function () {
+            $("body").attr("sidebar-data-theme", "sidebar-hide");
+            // Initialize Select2
+            $(".select2").select2({
+                width: '100%',
+                placeholder: 'Select',
+                allowClear: true
+            });
+
+            // Set Current Date default
+            var today = new Date().toISOString().split('T')[0];
+            $("#txtEnquiryDate").val(today);
+
+            // Extract Encrypted QueryString Param 'id'
+            var urlParams = new URLSearchParams(window.location.search);
+            var encryptedId = urlParams.get('id') || "";
+
+            // Bind Dropdowns Master Data
+            LoadDropdowns(function () {
+                LoadAutoCompleteData();
+                if (encryptedId !== "") {
+                    LoadEnquiryDataByID(encryptedId);
+                } else {
+                    AddCourseRow(); // Add empty row for new mode
+                }
+            });
+
+            // On Area Dropdown Select -> Auto-fill City, State, Pincode
+            $("#ddlArea").on("change", function () {
+                var selectedLocID = parseInt($(this).val()) || 0;
+                if (selectedLocID > 0) {
+                    var selectedLoc = globalLocationList.find(x => (x.LocationID || x.ID) == selectedLocID);
+                    if (selectedLoc) {
+                        $("#txtCity").val(selectedLoc.City || "");
+                        $("#txtState").val(selectedLoc.State || "");
+                        $("#txtPincode").val(selectedLoc.Pincode || "");
+                    }
+                }
+            });
+
+            // Add Course Button Event
+            $("#btnAddCourse").click(function () {
+                AddCourseRow();
+            });
+
+            // Checkbox FollowUp Event
+            $("#chkFollowUpRequired").on("change", function () {
+                if ($(this).is(":checked")) {
+                    $("#FollowUpModal").modal("show");
+                } else {
+                    followUpDetailsObj = null;
+                }
+            });
+
+            // FollowUp Modal Default Setup
+            $("#FollowUpModal").on("shown.bs.modal", function () {
+                $("#ddlFollowUpType, #ddlFollowUpBy").select2({
+                    dropdownParent: $("#FollowUpModal"),
+                    width: '100%',
+                    placeholder: 'Select'
+                });
+
+                if ($("#txtFollowUpDate").val() === "") {
+                    var now = new Date();
+                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                    $("#txtFollowUpDate").val(now.toISOString().slice(0, 16));
+                }
+
+                var loggedInUser = $("#hfLoggedInUserID").val();
+                if (loggedInUser && ($("#ddlFollowUpBy").val() === "" || $("#ddlFollowUpBy").val() === null)) {
+                    $("#ddlFollowUpBy").val(loggedInUser).trigger("change");
+                }
+            });
+
+            // FollowUp Modal Buttons
+            $("#btnCloseFollowUpModal, #btnCloseFollowUpModalHeader").click(function () {
+                if (followUpDetailsObj == null) {
+                    $("#chkFollowUpRequired").prop("checked", false);
+                }
+                $("#FollowUpModal").modal("hide");
+            });
+
+            $("#btnSaveFollowUp").click(function () {
+                if ($("#txtFollowUpDate").val() === "") {
+                    toastr.warning("Please select Follow Up Date.");
+                    return;
+                }
+                if ($("#ddlFollowUpType").val() === "") {
+                    toastr.warning("Please select Follow Up Type.");
+                    return;
+                }
+                if ($("#ddlFollowUpBy").val() === "") {
+                    toastr.warning("Please select Follow Up By User.");
+                    return;
+                }
+                if ($("#txtDiscussion").val().trim() === "") {
+                    toastr.warning("Please enter Discussion details.");
+                    return;
+                }
+
+                followUpDetailsObj = {
+                    StudentEnquiryFollowUpID: 0,
+                    FollowUpDate: $("#txtFollowUpDate").val(),
+                    NextFollowUpDate: $("#txtNextFollowUpDate").val(),
+                    FollowUpType: $("#ddlFollowUpType").val(),
+                    Discussion: $("#txtDiscussion").val().trim(),
+                    NextActionRemark: $("#txtNextAction").val().trim(),
+                    FollowUpByUserID: parseInt($("#ddlFollowUpBy").val()) || 0
+                };
+
+                toastr.success("Follow Up details attached successfully.");
+                $("#FollowUpModal").modal("hide");
+            });
+
+            // Dynamic Calculation of Fees
+            $(document).on("keyup change", ".fee, .discount", function () {
+                var row = $(this).closest("tr");
+                var fee = parseFloat(row.find(".fee").val()) || 0;
+                var discount = parseFloat(row.find(".discount").val()) || 0;
+
+                if (discount > fee) {
+                    toastr.error("Discount cannot exceed Course Fee.");
+                    row.find(".discount").val(0);
+                    discount = 0;
+                }
+
+                var finalFee = fee - discount;
+                row.find(".finalfee").val(finalFee.toFixed(2));
+            });
+
+            // Auto Bind Fee on Course Select
+            $(document).on("change", ".selectCourse", function () {
+                var row = $(this).closest("tr");
+                var selectedOption = $(this).find("option:selected");
+                var fee = parseFloat(selectedOption.data("fee")) || 0;
+                var discount = parseFloat(row.find(".discount").val()) || 0;
+                var finalFee = fee - discount;
+
+                row.find(".fee").val(fee.toFixed(2));
+                row.find(".finalfee").val((finalFee < 0 ? 0 : finalFee).toFixed(2));
+            });
+
+            // On Branch Change -> Auto-generate Enquiry No
+            $("#ddlBranch").on("change", function () {
+                var branchID = parseInt($(this).val()) || 0;
+                var currentID = parseInt($("#hfStudentEnquiryID").val()) || 0;
+                if (branchID > 0 && currentID === 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/bctechadmin/GetNextEnquiryNo",
+                        data: JSON.stringify({ branchID: branchID }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (res) {
+                            if (res && res.EnquiryNo) {
+                                $("#txtEnquiryNo").val(res.EnquiryNo);
+                            }
+                        }
+                    });
+                } else if (branchID === 0 && currentID === 0) {
+                    $("#txtEnquiryNo").val("");
+                }
+            });
+
+            // Dynamic Fee Calculations
+            $(document).on("keyup change", ".discount-percent", function () {
+                CalculateRowFeeFromPercent($(this).closest("tr"));
+            });
+
+            $(document).on("keyup change", ".discount", function () {
+                CalculateRowFeeFromAmount($(this).closest("tr"));
+            });
+
+            $(document).on("keyup change", ".fee", function () {
+                var row = $(this).closest("tr");
+                if (row.find(".discount-percent").val() !== "") {
+                    CalculateRowFeeFromPercent(row);
+                } else {
+                    CalculateRowFeeFromAmount(row);
+                }
+            });
+
+            // Save Master Click Events
+            $("#btnSave").click(function () {
+                SaveStudentEnquiry(false);
+            });
+
+            $("#btnSaveAndForward").click(function () {
+                SaveStudentEnquiry(true);
+            });
+        });
+
+        // ==========================================
+        // Helper & Dropdown Functions
+        // ==========================================
+
+        function LoadAutoCompleteData() {
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/GetQualificationAndSchoolAutoComplete",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "{}",
+                success: function (res) {
+                    if (res) {
+                        if (res.Qualifications && res.Qualifications.length > 0) {
+                            var qHtml = "";
+                            $.each(res.Qualifications, function (i, item) {
+                                qHtml += "<option value='" + item + "'>";
+                            });
+                            $("#dlQualification").html(qHtml);
+                        }
+                        if (res.Schools && res.Schools.length > 0) {
+                            var sHtml = "";
+                            $.each(res.Schools, function (i, item) {
+                                sHtml += "<option value='" + item + "'>";
+                            });
+                            $("#dlSchoolCollege").html(sHtml);
+                        }
+                    }
+                }
+            });
+        }
+
+        function ParseResponseData(res) {
+            if (!res) return [];
+            var data = Array.isArray(res) && res.length > 1 && res[1] === "success" ? res[0] : res;
+            if (typeof data === "string") {
+                try { data = JSON.parse(data); } catch (e) { data = []; }
+            }
+            return Array.isArray(data) ? data : [];
+        }
+
+        function RenderSelectOptions(elementId, dataList, valueKey, textKey, defaultText) {
+            var html = "<option value=''>" + defaultText + "</option>";
+            $.each(dataList, function (i, item) {
+                var val = item[valueKey] || item.ID || item.Id;
+                var txt = item[textKey] || item.EnquirySourceType || item.SourceTitle || item.SourceName || item.Name || item.Title || "";
+                html += "<option value='" + val + "'>" + txt + "</option>";
+            });
+            $("#" + elementId).html(html).trigger("change");
+        }
+
+        function BindBranchDropdown(data) {
+            var branchList = ParseResponseData(data);
+            RenderSelectOptions("ddlBranch", branchList, "BranchID", "BranchName", "Select Branch");
+        }
+
+        function BindUserDropdowns(data) {
+            var userList = ParseResponseData(data);
+            var userHtml = "<option value=''>Select User</option>";
+            $.each(userList, function (i, item) {
+                var id = item.UserID || item.ID;
+                var name = item.UserName || item.FullName || item.Name || ("User #" + id);
+                userHtml += "<option value='" + id + "'>" + name + "</option>";
+            });
+            $("#ddlTakenBy").html(userHtml).trigger("change");
+            $("#ddlFollowUpBy").html(userHtml).trigger("change");
+        }
+
+        function BindEnquirySourceDropdown(data) {
+            var sourceList = ParseResponseData(data);
+            RenderSelectOptions("ddlEnquirySource", sourceList, "EnquirySourceID", "SourceName", "Select Source");
+        }
+
+        function BindAreaDropdown(data) {
+            globalLocationList = ParseResponseData(data);
+            RenderSelectOptions("ddlArea", globalLocationList, "LocationID", "AreaLocation", "Select Area");
+        }
+
+        function SetCourseGlobalData(data) {
+            globalCourseList = ParseResponseData(data);
+        }
+
+        function LoadDropdowns(callback) {
+            $.when(
+                $.ajax({ type: "POST", url: "/bctechadmin/GetBranchDropdown", contentType: "application/json; charset=utf-8", dataType: "json", data: "{}" }),
+                $.ajax({ type: "POST", url: "/bctechadmin/GetUserDropdown", contentType: "application/json; charset=utf-8", dataType: "json", data: "{}" }),
+                $.ajax({ type: "POST", url: "/bctechadmin/GetEnquirySourceDropdown", contentType: "application/json; charset=utf-8", dataType: "json", data: "{}" }),
+                $.ajax({ type: "POST", url: "/bctechadmin/GetCourseDropdown", contentType: "application/json; charset=utf-8", dataType: "json", data: "{}" }),
+                $.ajax({ type: "POST", url: "/bctechadmin/GetLocationDropdown", contentType: "application/json; charset=utf-8", dataType: "json", data: "{}" })
+            ).done(function (branchesRes, usersRes, sourcesRes, coursesRes, locationRes) {
+
+                BindBranchDropdown(branchesRes);
+                BindUserDropdowns(usersRes);
+                BindEnquirySourceDropdown(sourcesRes);
+                SetCourseGlobalData(coursesRes);
+                BindAreaDropdown(locationRes);
+
+                if (typeof callback === "function") {
+                    callback();
+                }
+            }).fail(function (err) {
+                console.error("AJAX Error:", err);
+                toastr.error("Error loading dropdown data.");
+            });
+        }
+
+        // Add Dynamic Course Row
+        function AddCourseRow(courseData) {
+            CourseRow++;
+            var isViewMode = $("#hfMode").val() === "V";
+            var html = "";
+
+            html += "<tr id='trCourse_" + CourseRow + "'>";
+            html += "<td class='text-center row-index'>" + ($("#tblCourse tbody tr").length + 1) + "</td>";
+            html += "<td>";
+            html += "<select id='ddlCourse_" + CourseRow + "' class='form-select selectCourse select2'>";
+            html += "<option value=''>Select Course</option>";
+
+            $.each(globalCourseList, function (i, item) {
+                var id = item.ID || item.CourseID;
+                var name = item.Name || item.CourseTitle || item.CourseName;
+                var fee = parseFloat(item.Fee || item.CourseFee || 0);
+                html += "<option value='" + id + "' data-fee='" + fee + "'>" + name + "</option>";
+            });
+
+            html += "</select>";
+            html += "</td>";
+
+            html += "<td><input type='tel' step='0.01' class='form-control text-end fee' id='txtFee_" + CourseRow + "' value='' onkeypress='return validateFloatKeyPress(this,event);' /></td>";
+            html += "<td><input type='tel' step='0.01' class='form-control text-end discount-percent' id='txtDiscountPercent_" + CourseRow + "' placeholder='%' value='' onkeypress='return validateFloatKeyPress(this,event);' /></td>";
+            html += "<td><input type='tel' step='0.01' class='form-control text-end discount' id='txtDiscount_" + CourseRow + "' placeholder='Rs.' value='' onkeypress='return validateFloatKeyPress(this,event);' /></td>";
+            html += "<td><input type='tel' step='0.01' class='form-control text-end finalfee' id='txtFinalFee_" + CourseRow + "' value='' readonly /></td>";
+            html += "<td><input type='text' class='form-control remark' id='txtRemark_" + CourseRow + "' placeholder='Remark' /></td>";
+
+            if (!isViewMode) {
+                html += "<td class='text-center action-col'>";
+                html += "<a href='javascript:void(0);' class='text-danger fs-16' onclick='RemoveCourseRow(" + CourseRow + ")' title='Remove Course'>";
+                html += "<i class='ri-delete-bin-line'></i>";
+                html += "</a>";
+                html += "</td>";
+            }
+
+            html += "</tr>";
+
+            $("#tblCourse tbody").append(html);
+
+            $("#ddlCourse_" + CourseRow).select2({
+                width: '100%',
+                placeholder: 'Select Course'
+            });
+
+            if (courseData) {
+                var selectedCourseID = courseData.CourseID || courseData.ID;
+                $("#ddlCourse_" + CourseRow).val(selectedCourseID).trigger("change");
+
+                var courseFee = parseFloat(courseData.CourseFee || 0);
+                var discountAmount = parseFloat(courseData.Discount || 0);
+                var discountPercent = (courseFee > 0 && discountAmount > 0) ? ((discountAmount / courseFee) * 100) : 0;
+                var finalFee = parseFloat(courseData.FinalFee || (courseFee - discountAmount));
+
+                $("#txtFee_" + CourseRow).val(courseFee.toFixed(2));
+                $("#txtDiscountPercent_" + CourseRow).val(discountPercent > 0 ? discountPercent.toFixed(2) : "");
+                $("#txtDiscount_" + CourseRow).val(discountAmount.toFixed(2));
+                $("#txtFinalFee_" + CourseRow).val((finalFee < 0 ? 0 : finalFee).toFixed(2));
+                $("#txtRemark_" + CourseRow).val(courseData.Remarks);
+            }
+
+            if (isViewMode) {
+                $("#trCourse_" + CourseRow).find("input, select").prop("disabled", true);
+            }
+
+            ReindexCourseTable();
+        }
+
+        function CalculateRowFeeFromPercent(row) {
+            var fee = parseFloat(row.find(".fee").val()) || 0;
+            var discountPercent = parseFloat(row.find(".discount-percent").val()) || 0;
+
+            if (discountPercent > 100) {
+                toastr.error("Discount % cannot exceed 100%.");
+                row.find(".discount-percent").val(100);
+                discountPercent = 100;
+            }
+
+            var discountAmount = (fee * discountPercent) / 100;
+            row.find(".discount").val(discountAmount.toFixed(2));
+
+            var finalFee = fee - discountAmount;
+            row.find(".finalfee").val((finalFee < 0 ? 0 : finalFee).toFixed(2));
+        }
+
+        function CalculateRowFeeFromAmount(row) {
+            var fee = parseFloat(row.find(".fee").val()) || 0;
+            var discountAmount = parseFloat(row.find(".discount").val()) || 0;
+
+            if (discountAmount > fee) {
+                toastr.error("Discount Amount cannot exceed Course Fee.");
+                row.find(".discount").val(fee.toFixed(2));
+                discountAmount = fee;
+            }
+
+            var discountPercent = fee > 0 ? (discountAmount / fee) * 100 : 0;
+            row.find(".discount-percent").val(discountPercent > 0 ? discountPercent.toFixed(2) : "");
+
+            var finalFee = fee - discountAmount;
+            row.find(".finalfee").val((finalFee < 0 ? 0 : finalFee).toFixed(2));
+        }
+
+        function RemoveCourseRow(rowId) {
+            if ($("#tblCourse tbody tr").length <= 1) {
+                toastr.warning("At least one course line item is required.");
+                return;
+            }
+            $("#trCourse_" + rowId).remove();
+            ReindexCourseTable();
+        }
+
+        function ReindexCourseTable() {
+            $("#tblCourse tbody tr").each(function (index, elem) {
+                $(elem).find(".row-index").text(index + 1);
+            });
+        }
+
+        // Save / Update Function
+        function SaveStudentEnquiry(isForwardToAdmission) {
+            isForwardToAdmission = isForwardToAdmission === true;
+
+            if ($("#txtEnquiryDate").val() === "") {
+                toastr.warning("Please select Enquiry Date.");
+                $("#txtEnquiryDate").focus();
+                return;
+            }
+            if ($("#ddlBranch").val() === "") {
+                toastr.warning("Please select Branch.");
+                return;
+            }
+            if ($("#ddlTakenBy").val() === "") {
+                toastr.warning("Please select Enquiry Taken By User.");
+                return;
+            }
+            if ($("#txtStudentName").val().trim() === "") {
+                toastr.warning("Please enter Student Name.");
+                $("#txtStudentName").focus();
+                return;
+            }
+            if ($("#txtMobileNo").val().trim() === "" || $("#txtMobileNo").val().length !== 10) {
+                toastr.warning("Please enter valid 10 digit Mobile Number.");
+                $("#txtMobileNo").focus();
+                return;
+            }
+
+            var courseList = [];
+            var courseValid = true;
+
+            $("#tblCourse tbody tr").each(function () {
+                var courseID = parseInt($(this).find(".selectCourse").val()) || 0;
+                var fee = parseFloat($(this).find(".fee").val()) || 0;
+                var discount = parseFloat($(this).find(".discount").val()) || 0;
+                var finalFee = parseFloat($(this).find(".finalfee").val()) || 0;
+                var remark = $(this).find(".remark").val();
+
+                if (courseID === 0) {
+                    courseValid = false;
+                    return false;
+                }
+
+                courseList.push({
+                    StudentEnquiryCourseID: 0,
+                    StudentEnquiryID: parseInt($("#hfStudentEnquiryID").val()) || 0,
+                    CourseID: courseID,
+                    CourseFee: fee,
+                    Discount: discount,
+                    FinalFee: finalFee,
+                    Remarks: remark
+                });
+            });
+
+            if (!courseValid || courseList.length === 0) {
+                toastr.warning("Please select a valid Course for all rows in Course Grid.");
+                return;
+            }
+
+            if ($("#chkFollowUpRequired").is(":checked") && followUpDetailsObj == null) {
+                toastr.warning("Please complete Follow Up details or uncheck Follow Up Required.");
+                $("#FollowUpModal").modal("show");
+                return;
+            }
+
+            var selectedAreaText = $("#ddlArea option:selected").val() ? $("#ddlArea option:selected").text() : "";
+
+            var enquiryModel = {
+                StudentEnquiryID: parseInt($("#hfStudentEnquiryID").val()) || 0,
+                BranchID: parseInt($("#ddlBranch").val()) || 0,
+                EnquiryNo: $("#txtEnquiryNo").val(),
+                EnquiryDate: $("#txtEnquiryDate").val(),
+                EnquiryTakenByUserID: parseInt($("#ddlTakenBy").val()) || 0,
+                StudentName: $("#txtStudentName").val().trim(),
+                StudentMobileNo: $("#txtMobileNo").val().trim(),
+                WhatsAppNo: $("#txtWhatsappNo").val().trim(),
+                StudentEmail: $("#txtEmail").val().trim(),
+                DOB: $("#txtDOB").val() || null,
+                Gender: $("#ddlGender").val(),
+                BloodGroup: $("#ddlBloodGroup").val(),
+                EducationQualification: $("#txtQualification").val().trim(),
+                SchoolCollegeName: $("#txtSchoolCollege").val().trim(),
+                FatherName: $("#txtFatherName").val().trim(),
+                FatherMobileNo: $("#txtFatherMobile").val().trim(),
+                FatherAlternateMobileNo: $("#txtFatherAlternateMobile").val().trim(),
+                FatherOccupation: $("#txtFatherOccupation").val().trim(),
+                FatherEmail: $("#txtFatherEmail").val().trim(),
+                MotherName: $("#txtMotherName").val().trim(),
+                MotherMobileNo: $("#txtMotherMobile").val().trim(),
+                MotherOccupation: $("#txtMotherOccupation").val().trim(),
+                MotherEmail: $("#txtMotherEmail").val().trim(),
+                Address: $("#txtAddress").val().trim(),
+                AreaLocation: selectedAreaText,
+                City: $("#txtCity").val().trim(),
+                State: $("#txtState").val().trim(),
+                Pincode: $("#txtPincode").val().trim(),
+                EnquirySourceID: parseInt($("#ddlEnquirySource").val()) || 0,
+                ReferencePersonName: $("#txtReferencePerson").val().trim(),
+                ExpectedJoiningDate: $("#txtExpectedJoiningDate").val() || null,
+                Remarks: $("#txtRemarks").val().trim(),
+                IsFollowUpRequired: $("#chkFollowUpRequired").is(":checked"),
+                CourseList: courseList,
+                FollowUpObj: followUpDetailsObj
+            };
+
+            var actionUrl = enquiryModel.StudentEnquiryID > 0 ? "/bctechadmin/UpdateStudentEnquiry" : "/bctechadmin/SaveStudentEnquiry";
+
+            var confirmTitle = isForwardToAdmission ? 'Save & Forward to Admission?' : 'Are you sure?';
+            var confirmText = isForwardToAdmission ? 'Do you want to save this Student Enquiry and forward to Admission?' : 'Do you want to save this Student Enquiry?';
+            var confirmBtnText = isForwardToAdmission ? 'Yes, Save & Forward!' : 'Yes, Save it!';
+
+            Swal.fire({
+                title: confirmTitle,
+                text: confirmText,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: confirmBtnText
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: actionUrl,
+                        data: JSON.stringify(enquiryModel),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.IsSuccess) {
+                                var savedEnquiryID = response.PrimaryID || enquiryModel.StudentEnquiryID;
+                                var encryptedId = btoa(savedEnquiryID.toString());
+
+                                if (isForwardToAdmission) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Saved Successfully',
+                                        text: 'Enquiry saved! Forwarding to Admission...',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    }).then(function () {
+                                        window.location.href = "/bctechadmin/CreateStudentAdmission?id=" + encodeURIComponent(encryptedId);
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Saved Successfully',
+                                        text: response.Message
+                                    }).then(function () {
+                                        window.location.href = "/bctechadmin/StudentEnquiryMaster";
+                                    });
+                                }
+                            } else {
+                                Swal.fire('Error', response.Message, 'error');
+                            }
+                        },
+                        error: function (err) {
+                            Swal.fire('Error', 'An unexpected error occurred.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Fetch Record For Edit / View Mode using Encrypted String (e.g., id="NHxW")
+        function LoadEnquiryDataByID(encryptedId) {
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentEnquiryByID",
+                data: { id: encryptedId },
+                dataType: "json",
+                success: function (res) {
+                    var d = (res && res.Data) ? res.Data : res;
+                    if (d && (d.StudentEnquiryID > 0 || d.StudentName)) {
+                        $("#hfStudentEnquiryID").val(d.StudentEnquiryID);
+                        $("#txtEnquiryNo").val(d.EnquiryNo);
+                        if (d.EnquiryDate) $("#txtEnquiryDate").val(d.EnquiryDate.split('T')[0]);
+                        $("#ddlBranch").val(d.BranchID).trigger("change");
+                        $("#ddlTakenBy").val(d.EnquiryTakenByUserID).trigger("change");
+                        $("#txtStudentName").val(d.StudentName);
+                        $("#txtMobileNo").val(d.StudentMobileNo);
+                        $("#txtWhatsappNo").val(d.WhatsAppNo);
+                        $("#txtEmail").val(d.StudentEmail);
+                        if (d.DOB) $("#txtDOB").val(d.DOB.split('T')[0]);
+                        $("#ddlGender").val(d.Gender).trigger("change");
+                        $("#ddlBloodGroup").val(d.BloodGroup).trigger("change");
+                        $("#txtQualification").val(d.EducationQualification);
+                        $("#txtSchoolCollege").val(d.SchoolCollegeName);
+                        $("#txtFatherName").val(d.FatherName);
+                        $("#txtFatherMobile").val(d.FatherMobileNo);
+                        $("#txtFatherAlternateMobile").val(d.FatherAlternateMobileNo);
+                        $("#txtFatherOccupation").val(d.FatherOccupation);
+                        $("#txtFatherEmail").val(d.FatherEmail);
+                        $("#txtMotherName").val(d.MotherName);
+                        $("#txtMotherMobile").val(d.MotherMobileNo);
+                        $("#txtMotherOccupation").val(d.MotherOccupation);
+                        $("#txtMotherEmail").val(d.MotherEmail);
+                        $("#txtAddress").val(d.Address);
+
+                        // Bind Area Dropdown Text Match
+                        if (d.AreaLocation) {
+                            $("#ddlArea option").filter(function () {
+                                return $(this).text() === d.AreaLocation;
+                            }).prop('selected', true).trigger("change");
+                        }
+
+                        $("#txtCity").val(d.City);
+                        $("#txtState").val(d.State);
+                        $("#txtPincode").val(d.Pincode);
+                        $("#ddlEnquirySource").val(d.EnquirySourceID).trigger("change");
+                        $("#txtReferencePerson").val(d.ReferencePersonName);
+                        if (d.ExpectedJoiningDate) $("#txtExpectedJoiningDate").val(d.ExpectedJoiningDate.split('T')[0]);
+                        $("#txtRemarks").val(d.Remarks);
+                        $("#chkFollowUpRequired").prop("checked", d.IsFollowUpRequired);
+
+                        // Bind Follow Up Object if present
+                        if (d.FollowUpObj) {
+                            followUpDetailsObj = d.FollowUpObj;
+                            if (d.FollowUpObj.FollowUpDate) $("#txtFollowUpDate").val(d.FollowUpObj.FollowUpDate);
+                            if (d.FollowUpObj.NextFollowUpDate) $("#txtNextFollowUpDate").val(d.FollowUpObj.NextFollowUpDate);
+                            $("#ddlFollowUpType").val(d.FollowUpObj.FollowUpType).trigger("change");
+                            $("#ddlFollowUpBy").val(d.FollowUpObj.FollowUpByUserID).trigger("change");
+                            $("#txtDiscussion").val(d.FollowUpObj.Discussion);
+                            $("#txtNextAction").val(d.FollowUpObj.NextActionRemark);
+                        }
+
+                        // Bind Dynamic Course Grid
+                        $("#tblCourse tbody").empty();
+                        if (d.CourseList && d.CourseList.length > 0) {
+                            $.each(d.CourseList, function (i, item) {
+                                AddCourseRow(item);
+                            });
+                        } else {
+                            AddCourseRow();
+                        }
+
+                        // View Mode Disabling Logic
+                        if ($("#hfMode").val() === "V") {
+                            $("#frmStudentEnquiry").find("input, select, textarea, button").prop("disabled", true);
+                            $(".select2").prop("disabled", true).trigger("change");
+                            $("#btnAddCourse").hide();
+                            $("#btnSave").hide();
+                            $("#btnSaveAndForward").hide();
+                            $(".action-col").hide();
+                        }
+                    }
+                },
+                error: function () {
+                    toastr.error("Failed to fetch Enquiry Details.");
+                }
+            });
+        }
+
+
+         
+        function validateFloatKeyPress(el, evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode;
+            var number = el.value.split('.');
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            //just one dot (thanks ddlab)
+            if (number.length > 1 && charCode == 46) {
+                return false;
+            }
+            //get the carat position
+            var caratPos = getSelectionStart(el);
+            var dotPos = el.value.indexOf(".");
+            if (caratPos > dotPos && dotPos > -1 && (number[1].length > 6)) {
+                return false;
+            }
+            return true;
+        }
+
+        function getSelectionStart(o) {
+            if (o.createTextRange) {
+                var r = document.selection.createRange().duplicate()
+                r.moveEnd('character', o.value.length)
+                if (r.text == '') return o.value.length
+                return o.value.lastIndexOf(r.text)
+            } else return o.selectionStart
+        }
+
+
+
+
+    </script>
+}

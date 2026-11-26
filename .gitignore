@@ -363,3 +363,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Project specific ignores
+DLL/
+Uploads/
+Content/Upload/
+Content/profile/
+*.pubxml.user

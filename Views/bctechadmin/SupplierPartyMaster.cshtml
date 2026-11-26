@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "SupplierPartyMaster";
+    ViewBag.Title = "StudentEnquiryMaster";
     Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
 }
 
@@ -22,6 +22,8 @@
 
         </form>
 
+
+        <!--
         <a href="javascript:void(0);"
            class="text-primary fs-16 text-decoration-none"
            onclick="OpenSupplierPartyModal()">
@@ -29,6 +31,12 @@
             + Add Supplier
 
         </a>
+            -->
+
+        <a href="javascript:void(0);" class="btn btn-primary text-white" onclick="OpenSupplierPartyModal()">
+            <i class="ri-add-line me-1"></i> Add Supplier
+        </a>
+
 
     </div>
 
@@ -101,7 +109,7 @@
 
             <div class="modal-header bg-primary text-white">
 
-                <h5 class="modal-title">
+                <h5 class="modal-title text-white">
 
                     <i class="ri-user-3-line me-2"></i>
 
@@ -442,45 +450,18 @@
                         </div>
 
                     </div>
-
                 </div>
-
             </div>
 
             <!-- Modal Footer -->
-
             <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="ri-close-line me-1"></i>
-
                     Close
-
                 </button>
-
-                <button type="button"
-                        class="btn btn-warning"
-                        id="btnClearSupplier"
-                        onclick="ClearSupplierForm()">
-
-                    <i class="ri-refresh-line me-1"></i>
-
-                    Reset
-
-                </button>
-
-                <button type="button"
-                        class="btn btn-primary"
-                        id="btnSaveSupplier"
-                        onclick="SaveSupplier()">
-
+                <button type="button" class="btn btn-primary text-white" id="btnSaveSupplier" onclick="SaveSupplier()">
                     <i class="ri-save-line me-1"></i>
-
                     Save Supplier
-
                 </button>
 
             </div>
@@ -727,228 +708,228 @@
 
         function SaveSupplier() {
 
-    var PartyID = $("#hfPartyID").val();
+            var PartyID = $("#hfPartyID").val();
 
-    var PartyType = $("#ddlPartyType").val();
+            var PartyType = $("#ddlPartyType").val();
 
-    var CompanyName = $.trim($("#txtCompanyName").val());
+            var CompanyName = $.trim($("#txtCompanyName").val());
 
-    var ContactPerson = $.trim($("#txtContactPerson").val());
+            var ContactPerson = $.trim($("#txtContactPerson").val());
 
-    var MobileNo = $.trim($("#txtMobileNo").val());
+            var MobileNo = $.trim($("#txtMobileNo").val());
 
-    var AlternateMobileNo = $.trim($("#txtAlternateMobileNo").val());
+            var AlternateMobileNo = $.trim($("#txtAlternateMobileNo").val());
 
-    var EmailAddress = $.trim($("#txtEmailAddress").val());
+            var EmailAddress = $.trim($("#txtEmailAddress").val());
 
-    var GSTNo = $.trim($("#txtGSTNo").val());
+            var GSTNo = $.trim($("#txtGSTNo").val());
 
-    var Address = $.trim($("#txtAddress").val());
+            var Address = $.trim($("#txtAddress").val());
 
-    var City = $.trim($("#txtCity").val());
+            var City = $.trim($("#txtCity").val());
 
-    var State = $.trim($("#txtState").val());
+            var State = $.trim($("#txtState").val());
 
-    var Pincode = $.trim($("#txtPincode").val());
+            var Pincode = $.trim($("#txtPincode").val());
 
-    var BankName = $.trim($("#txtBankName").val());
+            var BankName = $.trim($("#txtBankName").val());
 
-    var AccountNo = $.trim($("#txtAccountNo").val());
+            var AccountNo = $.trim($("#txtAccountNo").val());
 
-    var IFSCCode = $.trim($("#txtIFSCCode").val());
+            var IFSCCode = $.trim($("#txtIFSCCode").val());
 
-    var OpeningBalance = $.trim($("#txtOpeningBalance").val());
+            var OpeningBalance = $.trim($("#txtOpeningBalance").val());
 
-    var IsActive = $("#chkIsActive").is(":checked");
+            var IsActive = $("#chkIsActive").is(":checked");
 
-    //===========================================
-    // Validation
-    //===========================================
+            //===========================================
+            // Validation
+            //===========================================
 
-    if (PartyType == "") {
+            if (PartyType == "") {
 
-        toastr.warning("Please Select Party Type.");
+                toastr.warning("Please Select Party Type.");
 
-        $("#ddlPartyType").focus();
+                $("#ddlPartyType").focus();
 
-        return;
-
-    }
-
-    if (CompanyName == "") {
-
-        toastr.warning("Please Enter Company Name.");
-
-        $("#txtCompanyName").focus();
-
-        return;
-
-    }
-
-    if (MobileNo == "") {
-
-        toastr.warning("Please Enter Mobile Number.");
-
-        $("#txtMobileNo").focus();
-
-        return;
-
-    }
-
-    if (!/^[0-9]{10}$/.test(MobileNo)) {
-
-        toastr.warning("Please Enter Valid Mobile Number.");
-
-        $("#txtMobileNo").focus();
-
-        return;
-
-    }
-
-    if (AlternateMobileNo != "" && !/^[0-9]{10}$/.test(AlternateMobileNo)) {
-
-        toastr.warning("Please Enter Valid Alternate Mobile Number.");
-
-        $("#txtAlternateMobileNo").focus();
-
-        return;
-
-    }
-
-    if (EmailAddress != "") {
-
-        var EmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!EmailPattern.test(EmailAddress)) {
-
-            toastr.warning("Please Enter Valid Email Address.");
-
-            $("#txtEmailAddress").focus();
-
-            return;
-
-        }
-
-    }
-
-    if (GSTNo != "" && GSTNo.length != 15) {
-
-        toastr.warning("GST Number must be 15 characters.");
-
-        $("#txtGSTNo").focus();
-
-        return;
-
-    }
-
-    if (Pincode != "" && !/^[0-9]{6}$/.test(Pincode)) {
-
-        toastr.warning("Please Enter Valid Pincode.");
-
-        $("#txtPincode").focus();
-
-        return;
-
-    }
-
-    if (OpeningBalance == "") {
-
-        OpeningBalance = 0;
-
-    }
-
-    //===========================================
-    // Disable Button
-    //===========================================
-
-    $("#btnSaveSupplier").prop("disabled", true);
-
-    //===========================================
-    // FormData
-    //===========================================
-
-    var formData = new FormData();
-
-    formData.append("PartyID", PartyID);
-
-    formData.append("PartyType", PartyType);
-
-    formData.append("CompanyName", CompanyName);
-
-    formData.append("ContactPerson", ContactPerson);
-
-    formData.append("MobileNo", MobileNo);
-
-    formData.append("AlternateMobileNo", AlternateMobileNo);
-
-    formData.append("EmailAddress", EmailAddress);
-
-    formData.append("GSTNo", GSTNo);
-
-    formData.append("Address", Address);
-
-    formData.append("City", City);
-
-    formData.append("State", State);
-
-    formData.append("Pincode", Pincode);
-
-    formData.append("BankName", BankName);
-
-    formData.append("AccountNo", AccountNo);
-
-    formData.append("IFSCCode", IFSCCode);
-
-    formData.append("OpeningBalance", OpeningBalance);
-
-    formData.append("IsActive", IsActive);
-
-    //===========================================
-    // Save Ajax
-    //===========================================
-
-    $.ajax({
-
-        type: "POST",
-
-        url: "/bctechadmin/SaveSupplierParty",
-
-        data: formData,
-
-        processData: false,
-
-        contentType: false,
-
-        success: function (response) {
-
-            $("#btnSaveSupplier").prop("disabled", false);
-
-            if (response.Status == 1) {
-
-                toastr.success(response.Message);
-
-                HideSupplierPartyModal();
-
-                GetSupplierPartyList();
-
-            }
-            else {
-
-                toastr.error(response.Message);
+                return;
 
             }
 
-        },
+            if (CompanyName == "") {
 
-        error: function () {
+                toastr.warning("Please Enter Company Name.");
 
-            $("#btnSaveSupplier").prop("disabled", false);
+                $("#txtCompanyName").focus();
 
-            toastr.error("Something went wrong.");
+                return;
 
-        }
+            }
 
-    });
+            if (MobileNo == "") {
+
+                toastr.warning("Please Enter Mobile Number.");
+
+                $("#txtMobileNo").focus();
+
+                return;
+
+            }
+
+            if (!/^[0-9]{10}$/.test(MobileNo)) {
+
+                toastr.warning("Please Enter Valid Mobile Number.");
+
+                $("#txtMobileNo").focus();
+
+                return;
+
+            }
+
+            if (AlternateMobileNo != "" && !/^[0-9]{10}$/.test(AlternateMobileNo)) {
+
+                toastr.warning("Please Enter Valid Alternate Mobile Number.");
+
+                $("#txtAlternateMobileNo").focus();
+
+                return;
+
+            }
+
+            if (EmailAddress != "") {
+
+                var EmailPattern = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+
+                if (!EmailPattern.test(EmailAddress)) {
+
+                    toastr.warning("Please Enter Valid Email Address.");
+
+                    $("#txtEmailAddress").focus();
+
+                    return;
+
+                }
+
+            }
+
+            if (GSTNo != "" && GSTNo.length != 15) {
+
+                toastr.warning("GST Number must be 15 characters.");
+
+                $("#txtGSTNo").focus();
+
+                return;
+
+            }
+
+            if (Pincode != "" && !/^[0-9]{6}$/.test(Pincode)) {
+
+                toastr.warning("Please Enter Valid Pincode.");
+
+                $("#txtPincode").focus();
+
+                return;
+
+            }
+
+            if (OpeningBalance == "") {
+
+                OpeningBalance = 0;
+
+            }
+
+            //===========================================
+            // Disable Button
+            //===========================================
+
+            $("#btnSaveSupplier").prop("disabled", true);
+
+            //===========================================
+            // FormData
+            //===========================================
+
+            var formData = new FormData();
+
+            formData.append("PartyID", PartyID);
+
+            formData.append("PartyType", PartyType);
+
+            formData.append("CompanyName", CompanyName);
+
+            formData.append("ContactPerson", ContactPerson);
+
+            formData.append("MobileNo", MobileNo);
+
+            formData.append("AlternateMobileNo", AlternateMobileNo);
+
+            formData.append("EmailAddress", EmailAddress);
+
+            formData.append("GSTNo", GSTNo);
+
+            formData.append("Address", Address);
+
+            formData.append("City", City);
+
+            formData.append("State", State);
+
+            formData.append("Pincode", Pincode);
+
+            formData.append("BankName", BankName);
+
+            formData.append("AccountNo", AccountNo);
+
+            formData.append("IFSCCode", IFSCCode);
+
+            formData.append("OpeningBalance", OpeningBalance);
+
+            formData.append("IsActive", IsActive);
+
+            //===========================================
+            // Save Ajax
+            //===========================================
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/SaveSupplierParty",
+
+                data: formData,
+
+                processData: false,
+
+                contentType: false,
+
+                success: function (response) {
+
+                    $("#btnSaveSupplier").prop("disabled", false);
+
+                    if (response.Status == 1) {
+
+                        toastr.success(response.Message);
+
+                        HideSupplierPartyModal();
+
+                        GetSupplierPartyList();
+
+                    }
+                    else {
+
+                        toastr.error(response.Message);
+
+                    }
+
+                },
+
+                error: function () {
+
+                    $("#btnSaveSupplier").prop("disabled", false);
+
+                    toastr.error("Something went wrong.");
+
+                }
+
+            });
 
         }
         function EditSupplierParty(PartyID) {

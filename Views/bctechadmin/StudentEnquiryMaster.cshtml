@@ -1,0 +1,478 @@
+@{
+    ViewBag.Title = "Student Enquiry";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+    ViewData["ParentMenu"] = "Student";
+    ViewData["PageTitle"] = "Student Enquiry List";
+}
+
+<input type="hidden" id="hfPageNumber" value="1" />
+<input type="hidden" id="hfPageSize" value="10" />
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <!-- Header & Search Controls -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        @*<div class="d-flex align-items-center gap-2">
+            <span class="text-muted fs-14">Show</span>
+            <select id="ddlPageSize" class="form-select form-select-sm w-auto border-light">
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span class="text-muted fs-14">entries</span>
+        </div>*@
+
+        <form class="table-src-form position-relative m-0">
+
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Student Name, Mobile No, Enquiry No..." />
+
+            <button type="button"
+                    class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent border-0">
+
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+
+            </button>
+
+        </form>
+        <a href="/bctechadmin/CreateStudentEnquiry" class="btn btn-primary text-white">
+            <i class="ri-add-line"></i>  New Student Enquiry
+        </a>
+
+ 
+
+
+    </div>
+
+    <!-- Custom HTML Table -->
+    <div class="table-responsive p-3 pt-0">
+        <table class="table table-hover align-middle border-bottom mb-0" id="tblStudentEnquiry">
+            <thead class="bg-light">
+                <tr class="text-secondary fs-13">
+                    <th width="40" class="text-center">SR</th>
+                    <th width="110">Enquiry No</th>
+                    <th width="100">Enquiry Date</th>
+                    <th>Student Name</th>
+                    <th width="110">Mobile</th>
+                    <th width="160">Course(s)</th>
+                    <th width="110">Source</th>
+                    <th width="100" class="text-center">Follow Up</th>
+                    <th width="90" class="text-center">Status</th>
+                    <th width="110" class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody id="tblStudentEnquiryBody">
+                <!-- Dynamic Data Rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Custom Pagination -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3 border-top">
+        <span id="lblShowing" class="text-muted fs-14">
+            Showing 0 to 0 of 0 entries
+        </span>
+
+        <nav>
+            <ul class="pagination pagination-sm mb-0 gap-1" id="pagination">
+                <!-- Dynamic Pagination Buttons -->
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+<!-- ================= Follow-Up History & Add Modal ================= -->
+<div class="modal fade" id="FollowUpHistoryModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white py-2">
+                <h6 class="modal-title text-white mb-0" id="lblModalStudentTitle">Student Follow Up History</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-3">
+                <input type="hidden" id="hfFollowUpEnquiryID" value="0" />
+
+                <!-- Existing Follow-up Records Table -->
+                <div class="table-responsive mb-3" style="max-height: 220px; overflow-y: auto;">
+                    <table class="table table-sm table-bordered align-middle mb-0" id="tblFollowUpHistory">
+                        <thead class="table-light fs-12">
+                            <tr>
+                                <th width="40" class="text-center">#</th>
+                                <th width="130">Date</th>
+                                <th width="90">Type</th>
+                                <th>Discussion</th>
+                                <th>Next Action / Remark</th>
+                                <th width="130">Next Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblFollowUpHistoryBody" class="fs-12">
+                            <!-- Dynamic Follow Up Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr class="my-2" />
+
+                <!-- Quick Add Follow-up Form -->
+                <h6 class="text-primary mb-2 fs-13"><i class="ri-add-circle-line me-1"></i> Add New Follow Up</h6>
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <label class="form-label fs-12 mb-1">Follow Up Date <span class="text-danger">*</span></label>
+                        <input type="datetime-local" id="txtNewFollowUpDate" class="form-control form-control-sm" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fs-12 mb-1">Next Follow Up Date</label>
+                        <input type="datetime-local" id="txtNewNextFollowUpDate" class="form-control form-control-sm" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fs-12 mb-1">Follow Up Type <span class="text-danger">*</span></label>
+                        <select id="ddlNewFollowUpType" class="form-select form-select-sm">
+                            <option value="Call" selected>Call</option>
+                            <option value="WhatsApp">WhatsApp</option>
+                            <option value="Visit">Visit</option>
+                            <option value="Email">Email</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fs-12 mb-1">Discussion <span class="text-danger">*</span></label>
+                        <textarea id="txtNewDiscussion" rows="2" class="form-control form-control-sm" placeholder="Discussion details..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fs-12 mb-1">Next Action / Remark</label>
+                        <textarea id="txtNewNextAction" rows="2" class="form-control form-control-sm" placeholder="Next action or remark..."></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer py-2">
+                <button type="button" class="btn btn-sm btn-success" id="btnSaveQuickFollowUp">
+                    <i class="ri-save-line me-1"></i> Save Follow Up
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            // Initial Data Fetch
+            GetEnquiryList(1);
+
+            // Search Button Click
+            $("#btnSearch").click(function () {
+                GetEnquiryList(1);
+            });
+
+            // Search Keyup (Debounce delay)
+            var searchTimeout = null;
+            $("#txtSearch").keyup(function () {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function () {
+                    GetEnquiryList(1);
+                }, 400);
+            });
+
+            // Page Size Change
+            $("#ddlPageSize").change(function () {
+                $("#hfPageSize").val($(this).val());
+                GetEnquiryList(1);
+            });
+
+            // Save Quick Follow-Up Click
+            $("#btnSaveQuickFollowUp").click(function () {
+                SaveQuickFollowUp();
+            });
+
+        });
+
+        // AJAX Function to Fetch Enquiry Records with Pagination & Search
+        function GetEnquiryList(pageNumber) {
+            $("#hfPageNumber").val(pageNumber);
+
+            var param = {
+                SearchText: $("#txtSearch").val().trim(),
+                PageNumber: parseInt($("#hfPageNumber").val()),
+                PageSize: parseInt($("#hfPageSize").val())
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentEnquiryList",
+                data: param,
+                dataType: "json",
+                beforeSend: function () {
+                    $("#tblStudentEnquiryBody").html("<tr><td colspan='10' class='text-center py-4'><div class='spinner-border spinner-border-sm text-primary' role='status'></div></td></tr>");
+                },
+                success: function (response) {
+                    var html = "";
+                    var totalRecords = response.TotalRecords || 0;
+                    var data = response.Data || [];
+
+                    if (data.length > 0) {
+                        var srNo = (param.PageNumber - 1) * param.PageSize;
+
+                        $.each(data, function (i, item) {
+                            srNo++;
+                            var recordId = item.DeleteEncryptedID || item.EncryptedID || item.StudentEnquiryID;
+
+                            html += "<tr>";
+                            html += "<td class='text-center fw-bold text-muted fs-13'>" + srNo + "</td>";
+                            html += "<td><span class='fw-semibold text-primary fs-13'>" + (item.EnquiryNo || '-') + "</span></td>";
+                            html += "<td class='text-secondary fs-13'>" + FormatDate(item.EnquiryDate) + "</td>";
+                            html += "<td><strong class='text-dark fs-13'>" + (item.StudentName || '-') + "</strong></td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.StudentMobileNo || '-') + "</td>";
+                            html += "<td class='text-secondary fs-13 text-truncate' style='max-width: 160px;' title='" + (item.CourseNames || '') + "'>" + (item.CourseNames || '-') + "</td>";
+                            html += "<td class='text-secondary fs-13'>" + (item.SourceName || '-') + "</td>";
+
+                            // Follow up required button / badge
+                            if (item.IsFollowUpRequired) {
+                                html += "<td class='text-center'>";
+                                html += "<button type='button' class='btn btn-sm btn-warning-subtle text-warning border border-warning-subtle px-2 py-0 fs-11 fw-semibold' onclick='OpenFollowUpModal(\"" + item.ViewEncryptedID + "\", \"" + item.StudentName + "\")' title='Click to view follow-up history'>Yes <i class='ri-external-link-line ms-1'></i></button>";
+                                html += "</td>";
+                            } else {
+                                html += "<td class='text-center'><span class='badge bg-light text-secondary border px-2 fs-11'>No</span></td>";
+                            }
+
+                            // Admission Converted status badge
+                            if (item.IsConvertedToAdmission) {
+                                html += "<td class='text-center'><span class='badge bg-success-subtle text-success border border-success-subtle px-2 fs-11'>Admitted</span></td>";
+                            } else {
+                                html += "<td class='text-center'><span class='badge bg-info-subtle text-info border border-info-subtle px-2 fs-11'>Pending</span></td>";
+                            }
+
+                            // Icon-Only Action Buttons
+                            html += "<td class='text-center'>";
+                            html += "<a href='/bctechadmin/CreateStudentEnquiry?id=" + item.ViewEncryptedID + "' class='me-2' title='View'><i class='ri-eye-line text-info fs-16'></i></a>";
+                            html += "<a href='/bctechadmin/CreateStudentEnquiry?id=" + item.EditEncryptedID + "' class='me-2' title='Edit'><i class='ri-edit-box-line text-primary fs-16'></i></a>";
+                            html += "<a href='javascript:void(0)' onclick='DeleteEnquiry(\"" + recordId + "\")' title='Delete'><i class='ri-delete-bin-line text-danger fs-16'></i></a>";
+                            html += "</td>";
+
+                            html += "</tr>";
+                        });
+
+                        $("#tblStudentEnquiryBody").html(html);
+                        RenderPagination(totalRecords, param.PageNumber, param.PageSize);
+                    } else {
+                        $("#tblStudentEnquiryBody").html("<tr><td colspan='10' class='text-center text-muted py-4'>No records found.</td></tr>");
+                        $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+                        $("#pagination").empty();
+                    }
+                },
+                error: function () {
+                    $("#tblStudentEnquiryBody").html("<tr><td colspan='10' class='text-center text-danger py-4'>Failed to load data. Please try again.</td></tr>");
+                }
+            });
+        }
+
+        // Open Follow-Up History Modal
+        function OpenFollowUpModal(encryptedId, studentName) {
+            $("#hfFollowUpEnquiryID").val(encryptedId);
+            $("#lblModalStudentTitle").text("Student Follow Up History - " + studentName);
+
+            // Set current time into datetime picker
+            var now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            $("#txtNewFollowUpDate").val(now.toISOString().slice(0, 16));
+            $("#txtNewNextFollowUpDate").val("");
+            $("#txtNewDiscussion").val("");
+            $("#txtNewNextAction").val("");
+
+            // Fetch History AJAX
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetStudentEnquiryByID",
+                data: { id: encryptedId },
+                dataType: "json",
+                beforeSend: function () {
+                    $("#tblFollowUpHistoryBody").html("<tr><td colspan='6' class='text-center py-3'><div class='spinner-border spinner-border-sm text-primary'></div></td></tr>");
+                },
+                success: function (res) {
+                    var html = "";
+                    var dataObj = res ? (res.Data || res) : null;
+                    var list = (dataObj && dataObj.FollowUpList && dataObj.FollowUpList.length > 0) ? dataObj.FollowUpList : (dataObj && dataObj.FollowUpObj ? [dataObj.FollowUpObj] : []);
+
+                    if (list && list.length > 0) {
+                        $.each(list, function (idx, item) {
+                            html += "<tr>";
+                            html += "<td class='text-center fw-bold'>" + (idx + 1) + "</td>";
+                            html += "<td>" + FormatDateTime(item.FollowUpDate) + "</td>";
+                            html += "<td><span class='badge bg-soft-primary text-primary'>" + (item.FollowUpType || 'Call') + "</span></td>";
+                            html += "<td>" + (item.Discussion || '-') + "</td>";
+                            html += "<td>" + (item.NextActionRemark || '-') + "</td>";
+                            html += "<td>" + FormatDateTime(item.NextFollowUpDate) + "</td>";
+                            html += "</tr>";
+                        });
+                        $("#tblFollowUpHistoryBody").html(html);
+                    } else {
+                        $("#tblFollowUpHistoryBody").html("<tr><td colspan='6' class='text-center text-muted py-3'>No previous follow-up records.</td></tr>");
+                    }
+                    $("#FollowUpHistoryModal").modal("show");
+                },
+                error: function () {
+                    toastr.error("Failed to load follow-up details.");
+                }
+            });
+        }
+
+        // Save Quick Follow Up
+        function SaveQuickFollowUp() {
+            var encryptedId = $("#hfFollowUpEnquiryID").val();
+            var followUpDate = $("#txtNewFollowUpDate").val();
+            var discussion = $("#txtNewDiscussion").val().trim();
+
+            if (!followUpDate) {
+                toastr.warning("Please select Follow Up Date.");
+                return;
+            }
+            if (!discussion) {
+                toastr.warning("Please enter Discussion details.");
+                return;
+            }
+
+            var followUpData = {
+                StudentEnquiryID: 0, // Will be decrypted on server
+                EncryptedID: encryptedId,
+                FollowUpObj: {
+                    StudentEnquiryFollowUpID: 0,
+                    FollowUpDate: followUpDate,
+                    NextFollowUpDate: $("#txtNewNextFollowUpDate").val(),
+                    FollowUpType: $("#ddlNewFollowUpType").val(),
+                    Discussion: discussion,
+                    NextActionRemark: $("#txtNewNextAction").val().trim()
+                }
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/bctechadmin/SaveQuickFollowUp",
+                data: JSON.stringify(followUpData),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    if (res.IsSuccess) {
+                        toastr.success(res.Message || "Follow up saved successfully.");
+                        $("#FollowUpHistoryModal").modal("hide");
+                        GetEnquiryList(parseInt($("#hfPageNumber").val()));
+                    } else {
+                        toastr.error(res.Message || "Failed to save follow up.");
+                    }
+                },
+                error: function () {
+                    toastr.error("An error occurred while saving follow-up.");
+                }
+            });
+        }
+
+        // Render Dynamic Pagination Controls
+        function RenderPagination(totalRecords, currentPage, pageSize) {
+            var totalPages = Math.ceil(totalRecords / pageSize);
+            if (totalPages === 0) totalPages = 1;
+
+            var startEntry = (currentPage - 1) * pageSize + 1;
+            var endEntry = Math.min(currentPage * pageSize, totalRecords);
+
+            if (totalRecords === 0) {
+                $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+            } else {
+                $("#lblShowing").text("Showing " + startEntry + " to " + endEntry + " of " + totalRecords + " entries");
+            }
+
+            var paginationHtml = "";
+
+            if (currentPage > 1) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetEnquiryList(" + (currentPage - 1) + ")'>Previous</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Previous</a></li>";
+            }
+
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(totalPages, currentPage + 2);
+
+            for (var i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationHtml += "<li class='page-item active'><a class='page-link' href='javascript:void(0);'>" + i + "</a></li>";
+                } else {
+                    paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetEnquiryList(" + i + ")'>" + i + "</a></li>";
+                }
+            }
+
+            if (currentPage < totalPages) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetEnquiryList(" + (currentPage + 1) + ")'>Next</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Next</a></li>";
+            }
+
+            $("#pagination").html(paginationHtml);
+        }
+
+        // Soft Delete Record Function
+        function DeleteEnquiry(encryptedId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/bctechadmin/DeleteStudentEnquiry",
+                        data: JSON.stringify({ id: encryptedId }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (res) {
+                            if (res.IsSuccess) {
+                                toastr.success(res.Message);
+
+                                var rowCount = $("#tblStudentEnquiryBody tr").length;
+                                var currentPage = parseInt($("#hfPageNumber").val()) || 1;
+
+                                if (rowCount === 1 && currentPage > 1) {
+                                    currentPage--;
+                                }
+
+                                GetEnquiryList(currentPage);
+                            } else {
+                                Swal.fire('Error', res.Message || 'Failed to delete record.', 'error');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Error', 'An error occurred while deleting the record.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Safe Date Formatter (dd/MM/yyyy)
+        function FormatDate(dateStr) {
+            if (!dateStr) return "-";
+            var parts = dateStr.split("T")[0].split("-");
+            if (parts.length === 3) {
+                return parts[2] + "/" + parts[1] + "/" + parts[0];
+            }
+            return "-";
+        }
+
+        // Safe DateTime Formatter (dd/MM/yyyy hh:mm tt)
+        function FormatDateTime(dateTimeStr) {
+            if (!dateTimeStr) return "-";
+            var d = new Date(dateTimeStr);
+            if (isNaN(d.getTime())) return dateTimeStr;
+            return ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear() + " " + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+    </script>
+}

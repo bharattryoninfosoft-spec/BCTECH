@@ -1,0 +1,420 @@
+@{
+    ViewBag.Title = "Payment Type Master";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0">
+            <input type="text" id="txtSearch" class="form-control w-350" placeholder="Search Payment Type...">
+            <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                <span class="material-symbols-outlined">search</span>
+            </div>
+        </form>
+
+        <a href="javascript:void(0);" class="btn btn-primary text-white" onclick="OpenPaymentTypeModal()">
+            <i class="ri-add-line"></i> Add Payment Type
+        </a>
+
+    </div>
+
+    <div class="default-table-area mx-minus-1 table-contact-list">
+
+        <div class="table-responsive">
+
+            <table class="table-common" id="tblPaymentType">
+
+                <thead>
+
+                    <tr>
+                        <th>SR</th>
+                        <th>Payment Type</th>
+                        <th>Created Date</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+                <span class="fs-15" id="lblShowing"></span>
+
+                <nav class="custom-pagination" aria-label="Page navigation example">
+                    <ul class="pagination mb-0 justify-content-center" id="pagination"></ul>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Add / Edit Modal -->
+
+    <div class="modal fade" id="PaymentTypeModal" tabindex="-1" aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title" id="modalTitle">Payment Type</h5>
+
+                    <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="hfPaymentTypeID" value="0" />
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">Payment Type <span class="text-danger">*</span></label>
+
+                        <input type="text"
+                               id="txtPaymentTypeTitle"
+                               class="form-control"
+                               maxlength="200"
+                               placeholder="Enter Payment Type" />
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+
+                    <button class="btn btn-primary text-white"
+                            onclick="SavePaymentType()">
+                        Save
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- View Modal -->
+
+    <div class="modal fade" id="ViewPaymentTypeModal" tabindex="-1" aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header bg-light">
+
+                    <h5 class="modal-title"><i class="ri-eye-line me-2 text-info"></i> View Payment Type Details</h5>
+
+                    <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th class="w-40 bg-light">Payment Type ID</th>
+                                <td id="lblViewPaymentTypeID"></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Payment Type Title</th>
+                                <td id="lblViewPaymentTypeTitle" class="fw-bold text-primary"></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Created Date</th>
+                                <td id="lblViewDateAndTime"></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">User ID</th>
+                                <td id="lblViewUserID"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @section Scripts {
+
+        <script>
+
+            var paymentTypes = [];
+            var filteredPaymentTypes = [];
+
+            var currentPage = 1;
+            var pageSize = 10;
+
+            $(document).ready(function () {
+                GetPaymentType();
+
+                $("#txtSearch").on("keyup", function () {
+                    var search = $(this).val().toLowerCase().trim();
+
+                    filteredPaymentTypes = paymentTypes.filter(function (x) {
+                        return x.PaymentTypeTitle.toLowerCase().includes(search);
+                    });
+
+                    currentPage = 1;
+                    RenderTable();
+                });
+            });
+
+            function GetPaymentType() {
+                $.ajax({
+                    type: "GET",
+                    url: "/BCTECHAdmin/GetPaymentTypeList",
+                    dataType: "json",
+                    success: function (data) {
+                        paymentTypes = data;
+                        filteredPaymentTypes = data;
+
+                        RenderTable();
+                    }
+                });
+            }
+
+            function RenderTable() {
+                var html = "";
+
+                var start = (currentPage - 1) * pageSize;
+                var end = Math.min(start + pageSize, filteredPaymentTypes.length);
+
+                if (filteredPaymentTypes.length === 0) {
+                    html = `<tr><td colspan="4" class="text-center text-danger py-4">No Payment Type records found</td></tr>`;
+                } else {
+                    for (var i = start; i < end; i++) {
+                        var item = filteredPaymentTypes[i];
+
+                        html += `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td hidden>${item.PaymentTypeID}</td>
+                                <td>${item.PaymentTypeTitle}</td>
+                                <td>${item.DateAndTime}</td>
+                                <td class="text-center">
+                                    <a href="javascript:void(0)" class="me-2" title="View"
+                                       onclick="ViewPaymentType(${item.PaymentTypeID})">
+                                        <i class="ri-eye-line text-info fs-18"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" class="me-2" title="Edit"
+                                       onclick="EditPaymentType(${item.PaymentTypeID})">
+                                        <i class="ri-edit-line text-primary fs-18"></i>
+                                    </a>
+                                    <a href="javascript:void(0)" title="Delete"
+                                       onclick="DeletePaymentType(${item.PaymentTypeID})">
+                                        <i class="ri-delete-bin-line text-danger fs-18"></i>
+                                    </a>
+                                </td>
+                            </tr>`;
+                    }
+                }
+
+                $("#tblPaymentType tbody").html(html);
+
+                $("#lblShowing").text(
+                    `Showing ${filteredPaymentTypes.length == 0 ? 0 : start + 1} to ${end} of ${filteredPaymentTypes.length} entries`
+                );
+
+                RenderPagination();
+            }
+
+            function RenderPagination() {
+                var totalPages = Math.ceil(filteredPaymentTypes.length / pageSize);
+                var html = "";
+
+                if (totalPages <= 1) {
+                    $("#pagination").html("");
+                    return;
+                }
+
+                html += `
+                    <li class="page-item ${currentPage == 1 ? "disabled" : ""}">
+                        <a class="page-link" href="javascript:void(0)" onclick="ChangePage(${currentPage - 1})">
+                            Previous
+                        </a>
+                    </li>`;
+
+                for (var i = 1; i <= totalPages; i++) {
+                    html += `
+                        <li class="page-item ${i == currentPage ? "active" : ""}">
+                            <a class="page-link" href="javascript:void(0)" onclick="ChangePage(${i})">
+                                ${i}
+                            </a>
+                        </li>`;
+                }
+
+                html += `
+                    <li class="page-item ${currentPage == totalPages ? "disabled" : ""}">
+                        <a class="page-link" href="javascript:void(0)" onclick="ChangePage(${currentPage + 1})">
+                            Next
+                        </a>
+                    </li>`;
+
+                $("#pagination").html(html);
+            }
+
+            function ChangePage(page) {
+                var totalPages = Math.ceil(filteredPaymentTypes.length / pageSize);
+
+                if (page < 1 || page > totalPages) return;
+
+                currentPage = page;
+                RenderTable();
+            }
+
+            function OpenPaymentTypeModal() {
+                $("#hfPaymentTypeID").val(0);
+                $("#txtPaymentTypeTitle").val("");
+                $("#modalTitle").text("Add Payment Type");
+                $("#PaymentTypeModal").modal("show");
+            }
+
+            function SavePaymentType() {
+                var title = $("#txtPaymentTypeTitle").val().trim();
+                if (title == "") {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Validation",
+                        text: "Please Enter Payment Type Title"
+                    });
+                    $("#txtPaymentTypeTitle").focus();
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/BCTECHAdmin/SavePaymentType",
+                    data: {
+                        PaymentTypeID: $("#hfPaymentTypeID").val(),
+                        PaymentTypeTitle: title
+                    },
+                    success: function (response) {
+                        if (response.Status) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success",
+                                text: response.Message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                            $("#PaymentTypeModal").modal("hide");
+                            GetPaymentType();
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: response.Message
+                            });
+                        }
+                    }
+                });
+            }
+
+            function ViewPaymentType(id) {
+                $.ajax({
+                    type: "GET",
+                    url: "/BCTECHAdmin/GetPaymentTypeByID",
+                    data: { id: id },
+                    success: function (item) {
+                        $("#lblViewPaymentTypeID").text(item.PaymentTypeID);
+                        $("#lblViewPaymentTypeTitle").text(item.PaymentTypeTitle);
+                        $("#lblViewUserID").text(item.UserID);
+
+                        if (item.DateAndTime) {
+                            var dateVal = item.DateAndTime;
+                            if (typeof dateVal === 'string' && dateVal.indexOf('/Date(') !== -1) {
+                                var milli = parseInt(dateVal.replace(/\/Date\((.*?)\)\//, '$1'));
+                                dateVal = new Date(milli).toLocaleDateString('en-GB');
+                            }
+                            $("#lblViewDateAndTime").text(dateVal);
+                        } else {
+                            $("#lblViewDateAndTime").text("-");
+                        }
+
+                        $("#ViewPaymentTypeModal").modal("show");
+                    }
+                });
+            }
+
+            function EditPaymentType(id) {
+                $.ajax({
+                    type: "GET",
+                    url: "/BCTECHAdmin/GetPaymentTypeByID",
+                    data: { id: id },
+                    success: function (item) {
+                        $("#hfPaymentTypeID").val(item.PaymentTypeID);
+                        $("#txtPaymentTypeTitle").val(item.PaymentTypeTitle);
+                        $("#modalTitle").text("Edit Payment Type");
+                        $("#PaymentTypeModal").modal("show");
+                    }
+                });
+            }
+
+            function DeletePaymentType(id) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to recover this record!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Delete",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/BCTECHAdmin/DeletePaymentType",
+                            type: "POST",
+                            data: { id: id },
+                            success: function (response) {
+                                if (response === "Success" || (response && response.Status)) {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Deleted",
+                                        text: "Payment Type Deleted Successfully",
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                    GetPaymentType();
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Error",
+                                        text: response.Message || "Failed to delete record."
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+        </script>
+    }
+
+</div>

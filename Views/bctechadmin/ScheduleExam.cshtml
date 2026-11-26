@@ -1,0 +1,264 @@
+@{
+    ViewBag.Title = "Schedule Exam";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+    ViewData["ParentMenu"] = "Student Exam";
+    ViewData["PageTitle"] = "Schedule Exam List";
+}
+
+<style>
+    #tblScheduleExam {
+        table-layout: auto !important;
+        width: 100% !important;
+    }
+
+    #tblScheduleExam th,
+    #tblScheduleExam td {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        max-width: none !important;
+        vertical-align: middle !important;
+        padding: 12px 14px !important;
+    }
+</style>
+
+<input type="hidden" id="hfPageNumber" value="1" />
+<input type="hidden" id="hfPageSize" value="10" />
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <!-- Header & Search Controls -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0" onsubmit="return false;">
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Course Title, Secure Code..." />
+            <button type="button"
+                    id="btnSearch"
+                    class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent border-0">
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+            </button>
+        </form>
+
+        <a href="/bctechadmin/ScheduleExamAdd" class="btn btn-primary text-white">
+            <i class="ri-add-line"></i> New Schedule Exam
+        </a>
+
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive p-3 pt-0">
+        <table class="table table-hover align-middle border-bottom mb-0" id="tblScheduleExam">
+            <thead class="bg-light">
+                <tr class="text-secondary fs-13">
+                    <th class="text-center" style="width: 50px;">SR</th>
+                    <th style="min-width: 220px;">Course Title</th>
+                    <th class="text-center">Exam Schedule Date</th>
+                    <th class="text-center">No Of Question</th>
+                    <th class="text-center">Exam Time</th>
+                    <th class="text-center">Exam Total Marks</th>
+                    <th class="text-center">Practical Exam Time</th>
+                    <th class="text-center">Theory Exam Time</th>
+                    <th class="text-center">Secure Code</th>
+                    <th class="text-center" style="width: 110px;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="tblScheduleExamBody">
+                <!-- Dynamic Rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Custom Pagination -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3 border-top">
+        <span id="lblShowing" class="text-muted fs-14">
+            Showing 0 to 0 of 0 entries
+        </span>
+
+        <nav>
+            <ul class="pagination pagination-sm mb-0 gap-1" id="pagination">
+                <!-- Dynamic Pagination Buttons -->
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            GetScheduleExamList(1);
+
+            // Live Search
+            var searchTimer;
+            $("#txtSearch").on("keyup", function () {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () {
+                    GetScheduleExamList(1);
+                }, 300);
+            });
+
+            $("#btnSearch").on("click", function () {
+                GetScheduleExamList(1);
+            });
+        });
+
+        function GetScheduleExamList(pageNumber) {
+            $("#hfPageNumber").val(pageNumber);
+
+            var param = {
+                SearchText: $("#txtSearch").val().trim(),
+                PageNumber: parseInt($("#hfPageNumber").val()) || 1,
+                PageSize: parseInt($("#hfPageSize").val()) || 10
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/bctechadmin/GetScheduleExamList",
+                data: param,
+                dataType: "json",
+                beforeSend: function () {
+                    $("#tblScheduleExamBody").html("<tr><td colspan='10' class='text-center py-4'><div class='spinner-border spinner-border-sm text-primary' role='status'></div></td></tr>");
+                },
+                success: function (response) {
+                    var html = "";
+                    var totalRecords = response.TotalRecords || 0;
+                    var data = response.Data || [];
+
+                    if (data.length > 0) {
+                        var srNo = (param.PageNumber - 1) * param.PageSize;
+
+                        $.each(data, function (i, item) {
+                            srNo++;
+                            html += "<tr>";
+                            html += "<td class='text-center fw-bold text-muted fs-13'>" + srNo + "</td>";
+                            html += "<td><strong class='text-dark fs-13'>" + escapeHtml(item.CourseTitle || '-') + "</strong></td>";
+                            html += "<td class='text-center text-secondary fs-13'>" + escapeHtml(item.ExamScheduleDate || '-') + "</td>";
+                            html += "<td class='text-center text-secondary fs-13'>" + escapeHtml(item.NoOfQuestion || '-') + "</td>";
+                            html += "<td class='text-center text-secondary fs-13'>" + escapeHtml(item.ExamTime || '-') + "</td>";
+                            html += "<td class='text-center text-secondary fs-13'>" + escapeHtml(item.ExamTotalMarks || '-') + "</td>";
+                            html += "<td class='text-center text-secondary fs-13'>" + escapeHtml(item.PracticalExamTime || '-') + "</td>";
+                            html += "<td class='text-center text-secondary fs-13'>" + escapeHtml(item.TheoryExamTime || '-') + "</td>";
+                            html += "<td class='text-center text-secondary fs-13 fw-semibold'>" + escapeHtml(item.SecureCode || '-') + "</td>";
+
+                            // Action Buttons matching project standard (ri-eye-line text-info, ri-edit-box-line text-primary, ri-delete-bin-line text-danger)
+                            html += "<td class='text-center'>";
+                            html += "<a href='/bctechadmin/ScheduleExamAdd?id=" + item.ScheduleExamId + "&mode=view' class='me-2' title='View'><i class='ri-eye-line text-info fs-16'></i></a>";
+                            html += "<a href='/bctechadmin/ScheduleExamAdd?id=" + item.ScheduleExamId + "' class='me-2' title='Edit'><i class='ri-edit-box-line text-primary fs-16'></i></a>";
+                            html += "<a href='javascript:void(0)' onclick='DeleteScheduleExam(" + item.ScheduleExamId + ", \"" + escapeHtml(item.CourseTitle || '') + "\")' title='Delete'><i class='ri-delete-bin-line text-danger fs-16'></i></a>";
+                            html += "</td>";
+
+                            html += "</tr>";
+                        });
+
+                        $("#tblScheduleExamBody").html(html);
+                        RenderPagination(totalRecords, param.PageNumber, param.PageSize);
+                    } else {
+                        $("#tblScheduleExamBody").html("<tr><td colspan='10' class='text-center text-muted py-4'>No records found.</td></tr>");
+                        $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+                        $("#pagination").empty();
+                    }
+                },
+                error: function () {
+                    $("#tblScheduleExamBody").html("<tr><td colspan='10' class='text-center text-danger py-4'>Failed to load data. Please try again.</td></tr>");
+                }
+            });
+        }
+
+        function RenderPagination(totalRecords, currentPage, pageSize) {
+            var totalPages = Math.ceil(totalRecords / pageSize);
+
+            var startEntry = (currentPage - 1) * pageSize + 1;
+            var endEntry = Math.min(currentPage * pageSize, totalRecords);
+
+            if (totalRecords === 0) {
+                $("#lblShowing").text("Showing 0 to 0 of 0 entries");
+            } else {
+                $("#lblShowing").text("Showing " + startEntry + " to " + endEntry + " of " + totalRecords + " entries");
+            }
+
+            var paginationHtml = "";
+
+            if (currentPage > 1) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetScheduleExamList(" + (currentPage - 1) + ")'>Previous</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Previous</a></li>";
+            }
+
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(totalPages, currentPage + 2);
+
+            for (var i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationHtml += "<li class='page-item active'><a class='page-link' href='javascript:void(0);'>" + i + "</a></li>";
+                } else {
+                    paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetScheduleExamList(" + i + ")'>" + i + "</a></li>";
+                }
+            }
+
+            if (currentPage < totalPages) {
+                paginationHtml += "<li class='page-item'><a class='page-link' href='javascript:void(0);' onclick='GetScheduleExamList(" + (currentPage + 1) + ")'>Next</a></li>";
+            } else {
+                paginationHtml += "<li class='page-item disabled'><a class='page-link' href='javascript:void(0);'>Next</a></li>";
+            }
+
+            $("#pagination").html(paginationHtml);
+        }
+
+        function DeleteScheduleExam(id, courseTitle) {
+            if (!id) return;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to delete the scheduled exam for: " + (courseTitle || 'this course') + "?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/bctechadmin/DeleteScheduleExam",
+                        data: { id: id },
+                        dataType: "json",
+                        success: function (res) {
+                            if (res && res.Status) {
+                                toastr.success(res.Message || "Schedule Exam deleted successfully!");
+
+                                var rowCount = $("#tblScheduleExamBody tr").length;
+                                var currentPage = parseInt($("#hfPageNumber").val()) || 1;
+
+                                if (rowCount === 1 && currentPage > 1) {
+                                    currentPage--;
+                                }
+
+                                GetScheduleExamList(currentPage);
+                            } else {
+                                Swal.fire('Error', (res ? res.Message : 'Failed to delete record.'), 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'An error occurred while deleting the scheduled exam.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        function escapeHtml(text) {
+            if (!text && text !== 0) return "";
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+}

@@ -1,4 +1,4 @@
-﻿
+
 @{
     ViewBag.Title = "CreateCourse";
     Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
@@ -152,9 +152,9 @@
                     </label>
 
                     <div class="position-relative">
-                        <input type="number"
+                        <input type="tel"
                                id="txtDuration"
-                               class="form-control"
+                               class="form-control" onkeypress="return (event.charCode>=48 && event.charCode<=57)" maxlength="3"
                                placeholder="Duration">
                     </div>
                 </div>
@@ -193,41 +193,43 @@
                     </label>
 
                     <div class="position-relative">
-                        <input type="number"
+                        <input type="tel"
                                id="txtCourseFee"
-                               class="form-control"
+                               class="form-control"  onkeypress="return (event.charCode>=48 && event.charCode<=57)"
                                placeholder="0.00">
                     </div>
                 </div>
             </div>
 
             <!-- Registration Fee -->
-            <div class="col-lg-2">
+            <div class="col-lg-2" style="display:none">
                 <div class="mb-20">
                     <label class="label fs-16 mb-2">
                         Registration Fee
                     </label>
 
                     <div class="position-relative">
-                        <input type="number"
+                        <input type="tel"
                                id="txtRegistrationFee"
                                class="form-control"
+                               value="0.00"  onkeypress="return (event.charCode>=48 && event.charCode<=57)"
                                placeholder="0.00">
                     </div>
                 </div>
             </div>
 
             <!-- Exam Fee -->
-            <div class="col-lg-2">
+            <div class="col-lg-2"  style="display:none">
                 <div class="mb-20">
                     <label class="label fs-16 mb-2">
                         Exam Fee
                     </label>
 
                     <div class="position-relative">
-                        <input type="number"
+                        <input type="tel"
                                id="txtExamFee"
-                               class="form-control"
+                               value="0.00"
+                               class="form-control"  onkeypress="return (event.charCode>=48 && event.charCode<=57)"
                                placeholder="0.00">
                     </div>
                 </div>
@@ -251,23 +253,8 @@
 
         <div class="row">
 
-            <div class="col-lg-4">
 
-                <div class="form-check form-switch mt-3">
-
-                    <input class="form-check-input"
-                           type="checkbox"
-                           id="chkCertificate">
-
-                    <label class="form-check-label ms-2">
-                        Certificate Available
-                    </label>
-
-                </div>
-
-            </div>
-
-            <div class="col-lg-4">
+            <div class="col-lg-3">
 
                 <div class="form-check form-switch mt-3">
 
@@ -283,7 +270,39 @@
 
             </div>
 
-            <div class="col-lg-4">
+            <div class="col-lg-3">
+
+                <div class="form-check form-switch mt-3">
+
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="chkIsStudentCourse">
+
+                    <label class="form-check-label ms-2">
+                        Student Course
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3">
+
+                <div class="form-check form-switch mt-3">
+
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="chkCertificate">
+
+                    <label class="form-check-label ms-2">
+                        Certificate Available
+                    </label>
+
+                </div>
+
+            </div>
+            <div class="col-lg-3">
 
                 <div class="form-check form-switch mt-3">
 
@@ -299,6 +318,8 @@
                 </div>
 
             </div>
+
+
 
         </div>
 
@@ -448,7 +469,23 @@
 
             ToggleMasterCourse();
 
+            $("#txtCourseTitle").on("keyup input change", function () {
+                var title = $(this).val();
+                var slug = generateSlug(title);
+                $("#txtCourseURL").val(slug);
+            });
+
         });
+
+        function generateSlug(text) {
+            if (!text) return "";
+            return text
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
 
         function InitializeControls() {
 
@@ -486,6 +523,8 @@
 
             if ($("#chkMasterCourse").is(":checked")) {
 
+                
+                $('#chkIsStudentCourse').prop('checked', true);
                 $("#divMasterCourseSection").slideDown();
 
                 BindMasterCourse($("#hfCourseID").val());
@@ -546,27 +585,136 @@
                 data: { CourseID: courseId },
                 success: function (res) {
 
-                    var html = "";
+                    if (!res || res.length === 0) {
+                        $("#divMasterCourse").html('<div class="text-muted text-center p-3">No courses available for mapping.</div>');
+                        return;
+                    }
+
+                    var html = '<div class="d-flex justify-content-between align-items-center mb-3">' +
+                        '<div class="text-muted fs-14">' +
+                        '<i class="ri-information-line me-1"></i>Select courses to include in this master course package.' +
+                        '</div>' +
+                        '<div class="input-group input-group-sm" style="max-width: 250px;">' +
+                        '<span class="input-group-text bg-white"><i class="ri-search-line"></i></span>' +
+                        '<input type="text" class="form-control" id="txtSearchMasterCourse" placeholder="Search courses...">' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="table-responsive" style="max-height: 400px; overflow-y: auto;">' +
+                        '<table class="table table-hover table-bordered align-middle mb-0 bg-white">' +
+                        '<thead class="table-light sticky-top" style="z-index: 1;">' +
+                        '<tr>' +
+                        '<th style="width: 50px;" class="text-center">' +
+                        '<input type="checkbox" class="form-check-input" id="chkSelectAllMasterCourse" title="Select All">' +
+                        '</th>' +
+                        '<th>Course Title</th>' +
+                        '<th style="width: 250px;">Course Fee</th>' +
+                        '</tr>' +
+                        '</thead>' +
+                        '<tbody>';
 
                     $.each(res, function (i, item) {
+                        var fee = (item.CourseFee != null && item.CourseFee !== "") ? item.CourseFee : "0.00";
+                        var isChecked = item.IsSelected ? "checked" : "";
+                        var rowClass = item.IsSelected ? "table-primary table-selected" : "";
 
-                        html += `
-                <div class="form-check mb-2">
-                    <input type="checkbox"
-                           class="form-check-input chkMasterCourse"
-                           value="${item.CourseID}"
-                           id="chk_${item.CourseID}"
-                           ${item.IsSelected ? "checked" : ""}>
-
-                    <label class="form-check-label" for="chk_${item.CourseID}">
-                        ${item.CourseTitle}
-                    </label>
-                </div>`;
+                        html += '<tr class="' + rowClass + '">' +
+                            '<td class="text-center">' +
+                            '<input type="checkbox" class="form-check-input chkMasterCourse" value="' + item.CourseID + '" id="chk_' + item.CourseID + '" ' + isChecked + '>' +
+                            '</td>' +
+                            '<td>' +
+                            '<label class="form-check-label fw-medium mb-0" for="chk_' + item.CourseID + '" style="cursor: pointer;">' + item.CourseTitle + '</label>' +
+                            '</td>' +
+                            '<td>' +
+                            '<div class="input-group input-group-sm">' +
+                            '<span class="input-group-text bg-light"><i class="fa fa-inr"></i></span>' +
+                            '<input type="tel" class="form-control txtMasterCourseFee" id="txtFee_' + item.CourseID + '" value="' + fee + '" placeholder="0.00" onkeypress="return (event.charCode>=48 && event.charCode<=57)">' +
+                            '</div>' +
+                            '</td>' +
+                            '</tr>';
                     });
 
+                    html += '</tbody>' +
+                        '<tfoot class="table-light">' +
+                        '<tr>' +
+                        '<th colspan="2" class="text-end fw-semibold">Total Selected Course Fee:</th>' +
+                        '<th>' +
+                        '<div class="d-flex align-items-center gap-2">' +
+                        '<div class="input-group input-group-sm flex-grow-1">' +
+                        '<span class="input-group-text bg-light"><i class="fa fa-inr"></i></span>' +
+                        '<input type="tel" class="form-control fw-bold text-primary" id="txtTotalMasterCourseFee" value="0.00" onkeypress="return (event.charCode>=48 && event.charCode<=57)" readonly disabled>' +
+                        '</div>' +
+                        '<button type="button" class="btn btn-sm btn-outline-primary text-nowrap" id="btnApplyTotalFee" title="Set this total to Course Fee">' +
+                        '<i class="ri-arrow-up-circle-line me-1"></i>Apply' +
+                        '</button>' +
+                        '</div>' +
+                        '</th>' +
+                        '</tr>' +
+                        '</tfoot>' +
+                        '</table>' +
+                        '</div>';
+
                     $("#divMasterCourse").html(html);
+
+                    CalculateTotalMasterFee();
+
+                    if (typeof mode !== 'undefined' && mode == "V") {
+                        $("#divMasterCourse input, #divMasterCourse button").prop("disabled", true);
+                    }
                 }
             });
+        }
+
+        $(document).on("keyup input", "#txtSearchMasterCourse", function () {
+            var val = $(this).val().toLowerCase().trim();
+            $("#divMasterCourse tbody tr").each(function () {
+                var text = $(this).find("label").text().toLowerCase();
+                $(this).toggle(text.indexOf(val) > -1);
+            });
+        });
+
+        $(document).on("click", "#btnApplyTotalFee", function () {
+            var total = $("#txtTotalMasterCourseFee").val();
+            $("#txtCourseFee").val(total);
+            if (typeof toastr !== "undefined") {
+                toastr.success("Course Fee updated to ₹" + total);
+            }
+        });
+
+        $(document).on("change", "#chkSelectAllMasterCourse", function () {
+            var isChecked = $(this).is(":checked");
+            $(".chkMasterCourse").prop("checked", isChecked);
+            if (isChecked) {
+                $("#divMasterCourse tbody tr").addClass("table-primary table-selected");
+            } else {
+                $("#divMasterCourse tbody tr").removeClass("table-primary table-selected");
+            }
+            CalculateTotalMasterFee();
+        });
+
+        $(document).on("change", ".chkMasterCourse", function () {
+            if ($(this).is(":checked")) {
+                $(this).closest("tr").addClass("table-primary table-selected");
+            } else {
+                $(this).closest("tr").removeClass("table-primary table-selected");
+            }
+
+            var total = $(".chkMasterCourse").length;
+            var checked = $(".chkMasterCourse:checked").length;
+            $("#chkSelectAllMasterCourse").prop("checked", total > 0 && total === checked);
+            CalculateTotalMasterFee();
+        });
+
+        $(document).on("input change", ".txtMasterCourseFee", function () {
+            CalculateTotalMasterFee();
+        });
+
+        function CalculateTotalMasterFee() {
+            var totalFee = 0;
+            $(".chkMasterCourse:checked").each(function () {
+                var fee = parseFloat($(this).closest("tr").find(".txtMasterCourseFee").val()) || 0;
+                totalFee += fee;
+            });
+            $("#txtTotalMasterCourseFee").val(totalFee.toFixed(2));
         }
 
         function LoadCourse() {
@@ -645,6 +793,47 @@
             });
 
         }
+        function DeleteCourse(id) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        PerformDeleteCourse(id);
+                    }
+                });
+            } else if (confirm("Are you sure you want to delete this course?")) {
+                PerformDeleteCourse(id);
+            }
+        }
+
+        function PerformDeleteCourse(id) {
+            $.ajax({
+                url: "/BCTECHAdmin/DeleteCourse",
+                type: "POST",
+                data: { CourseID: id },
+                success: function (response) {
+                    if (response && (response.Status == 1 || response.IsSuccess)) {
+                        toastr.success(response.Message || "Course deleted successfully.");
+                        setTimeout(function () {
+                            window.location.href = "/BCTECHAdmin/CourseManage";
+                        }, 1000);
+                    } else {
+                        toastr.error((response ? response.Message : "Failed to delete course."));
+                    }
+                },
+                error: function () {
+                    toastr.error("Error deleting course.");
+                }
+            });
+        }
+
         $(document).on("click", ".btnEdit", function () {
 
             var id = $(this).data("id");
@@ -719,6 +908,21 @@
                 if (!ValidateCourse())
                     return;
 
+
+                var courseFee = $("#txtCourseFee").val();
+                var TotalMasterCourseFee = $("#txtTotalMasterCourseFee").val();
+
+                if ($("#chkMasterCourse").is(":checked")) {
+
+                    if (parseInt(courseFee) != parseInt(TotalMasterCourseFee)) {
+                        toastr.error("Course Fee and All Total Course Fee are not Match.");
+                        return;
+                    }
+
+                }
+
+                
+
                 var formData = new FormData();
 
                 formData.append("CourseID", $("#hfCourseID").val());
@@ -734,6 +938,7 @@
 
                 formData.append("CertificateAvailable", $("#chkCertificate").is(":checked"));
                 formData.append("IsMasterCourse", $("#chkMasterCourse").is(":checked"));
+                formData.append("IsStudentCourse", $("#chkIsStudentCourse").is(":checked"));
                 formData.append("IsActive", $("#chkActive").is(":checked"));
 
                 formData.append("ShortDescription", $("#txtShortDescription").val());
@@ -746,9 +951,11 @@
                 if ($("#chkMasterCourse").is(":checked")) {
 
                     $(".chkMasterCourse:checked").each(function () {
+                        var courseId = $(this).val();
+                        var courseFee = $(this).closest("tr").find(".txtMasterCourseFee").val() || 0;
 
-                        formData.append("MasterCourse[]", $(this).val());
-
+                        formData.append("MasterCourse[]", courseId);
+                        formData.append("MasterCourseFee[]", courseFee);
                     });
 
                 }
@@ -864,9 +1071,6 @@
             });
 
         }
-
-       
-
     </script>
 }
 

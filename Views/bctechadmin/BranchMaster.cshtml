@@ -1,4 +1,4 @@
-﻿
+
 @{
     ViewBag.Title = "BranchMaster";
     Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
@@ -37,11 +37,19 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center mb-sm-4">
-                    <a href="/bctechadmin/CreateBranchMaster"
+
+                    <!--<a href="/bctechadmin/CreateBranchMaster"
                        class="btn btn-outline-border-color-70 text-secondary fw-normal fs-16 hover-bg"
                        style="padding:12px 15px;">
                         Add Branch Master
+                    </a>-->
+
+                    <a href="/bctechadmin/CreateBranchMaster" class="btn btn-primary text-white">
+                        <i class="ri-add-line"></i> Add Branch Master
                     </a>
+
+
+
                 </div>
             </div>
 
@@ -162,120 +170,129 @@
                                         : "/Content/Admin/assets/Images/admin.png";
 
                                     staffHtml += `
-                                    <li style="margin-right:-12px;" title="${staff.Username}">
+                                        <li style="margin-right:-12px;" title="${staff.Username}">
 
-                                        <img src="${photo}"
-                                             alt="${staff.Username}"
-                                             onerror="this.src='/Content/Admin/assets/Images/admin.png'"
-                                             class="rounded-circle border border-white border-2"
-                                             style="width:42px;height:42px;object-fit:cover;cursor:pointer;">
+                                            <img src="${photo}"
+                                                 alt="${staff.Username}"
+                                                 onerror="this.src='/Content/Admin/assets/Images/admin.png'"
+                                                 class="rounded-circle border border-white border-2"
+                                                 style="width:42px;height:42px;object-fit:cover;cursor:pointer;">
 
-                                    </li>`;
+                                        </li>`;
                                 });
 
                             }
                             else {
 
                                 staffHtml = `
-                            <li class="text-muted">
-                                No Staff Assigned
-                            </li>`;
+                                <li class="text-muted">
+                                    No Staff Assigned
+                                </li>`;
                             }
 
                             html += `
-                    <div class="col-xxl-3 col-xxxl-4 col-lg-4 col-md-6">
+                        <div class="col-xxl-3 col-xxxl-4 col-lg-4 col-md-6">
 
-                        <div class="card bg-white p-20 rounded-10 border border-white mb-4 for-mobile-sellers">
+                            <div class="card bg-white p-20 rounded-10 border border-white mb-4 for-mobile-sellers">
 
-                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
 
-                                <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center">
 
-                                    <div class="flex-shrink-0">
-                                        <img src="/Content/Admin/assets/Images/branch.png"
-                                             style="width:100px;height:100px;"
-                                             class="rounded-circle" />
+                                        <div class="flex-shrink-0">
+                                            <img src="/Content/Admin/assets/Images/branch.png"
+                                                 style="width:100px;height:100px;"
+                                                 class="rounded-circle" />
+                                        </div>
+
+                                        <div class="flex-grow-1 ms-3">
+                                            <h4 class="mb-1">${item.BranchName}</h4>
+                                            <span class="fs-16">${item.BranchCode}</span>
+                                        </div>
+
                                     </div>
 
-                                    <div class="flex-grow-1 ms-3">
-                                        <h4 class="mb-1">${item.BranchName}</h4>
-                                        <span class="fs-16">${item.BranchCode}</span>
+                                    <div class="dropdown">
+
+                                        <button class="bg-transparent border-0"
+                                                data-bs-toggle="dropdown">
+                                            <i class="material-symbols-outlined">more_horiz</i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+
+                                            <li>
+                                                <a href="/bctechadmin/CreateBranchMaster?id=${item.EditEncryptedID}"
+                                                   class="dropdown-item text-secondary">
+                                                    <i class="ri-edit-line me-2 text-primary"></i>
+                                                    Edit
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="/bctechadmin/CreateBranchMaster?id=${item.ViewEncryptedID}"
+                                                   class="dropdown-item text-secondary">
+                                                    <i class="ri-eye-line me-2 text-info"></i>
+                                                    View
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="javascript:void(0)"
+                                                   class="dropdown-item text-danger deleteBranch"
+                                                   data-id="${item.BranchID}">
+                                                    <i class="ri-delete-bin-line me-2"></i>
+                                                    Delete
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="javascript:void(0)"
+                                                   class="dropdown-item text-success addStaff"
+                                                   data-id="${item.BranchID}"
+                                                   data-branch="${item.BranchName}">
+                                                    <i class="ri-user-add-line me-2"></i>
+                                                    Add Staff
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="javascript:void(0)"
+                                                   class="dropdown-item text-dark openBranchQrModal"
+                                                   data-id="${item.BranchID}"
+                                                   data-encrypted="${item.EncryptedBranchID || ''}"
+                                                   data-name="${item.BranchName}">
+                                                    <i class="ri-qr-code-line me-2 text-success"></i>
+                                                    Public QR & Link
+                                                </a>
+                                            </li>
+
+                                        </ul>
+
                                     </div>
 
                                 </div>
 
-                                <div class="dropdown">
+                                <ul class="list-unstyled">
+                                    <li><b>Address :</b> ${item.Address}</li>
+                                    <li><b>Mobile :</b> ${item.MobileNo}</li>
+                                    <li><b>Email :</b> ${item.EmailAddress ?? ""}</li>
+                                    <li><b>City :</b> ${item.City}</li>
+                                </ul>
 
-                                    <button class="bg-transparent border-0"
-                                            data-bs-toggle="dropdown">
-                                        <i class="material-symbols-outlined">more_horiz</i>
-                                    </button>
+                                <hr>
 
-                                    <ul class="dropdown-menu dropdown-menu-end bg-white border-0 box-shadow rounded-10">
+                                <span class="fs-16 d-block mb-2 fw-semibold">
+                                    Staff:
+                                </span>
 
-                                        <li>
-                                            <a href="/bctechadmin/CreateBranchMaster?id=${item.EditEncryptedID}"
-                                               class="dropdown-item text-secondary">
-                                                <i class="ri-edit-line me-2 text-primary"></i>
-                                                Edit
-                                            </a>
-                                        </li>
-
-                                        <li>
-                                            <a href="/bctechadmin/CreateBranchMaster?id=${item.ViewEncryptedID}"
-                                               class="dropdown-item text-secondary">
-                                                <i class="ri-eye-line me-2 text-info"></i>
-                                                View
-                                            </a>
-                                        </li>
-
-                                        <li>
-                                            <a href="javascript:void(0)"
-                                               class="dropdown-item text-danger deleteBranch"
-                                               data-id="${item.BranchID}">
-                                                <i class="ri-delete-bin-line me-2"></i>
-                                                Delete
-                                            </a>
-                                        </li>
-
-                                        <li><hr class="dropdown-divider"></li>
-
-                                        <li>
-                                            <a href="javascript:void(0)"
-                                               class="dropdown-item text-success addStaff"
-                                               data-id="${item.BranchID}"
-                                               data-branch="${item.BranchName}">
-                                                <i class="ri-user-add-line me-2"></i>
-                                                Add Staff
-                                            </a>
-                                        </li>
-
-                                    </ul>
-
-                                </div>
+                                <ul class="list-unstyled d-flex align-items-center mb-0">
+                                    ${staffHtml}
+                                </ul>
 
                             </div>
 
-                            <ul class="list-unstyled">
-                                <li><b>Address :</b> ${item.Address}</li>
-                                <li><b>Mobile :</b> ${item.MobileNo}</li>
-                                <li><b>Email :</b> ${item.EmailAddress ?? ""}</li>
-                                <li><b>City :</b> ${item.City}</li>
-                            </ul>
-
-                            <hr>
-
-                            <span class="fs-16 d-block mb-2 fw-semibold">
-                                Staff:
-                            </span>
-
-                            <ul class="list-unstyled d-flex align-items-center mb-0">
-                                ${staffHtml}
-                            </ul>
-
-                        </div>
-
-                    </div>`;
+                        </div>`;
                         });
 
                         $("#branchList").html(html);
@@ -322,11 +339,11 @@
 
                         if (logo != null && logo != "") {
 
-                            $("#imagePreview").css("background-image","url('/Content/Admin/assets/Images/" + logo + "')");
+                            $("#imagePreview").css("background-image", "url('/Content/Admin/assets/Images/" + logo + "')");
                         }
                         else {
 
-                            $("#imagePreview").css("background-image","url('/Content/Admin/assets/Images/admin.png')"
+                            $("#imagePreview").css("background-image", "url('/Content/Admin/assets/Images/admin.png')"
                             );
                         }
                     }
@@ -405,7 +422,7 @@
             var branchId = $(this).data("id");
             var branchName = $(this).data("branch");
             $("#hfBranchID").val(branchId);
-            $("#lblBranchName").text(branchName);            
+            $("#lblBranchName").text(branchName);
             LoadStaff(branchId);
             $("#staffModal").modal("show");
         });
@@ -427,31 +444,31 @@
                             : "/Content/Admin/assets/Images/admin.png";
 
                         html += `
-                            <tr>
-                                <td>
-                                    <input type="checkbox"
-                                               class="chkStaff"
-                                               value="${item.UserID}"
-                                               ${item.IsAssigned ? "checked" : ""}>
-                                </td>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                                   class="chkStaff"
+                                                   value="${item.UserID}"
+                                                   ${item.IsAssigned ? "checked" : ""}>
+                                    </td>
 
-                                <td>
-                                    <div class="d-flex align-items-center">
+                                    <td>
+                                        <div class="d-flex align-items-center">
 
-                                        <img src="${photo}"
-                                             class="rounded-circle border me-2"
-                                             style="width:45px;height:45px;object-fit:cover;">
+                                            <img src="${photo}"
+                                                 class="rounded-circle border me-2"
+                                                 style="width:45px;height:45px;object-fit:cover;">
 
-                                        <div>
-                                            <div class="fw-semibold">${item.Username}</div>
+                                            <div>
+                                                <div class="fw-semibold">${item.Username}</div>
+                                            </div>
+
                                         </div>
+                                    </td>
 
-                                    </div>
-                                </td>
-
-                                <td>${item.MobileNo}</td>
-                                <td>${item.EmailAddress}</td>
-                            </tr>`;
+                                    <td>${item.MobileNo}</td>
+                                    <td>${item.EmailAddress}</td>
+                                </tr>`;
                     });
 
                     $("#staffList").html(html);
@@ -501,5 +518,68 @@
             $("#chkAll").prop("checked", total === checked);
 
         });
+
+        // Open Public QR & Link Modal
+        $(document).on("click", ".openBranchQrModal", function () {
+            var branchId = $(this).data("id");
+            var encryptedBranchId = $(this).data("encrypted") || "";
+            var branchName = $(this).data("name");
+            var paramVal = encryptedBranchId !== "" ? encodeURIComponent(encryptedBranchId) : branchId;
+            var publicUrl = window.location.origin + "/StudentEnquiry/BranchWise?b=" + paramVal;
+
+            $("#lblQrBranchName").text(branchName);
+            $("#txtPublicEnquiryUrl").val(publicUrl);
+            $("#btnOpenPublicUrl").attr("href", publicUrl);
+
+            // Generate QR Code via QR Server API
+            var qrApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(publicUrl);
+            $("#imgBranchQrCode").attr("src", qrApiUrl);
+
+            $("#BranchQrModal").modal("show");
+        });
+
+        function CopyPublicEnquiryUrl() {
+            var copyText = document.getElementById("txtPublicEnquiryUrl");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            if (typeof toastr !== "undefined") {
+                toastr.success("Public Enquiry URL copied to clipboard!");
+            } else {
+                alert("Copied: " + copyText.value);
+            }
+        }
     </script>
 }
+
+<!-- ================= Modal: Branch Public QR & Link ================= -->
+<div class="modal fade" id="BranchQrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-white"><i class="ri-qr-code-line me-2"></i> Branch Public QR Code & Link</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <h5 class="fw-bold text-dark mb-1" id="lblQrBranchName">Branch Name</h5>
+                <p class="text-muted fs-14 mb-3">Scan QR Code or share public URL to open student enquiry form</p>
+
+                <div class="p-3 bg-light rounded border d-inline-block mb-3">
+                    <img id="imgBranchQrCode" src="" alt="Branch QR Code" style="width: 200px; height: 200px;" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold d-block text-start">Public Enquiry URL</label>
+                    <div class="input-group">
+                        <input type="text" id="txtPublicEnquiryUrl" class="form-control" readonly />
+                        <button class="btn btn-primary" type="button" onclick="CopyPublicEnquiryUrl()"><i class="ri-file-copy-line me-1"></i> Copy</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <a href="#" id="btnOpenPublicUrl" target="_blank" class="btn btn-outline-primary"><i class="ri-external-link-line me-1"></i> Open Form</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

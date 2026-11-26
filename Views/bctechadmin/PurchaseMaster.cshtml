@@ -1,0 +1,313 @@
+﻿
+@{
+    ViewBag.Title = "PurchaseMaster";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<input type="hidden" id="hfPageNumber" value="1" />
+<input type="hidden" id="hfPageSize" value="10" />
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0">
+
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Invoice No, Supplier Name..." />
+
+            <button type="button"
+                    class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent border-0">
+
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+
+            </button>
+
+        </form>
+
+        <a href="/bctechadmin/CreatePurchase" class="btn btn-primary text-white">
+            <i class="ri-add-line"></i>  New Purchase
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="default-table-area mx-minus-1 table-contact-list">
+
+        <div class="table-responsive">
+
+            <table class="table-common"
+                   id="tblPurchaseMaster">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th class="text-center">
+                            SR
+                        </th>
+
+                        <th>
+                            Invoice No
+                        </th>
+
+                        <th >
+                            Invoice Date
+                        </th>
+
+                        <th>
+                            Supplier
+                        </th>                     
+
+                        <th  class="text-end">
+                            Sub Total
+                        </th>
+
+                        <th  class="text-end">
+                            GST
+                        </th>
+
+                        <th  class="text-end">
+                            Total Amount
+                        </th>
+
+                        <th  class="text-center">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tblPurchaseBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+            <span id="lblShowing">
+                Showing 0 to 0 of 0 entries
+            </span>
+
+            <nav>
+
+                <ul class="pagination mb-0"
+                    id="pagination">
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+</div>
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            BindPurchaseList();
+
+            $("#txtSearch").on("keyup", function () {
+
+                $("#hfPageNumber").val(1);
+
+                BindPurchaseList();
+
+            });
+
+        });
+        function BindPurchaseList() {
+
+            $.ajax({
+
+                type: "POST",
+                url: "/bctechadmin/GetPurchaseMasterList",
+
+                data: JSON.stringify({
+
+                    Search: $("#txtSearch").val().trim(),
+                    PageNumber: parseInt($("#hfPageNumber").val()),
+                    PageSize: parseInt($("#hfPageSize").val())
+
+                }),
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success: function (response) {
+
+                    var html = "";
+
+                    if (response.Status && response.Data.length > 0) {
+
+                        var pageNumber = parseInt($("#hfPageNumber").val());
+                        var pageSize = parseInt($("#hfPageSize").val());
+
+                        $.each(response.Data, function (i, item) {   
+                            var sr = ((pageNumber - 1) * pageSize) + i + 1;
+
+                            html += "<tr>";
+
+                            html += "<td class='text-center'>" + sr + "</td>";
+
+                            html += "<td>" + item.PurchaseInvoiceNo + "</td>";
+
+                            html += "<td>" + item.PurchaseInvoiceDate + "</td>";
+
+                            html += "<td>" + (item.SupplierName || item.CompanyName || item.PartyId) + "</td>";        
+
+                            html += "<td class='text-end'>" + parseFloat(item.SubTotal || 0).toFixed(2) + "</td>";
+
+                            html += "<td class='text-end'>" + parseFloat(item.GSTTax || 0).toFixed(2) + "</td>";
+
+                            html += "<td class='text-end'>" + parseFloat(item.TotalAmount || 0).toFixed(2) + "</td>";
+
+                            html += "<td class='text-center'>";
+
+                            html += "<a href='/bctechadmin/CreatePurchase?id=" + item.ViewEncryptedID + "' class='me-2' title='View'>";
+                            html += "<i class='ri-eye-line text-info'></i>";
+                            html += "</a>";
+
+                            html += "<a href='/bctechadmin/CreatePurchase?id=" + item.EditEncryptedID + "' class='me-2' title='Edit'>";
+                            html += "<i class='ri-edit-box-line text-primary'></i>";
+                            html += "</a>";
+
+                            html += "<a href='javascript:void(0)' onclick='DeletePurchase(" + item.PurchaseInvoiceID + ")' title='Delete'>";
+                            html += "<i class='ri-delete-bin-line text-danger'></i>";
+                            html += "</a>";
+
+                            html += "</td>";
+
+                            html += "</tr>";
+
+                        });
+
+                    }
+                    else {
+
+                        html = "<tr><td colspan='8' class='text-center text-danger'>No Record Found</td></tr>";
+
+                    }
+
+                    $("#tblPurchaseBody").html(html);
+
+                    BuildPagination(response.TotalRecords || 0);
+
+                },
+
+                error: function (xhr) {
+
+                    console.log(xhr.responseText);
+
+                    alert("Error loading purchase list.");
+
+                }
+
+            });
+
+        }
+        function BuildPagination(totalRecords) {
+
+            var pageNumber = parseInt($("#hfPageNumber").val());
+            var pageSize = parseInt($("#hfPageSize").val());
+
+            var totalPages = Math.ceil(totalRecords / pageSize);
+
+            var html = "";
+
+            html += "<li class='page-item " + (pageNumber == 1 ? "disabled" : "") + "'>";
+            html += "<a class='page-link' href='javascript:void(0)' onclick='ChangePage(" + (pageNumber - 1) + ")'>Previous</a>";
+            html += "</li>";
+
+            for (var i = 1; i <= totalPages; i++) {
+
+                html += "<li class='page-item " + (i == pageNumber ? "active" : "") + "'>";
+                html += "<a class='page-link' href='javascript:void(0)' onclick='ChangePage(" + i + ")'>" + i + "</a>";
+                html += "</li>";
+
+            }
+
+            html += "<li class='page-item " + (pageNumber >= totalPages ? "disabled" : "") + "'>";
+            html += "<a class='page-link' href='javascript:void(0)' onclick='ChangePage(" + (pageNumber + 1) + ")'>Next</a>";
+            html += "</li>";
+
+            $("#pagination").html(html);
+
+            var start = totalRecords == 0 ? 0 : ((pageNumber - 1) * pageSize) + 1;
+            var end = Math.min(pageNumber * pageSize, totalRecords);
+
+            $("#lblShowing").text("Showing " + start + " to " + end + " of " + totalRecords + " entries");
+
+        }
+        function ChangePage(page) {
+
+            if (page <= 0)
+                return;
+
+            $("#hfPageNumber").val(page);
+
+            BindPurchaseList();
+
+        }
+        function DeletePurchase(id) {
+
+            if (!confirm("Are you sure you want to delete this purchase?"))
+                return;
+
+            $.ajax({
+
+                type: "POST",
+
+                url: "/bctechadmin/DeletePurchase",
+
+                data: JSON.stringify({
+
+                    PurchaseInvoiceID: id
+
+                }),
+
+                contentType: "application/json; charset=utf-8",
+
+                dataType: "json",
+
+                success: function (response) {
+
+                    alert(response.Message);
+
+                    if (response.Status) {
+
+                        BindPurchaseList();
+
+                    }
+
+                },
+
+                error: function () {
+
+                    alert("Delete failed.");
+
+                }
+
+            });
+
+        }
+        function FormatDate(value) {
+
+            if (!value)
+                return "";
+
+            return value.substring(0, 10);
+
+        }
+    </script>
+}

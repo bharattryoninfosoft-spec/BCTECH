@@ -1,0 +1,155 @@
+﻿@{
+    ViewBag.Title = "Students Examination";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+    ViewData["ParentMenu"] = "Student Exam";
+    ViewData["PageTitle"] = "Students Examination";
+}
+
+<style>
+    .exam-summary-table th {
+        background-color: #e9ecef;
+        color: #495057;
+        font-weight: 600;
+        font-size: 13px;
+        border-color: #dee2e6;
+    }
+
+    .exam-summary-table td {
+        background-color: #ffffff;
+        color: #6c757d;
+        font-size: 13px;
+        border-color: #dee2e6;
+    }
+
+    .btn-purple-exam {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+        color: #fff;
+        font-weight: 500;
+    }
+
+        .btn-purple-exam:hover {
+            background-color: #59359a;
+            border-color: #59359a;
+            color: #fff;
+        }
+
+    .students-table th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        font-size: 13px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .students-table td {
+        vertical-align: middle;
+        font-size: 13px;
+        color: #334155;
+    }
+</style>
+
+<div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+    <!-- Blue Header Banner -->
+    <div class="px-4 py-3 text-white" style="background-color: #3b82f6;">
+        <h5 class="mb-0 fw-semibold">Students Examination</h5>
+    </div>
+
+    <div class="card-body p-4 bg-white">
+        <!-- Exam Info Summary Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle mb-4 exam-summary-table">
+                <thead>
+                    <tr>
+                        <th>Exam Date</th>
+                        <th>Exam Course</th>
+                        <th>No. Of Ques.</th>
+                        <th>Exam Time</th>
+                        <th>Exam Marks</th>
+                        <th>Practical Exam Time</th>
+                        <th>Theory Exam Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@(ViewBag.Exam_schedule_Date ?? "-")</td>
+                        <td>@(ViewBag.course_title ?? "-")</td>
+                        <td>@(ViewBag.No_Of_Question ?? "0")</td>
+                        <td>@(string.IsNullOrEmpty(ViewBag.Exam_Time as string) ? "-" : ViewBag.Exam_Time + " Min.")</td>
+                        <td>@(ViewBag.Exam_Total_Marks ?? "0")</td>
+                        <td>@(string.IsNullOrEmpty(ViewBag.Practical_Exam_Time as string) ? "-" : ViewBag.Practical_Exam_Time)</td>
+                        <td>@(string.IsNullOrEmpty(ViewBag.Theory_Exam_Time as string) ? "-" : ViewBag.Theory_Exam_Time)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="my-3" style="border-top: 1px dashed #cbd5e1;" />
+
+        @using (Html.BeginForm("StudentExamination", "bctechAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="Schedule_Exam_Id" name="Schedule_Exam_Id" value="@ViewBag.Schedule_Exam_Id" />
+
+            <!-- Action Buttons & Secure Code Row -->
+            <div class="row align-items-center my-3">
+                <div class="col-md-6 d-flex flex-wrap gap-2">
+                    <button type="submit"
+                            name="submit"
+                            class="btn btn-purple-exam px-3 py-2"
+                            onclick="return confirm('Do you really want to Conduct Re-Examination?');">
+                        <i class="fa fa-check me-1"></i> Conduct Re-Examination
+                    </button>
+                    <a href="@Url.Action("GenerateSecureCode", "bctechAdmin", new { id = "" })" class="btn btn-danger px-3 py-2">
+                        <i class="fa fa-arrow-left me-1"></i> Back
+                    </a>
+                </div>
+                <div class="col-md-6 text-md-center mt-3 mt-md-0">
+                    <span class="fs-5 text-secondary fw-normal">
+                        Secure Code: @(string.IsNullOrEmpty(ViewBag.SecureCode as string) ? "-" : ViewBag.SecureCode)
+                    </span>
+                </div>
+            </div>
+
+            <!-- Students List Table -->
+            <div class="table-responsive mt-4">
+                <table id="tblStudentExam" class="table table-hover table-bordered align-middle mb-0 students-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th style="width: 110px;">Profile</th>
+                            <th>Enrollment No</th>
+                            <th>Student Name</th>
+                            <th>Gender</th>
+                            <th class="text-center" style="width: 100px;">Re-Exam</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-weight: 500;">
+                        @if (!string.IsNullOrEmpty(ViewBag.StudentExam as string))
+                        {
+                            @Html.Raw(ViewBag.StudentExam)
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">No student examination records found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            if ($.fn.DataTable && $('#tblStudentExam tbody tr').length > 0 && !$('#tblStudentExam tbody tr td').first().attr('colspan')) {
+                $('#tblStudentExam').DataTable({
+                    pageLength: 25
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,445 @@
+﻿
+@{
+    ViewBag.Title = "BookSource";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0">
+            <input type="text" id="txtSearch" class="form-control w-350" placeholder="Search Book Source...">
+            <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                <span class="material-symbols-outlined">search</span>
+            </div>
+        </form>
+
+        <!--<a href="javascript:void(0);" class="text-primary fs-16 text-decoration-none"
+           onclick="OpenBookSourceModal()">
+            + Add Book Source
+        </a>-->
+
+        <a href="javascript:void(0);" class="btn btn-primary text-white" onclick="OpenBookSourceModal()">
+            <i class="ri-add-line"></i> Add Book Source
+        </a>
+
+    </div>
+
+    <div class="default-table-area mx-minus-1 table-contact-list">
+
+        <div class="table-responsive">
+
+            <table class="table-common" id="tblBookSource">
+
+                <thead>
+
+                    <tr>
+                        <th>SR</th>
+                        <th>Book Source</th>
+                        <th>Is Active</th>
+                        <th>Created Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+                <span class="fs-15" id="lblShowing"></span>
+
+                <nav class="custom-pagination" aria-label="Page navigation example">
+                    <ul class="pagination mb-0 justify-content-center" id="pagination"></ul>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+
+    <div class="modal fade" id="BookSourceModal">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">Book Source</h5>
+
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="hfBookSourceID" value="0" />
+
+                    <div class="mb-3">
+
+                        <label class="form-label">Book Source</label>
+
+                        <input type="text"
+                               id="txtBookSourceTitle"
+                               class="form-control"
+                               maxlength="50"
+                               placeholder="Enter Book Source" />
+
+                    </div>
+
+                    <!-- Active -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   id="chkIsActive"
+                                   checked>
+
+                            <label class="form-check-label" for="chkIsActive">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+
+                    <button class="btn btn-primary text-white"
+                            onclick="SaveBookSource()">
+                        Save
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @section Scripts{
+        <script>
+
+            var BookSources = [];
+            var filteredBookSources = [];
+            var currentPage = 1;
+            var pageSize = 10;
+
+            $(document).ready(function () {
+
+                GetBookSource();
+
+                $("#txtSearch").on("keyup", function () {
+
+                    var search = $(this).val().toLowerCase().trim();
+
+                    filteredBookSources = BookSources.filter(function (x) {
+
+                        return x.BookSourceTitle.toLowerCase().includes(search);
+
+                    });
+
+                    currentPage = 1;
+
+                    BindGrid();
+
+                });
+
+            });
+
+            function GetBookSource() {
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/GetBookSourceList",
+
+                    type: "GET",
+
+                    dataType: "json",
+
+                    success: function (data) {
+
+                        BookSources = data;
+                        filteredBookSources = data;
+
+                        currentPage = 1;
+
+                        BindGrid();
+
+                    }
+
+                });
+
+            }
+
+            function BindGrid() {
+
+                var html = "";
+
+                var start = (currentPage - 1) * pageSize;
+                var end = Math.min(start + pageSize, filteredBookSources.length);
+
+                for (var i = start; i < end; i++) {
+
+                    var item = filteredBookSources[i];
+
+                    var isactivecss = "";
+                    if (item.IsActive) {
+                        isactivecss = "<td><span class='badge bg-success'>Active</span></td>";
+                    }
+                    else {
+                        isactivecss = "<td><span class='badge bg-danger'>Inactive</span></td>";
+                    }
+
+
+                    html += `
+                                        <tr>
+
+                                             <td>${i + 1}</td>
+                                            <td hidden>${item.BookSourceID}</td>
+                                            <td>${item.BookSourceTitle}</td>
+                                             ${isactivecss}
+                                            <td>${item.CreatedDateTime}</td>
+
+                                            <td>
+
+                                                <a href="javascript:void(0)"
+                                                   onclick="EditBookSource(${item.BookSourceID})">
+
+                                                    <i class="ri-edit-line text-primary"></i>
+
+                                                </a>
+
+                                                &nbsp;&nbsp;
+
+                                                <a href="javascript:void(0)"
+                                                   onclick="DeleteBookSource(${item.BookSourceID})">
+
+                                                    <i class="ri-delete-bin-line text-danger"></i>
+
+                                                </a>
+
+                                            </td>
+
+                                        </tr>`;
+                }
+
+                $("#tblBookSource tbody").html(html);
+
+                $("#lblShowing").text(
+
+                    `Showing ${filteredBookSources.length == 0 ? 0 : start + 1}
+                                         to ${end}
+                                         of ${filteredBookSources.length} entries`
+
+                );
+
+                CreatePagination();
+
+            }
+
+            function CreatePagination() {
+
+                var totalPages = Math.ceil(filteredBookSources.length / pageSize);
+
+                var html = "";
+
+                html += `
+                                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           href="javascript:void(0)"
+                                           ${currentPage == 1 ? '' : `onclick="ChangePage(${currentPage - 1})"`}>
+                                            <i class="material-symbols-outlined">west</i>
+                                        </a>
+                                    </li>`;
+
+                for (var i = 1; i <= totalPages; i++) {
+
+                    html += `
+                                        <li class="page-item">
+
+                                            <a class="page-link ${currentPage == i ? 'active' : ''}"
+                                               href="javascript:void(0)"
+                                               onclick="ChangePage(${i})">
+
+                                                ${i}
+
+                                            </a>
+
+                                        </li>`;
+
+                }
+
+                html += `
+                                    <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                        <a class="page-link"
+                                           href="javascript:void(0)"
+                                           ${currentPage == totalPages ? '' : `onclick="ChangePage(${currentPage + 1})"`}>
+                                            <i class="material-symbols-outlined">east</i>
+                                        </a>
+                                    </li>`;
+
+                $("#pagination").html(html);
+
+            }
+
+            function ChangePage(page) {
+
+                var totalPages = Math.ceil(filteredBookSources.length / pageSize);
+
+                if (page < 1 || page > totalPages)
+                    return;
+
+                currentPage = page;
+
+                BindGrid();
+
+            }
+
+            function OpenBookSourceModal() {
+
+                $("#hfBookSourceID").val(0);
+
+                $("#txtBookSourceTitle").val("");
+
+                $("#BookSourceModal").modal("show");
+
+            }
+
+            function SaveBookSource() {
+
+                if ($("#txtBookSourceTitle").val().trim() == "") {
+                    toastr.warning("Please Enter Book Source.");
+                    $("#txtBookSourceTitle").focus();
+                    return;
+                }
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/SaveBookSource",
+
+                    type: "POST",
+
+                    data: {
+                        BookSourceID: $("#hfBookSourceID").val(),
+                        BookSourceTitle: $("#txtBookSourceTitle").val(),
+                        IsActive: $("#chkIsActive").is(":checked")
+                        //IsActive: $("#chkIsActive").is(":checked")
+                    },
+
+                    success: function (res) {
+
+                        if (res.Status) {
+                            toastr.success(res.Message);
+                            $("#BookSourceModal").modal("hide");
+                            GetBookSource();
+                        }
+                        else {
+                            toastr.warning(res.Message);
+                        }
+                    }
+
+                });
+
+            }
+
+            function EditBookSource(id) {
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/GetBookSourceByID",
+
+                    type: "GET",
+
+                    data: { id: id },
+
+                    success: function (item) {
+
+                        $("#hfBookSourceID").val(item.BookSourceID);
+
+                        $("#txtBookSourceTitle").val(item.BookSourceTitle);
+
+                        $("#BookSourceModal").modal("show");
+
+                    }
+
+                });
+
+            }
+
+            function DeleteBookSource(id) {
+
+                Swal.fire({
+
+                    title: "Are you sure?",
+
+                    text: "You won't be able to recover this record!",
+
+                    icon: "warning",
+
+                    showCancelButton: true,
+
+                    confirmButtonText: "Yes, Delete",
+
+                    cancelButtonText: "Cancel"
+
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+
+                            url: "/BCTECHAdmin/DeleteBookSource",
+
+                            type: "POST",
+
+                            data: { id: id },
+
+                            success: function (response) {
+
+                                if (response == "Success") {
+
+                                    Swal.fire({
+
+                                        icon: "success",
+
+                                        title: "Deleted",
+
+                                        text: "Book Source Deleted Successfully",
+
+                                        timer: 1500,
+
+                                        showConfirmButton: false
+
+                                    });
+
+                                    GetBookSource();
+
+                                }
+
+                            }
+
+                        });
+
+                    }
+
+                });
+
+            }
+
+        </script>
+    }
+
+</div>

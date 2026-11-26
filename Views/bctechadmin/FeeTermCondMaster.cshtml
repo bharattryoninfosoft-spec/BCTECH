@@ -1,0 +1,821 @@
+﻿@{
+    ViewBag.Title = "Fee Term & Condition Master";
+    Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+}
+
+<div class="card bg-white rounded-10 border border-white mb-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-20">
+
+        <form class="table-src-form position-relative m-0">
+
+            <input type="text"
+                   id="txtSearch"
+                   class="form-control w-350"
+                   placeholder="Search Fee Term & Condition...">
+
+            <div class="src-btn position-absolute top-50 start-0 translate-middle-y bg-transparent p-0 border-0">
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+            </div>
+
+        </form>
+
+
+        <a href="javascript:void(0);"
+           class="btn btn-primary text-white"
+           onclick="OpenFeeTermCondModal()">
+
+            <i class="ri-add-line"></i>
+            Add Fee Term & Condition
+
+        </a>
+
+    </div>
+
+
+    <!-- Table -->
+    <div class="default-table-area mx-minus-1 table-contact-list">
+
+        <div class="table-responsive">
+
+            <table class="table-common"
+                   id="tblFeeTermCond">
+
+                <thead>
+
+                    <tr>
+
+                        <th width="60">
+                            SR
+                        </th>
+
+                        <th>
+                            Fee Term & Condition
+                        </th>
+
+                        <th width="100">
+                            Status
+                        </th>
+
+                        <th width="140">
+                            Created Date
+                        </th>
+
+                        <th width="100">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+
+        <div class="col-lg-12">
+
+            <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap pt-15 p-20">
+
+                <span class="fs-15"
+                      id="lblShowing">
+                </span>
+
+
+                <nav class="custom-pagination"
+                     aria-label="Page navigation">
+
+                    <ul class="pagination mb-0 justify-content-center"
+                        id="pagination">
+                    </ul>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- Fee Term & Condition Modal -->
+    <!-- ========================================= -->
+
+    <div class="modal fade"
+         id="FeeTermCondModal">
+
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+
+
+                <!-- Header -->
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Fee Term & Condition
+                    </h5>
+
+                    <button class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <!-- Body -->
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           id="hfFeeTermCondID"
+                           value="0" />
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Fee Term & Condition
+
+                            <span class="text-danger">
+                                *
+                            </span>
+
+                        </label>
+
+
+                        <textarea id="txtFeeTermCond"
+                                  class="form-control"
+                                  rows="5"
+                                  maxlength="5000"
+                                  placeholder="Enter Fee Term & Condition"></textarea>
+
+                    </div>
+
+
+                    <div class="form-check">
+
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="chkIsActive"
+                               checked>
+
+
+                        <label class="form-check-label"
+                               for="chkIsActive">
+
+                            Active
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Close
+
+                    </button>
+
+
+                    <button class="btn btn-primary text-white"
+                            onclick="SaveFeeTermCond()">
+
+                        Save
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @section Scripts
+    {
+
+        <script>
+
+            var feeTermConds = [];
+
+            var filteredFeeTermConds = [];
+
+            var currentPage = 1;
+
+            var pageSize = 10;
+
+
+            // =========================================
+            // DOCUMENT READY
+            // =========================================
+
+            $(document).ready(function () {
+
+                GetFeeTermCond();
+
+
+                // Search
+
+                $("#txtSearch").on("keyup", function () {
+
+                    var search =
+                        $(this)
+                            .val()
+                            .toLowerCase()
+                            .trim();
+
+
+                    filteredFeeTermConds =
+                        feeTermConds.filter(function (x) {
+
+                            return (x.FeeTermCond || "")
+                                .toLowerCase()
+                                .includes(search);
+
+                        });
+
+
+                    currentPage = 1;
+
+                    BindFeeTermCondGrid();
+
+                });
+
+            });
+
+
+            // =========================================
+            // GET LIST
+            // =========================================
+
+            function GetFeeTermCond() {
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/GetFeeTermCondList",
+
+                    type: "GET",
+
+                    dataType: "json",
+
+                    success: function (data) {
+
+                        feeTermConds =
+                            data || [];
+
+                        filteredFeeTermConds =
+                            data || [];
+
+                        currentPage = 1;
+
+                        BindFeeTermCondGrid();
+
+                    },
+
+                    error: function () {
+
+                        toastr.error(
+                            "Unable to load Fee Term & Conditions."
+                        );
+
+                    }
+
+                });
+
+            }
+
+
+            // =========================================
+            // BIND GRID
+            // =========================================
+
+            function BindFeeTermCondGrid() {
+
+                var html = "";
+
+
+                var start =
+                    (currentPage - 1) *
+                    pageSize;
+
+
+                var end =
+                    Math.min(
+                        start + pageSize,
+                        filteredFeeTermConds.length
+                    );
+
+
+                for (var i = start; i < end; i++) {
+
+                    var item =
+                        filteredFeeTermConds[i];
+
+
+                    var statusHtml =
+                        item.IsActive == 1
+
+                        ? `<span class="badge bg-success-subtle text-success">
+                                Active
+                           </span>`
+
+                        : `<span class="badge bg-danger-subtle text-danger">
+                                Inactive
+                           </span>`;
+
+
+                    html += `
+
+                        <tr>
+
+                            <td>
+                                ${i + 1}
+                            </td>
+
+
+                            <td>
+                                ${item.FeeTermCond || "-"}
+                            </td>
+
+
+                            <td>
+                                ${statusHtml}
+                            </td>
+
+
+                            <td>
+                                ${item.CreatedDateTime || "-"}
+                            </td>
+
+
+                            <td>
+
+                                <a href="javascript:void(0)"
+                                   onclick="EditFeeTermCond(${item.FeeTermCondID})"
+                                   title="Edit">
+
+                                    <i class="ri-edit-line text-primary"></i>
+
+                                </a>
+
+                                &nbsp;&nbsp;
+
+                                <a href="javascript:void(0)"
+                                   onclick="DeleteFeeTermCond(${item.FeeTermCondID})"
+                                   title="Delete">
+
+                                    <i class="ri-delete-bin-line text-danger"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }
+
+
+                $("#tblFeeTermCond tbody")
+                    .html(html);
+
+
+                $("#lblShowing").text(
+
+                    `Showing ${
+                        filteredFeeTermConds.length == 0
+                            ? 0
+                            : start + 1
+                    }
+                    to ${end}
+                    of ${filteredFeeTermConds.length} entries`
+
+                );
+
+
+                CreateFeeTermCondPagination();
+
+            }
+
+
+            // =========================================
+            // PAGINATION
+            // =========================================
+
+            function CreateFeeTermCondPagination() {
+
+                var totalPages =
+                    Math.ceil(
+                        filteredFeeTermConds.length /
+                        pageSize
+                    );
+
+
+                var html = "";
+
+
+                if (totalPages <= 1) {
+
+                    $("#pagination").html("");
+
+                    return;
+
+                }
+
+
+                // Previous
+
+                html += `
+
+                    <li class="page-item ${
+                        currentPage == 1
+                            ? 'disabled'
+                            : ''
+                    }">
+
+                        <a class="page-link"
+                           href="javascript:void(0)"
+                           ${
+                               currentPage == 1
+                                   ? ''
+                                   : `onclick="ChangeFeeTermCondPage(${currentPage - 1})"`
+                           }>
+
+                            <i class="material-symbols-outlined">
+                                west
+                            </i>
+
+                        </a>
+
+                    </li>
+
+                `;
+
+
+                // Pages
+
+                for (
+                    var i = 1;
+                    i <= totalPages;
+                    i++
+                ) {
+
+                    html += `
+
+                        <li class="page-item">
+
+                            <a class="page-link ${
+                                currentPage == i
+                                    ? 'active'
+                                    : ''
+                            }"
+                               href="javascript:void(0)"
+                               onclick="ChangeFeeTermCondPage(${i})">
+
+                                ${i}
+
+                            </a>
+
+                        </li>
+
+                    `;
+
+                }
+
+
+                // Next
+
+                html += `
+
+                    <li class="page-item ${
+                        currentPage == totalPages
+                            ? 'disabled'
+                            : ''
+                    }">
+
+                        <a class="page-link"
+                           href="javascript:void(0)"
+                           ${
+                               currentPage == totalPages
+                                   ? ''
+                                   : `onclick="ChangeFeeTermCondPage(${currentPage + 1})"`
+                           }>
+
+                            <i class="material-symbols-outlined">
+                                east
+                            </i>
+
+                        </a>
+
+                    </li>
+
+                `;
+
+
+                $("#pagination")
+                    .html(html);
+
+            }
+
+
+            // =========================================
+            // CHANGE PAGE
+            // =========================================
+
+            function ChangeFeeTermCondPage(page) {
+
+                var totalPages =
+                    Math.ceil(
+                        filteredFeeTermConds.length /
+                        pageSize
+                    );
+
+
+                if (
+                    page < 1 ||
+                    page > totalPages
+                )
+                    return;
+
+
+                currentPage = page;
+
+                BindFeeTermCondGrid();
+
+            }
+
+
+            // =========================================
+            // OPEN ADD MODAL
+            // =========================================
+
+            function OpenFeeTermCondModal() {
+
+                $("#hfFeeTermCondID")
+                    .val(0);
+
+                $("#txtFeeTermCond")
+                    .val("");
+
+                $("#chkIsActive")
+                    .prop("checked", true);
+
+
+                $("#FeeTermCondModal")
+                    .modal("show");
+
+            }
+
+
+            // =========================================
+            // SAVE
+            // =========================================
+
+            function SaveFeeTermCond() {
+
+                var feeTermCond =
+                    $("#txtFeeTermCond")
+                        .val()
+                        .trim();
+
+
+                if (feeTermCond == "") {
+
+                    toastr.warning(
+                        "Please Enter Fee Term & Condition."
+                    );
+
+                    $("#txtFeeTermCond")
+                        .focus();
+
+                    return;
+
+                }
+
+
+                // tinyint: 1 = Active, 0 = Inactive
+
+                var isActive =
+                    $("#chkIsActive").is(":checked")
+                        ? 1
+                        : 0;
+
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/SaveFeeTermCond",
+
+                    type: "POST",
+
+                    data: {
+
+                        FeeTermCondID:
+                            $("#hfFeeTermCondID")
+                                .val(),
+
+                        FeeTermCond:
+                            feeTermCond,
+
+                        IsActive:
+                            isActive
+
+                    },
+
+
+                    success: function (res) {
+
+                        if (res.Status) {
+
+                            toastr.success(
+                                res.Message
+                            );
+
+
+                            $("#FeeTermCondModal")
+                                .modal("hide");
+
+
+                            GetFeeTermCond();
+
+                        }
+                        else {
+
+                            toastr.warning(
+                                res.Message
+                            );
+
+                        }
+
+                    },
+
+
+                    error: function () {
+
+                        toastr.error(
+                            "Something went wrong."
+                        );
+
+                    }
+
+                });
+
+            }
+
+
+            // =========================================
+            // EDIT
+            // =========================================
+
+            function EditFeeTermCond(id) {
+
+                $.ajax({
+
+                    url: "/BCTECHAdmin/GetFeeTermCondByID",
+
+                    type: "GET",
+
+                    data: {
+                        id: id
+                    },
+
+
+                    success: function (item) {
+
+                        if (!item)
+                            return;
+
+
+                        $("#hfFeeTermCondID")
+                            .val(
+                                item.FeeTermCondID
+                            );
+
+
+                        $("#txtFeeTermCond")
+                            .val(
+                                item.FeeTermCond
+                            );
+
+
+                        $("#chkIsActive")
+                            .prop(
+                                "checked",
+                                item.IsActive == 1
+                            );
+
+
+                        $("#FeeTermCondModal")
+                            .modal("show");
+
+                    }
+
+                });
+
+            }
+
+
+            // =========================================
+            // DELETE
+            // =========================================
+
+            function DeleteFeeTermCond(id) {
+
+                Swal.fire({
+
+                    title: "Are you sure?",
+
+                    text:
+                        "You won't be able to recover this record!",
+
+                    icon: "warning",
+
+                    showCancelButton: true,
+
+                    confirmButtonText:
+                        "Yes, Delete",
+
+                    cancelButtonText:
+                        "Cancel"
+
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+
+                            url:
+                                "/BCTECHAdmin/DeleteFeeTermCond",
+
+                            type: "POST",
+
+                            data: {
+                                id: id
+                            },
+
+
+                            success: function (response) {
+
+                                if (
+                                    response ==
+                                    "Success"
+                                ) {
+
+                                    Swal.fire({
+
+                                        icon: "success",
+
+                                        title: "Deleted",
+
+                                        text:
+                                            "Fee Term & Condition Deleted Successfully",
+
+                                        timer: 1500,
+
+                                        showConfirmButton:
+                                            false
+
+                                    });
+
+
+                                    GetFeeTermCond();
+
+                                }
+
+                            }
+
+                        });
+
+                    }
+
+                });
+
+            }
+
+        </script>
+
+    }
+
+</div>

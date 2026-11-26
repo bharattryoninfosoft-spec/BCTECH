@@ -1,22 +1,583 @@
-﻿
 @{
     ViewBag.Title = "Dashboard";
     Layout = "~/Views/bctechadmin/LayoutAdmin.cshtml";
+    bool isAdmin = ViewBag.IsAdmin != null && (bool)ViewBag.IsAdmin;
 }
 
-<div class="main-content-container overflow-hidden">
-    <div class="card bg-white rounded-10 border border-white p-20 mb-4 text-center" style="padding-top: 100px; padding-bottom: 1px;">
-        <div class="">
-            <img src="~/Content/Admin/assets/Images/starter.png" alt="starter" />
+<style>
+    /* ========================================================
+       EDUCATION DASHBOARD THEME (Modern & Professional)
+       ======================================================== */
+
+    /* 1. Welcome Education Banner (Inspired by reference) */
+    .edu-welcome-banner {
+        background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 45%, #fed7aa 100%);
+        border-radius: 20px;
+        padding: 26px 32px;
+        margin-bottom: 26px;
+        box-shadow: 0 4px 20px rgba(249, 115, 22, 0.08);
+        border: 1px solid rgba(251, 146, 60, 0.22);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .edu-welcome-banner::after {
+        content: "";
+        position: absolute;
+        top: -40px;
+        right: 180px;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(circle, rgba(251, 191, 36, 0.35) 0%, rgba(251, 191, 36, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .edu-welcome-title {
+        font-size: 26px;
+        font-weight: 800;
+        color: #7c2d12;
+        letter-spacing: -0.4px;
+        margin-bottom: 6px;
+    }
+
+    .edu-welcome-subtitle {
+        font-size: 13.5px;
+        color: #9a3412;
+        margin-bottom: 16px;
+        max-width: 680px;
+        line-height: 1.5;
+        font-weight: 400;
+    }
+
+    .edu-stat-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .edu-stat-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        padding: 7px 14px;
+        border-radius: 24px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #7c2d12;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .edu-stat-chip i {
+        font-size: 15px;
+        color: #ea580c;
+    }
+
+    .edu-banner-img {
+        max-height: 130px;
+        object-fit: contain;
+        filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.08));
+    }
+
+    /* 2. Section Header */
+    .edu-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .edu-section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .edu-section-subtitle {
+        font-size: 13px;
+        color: #64748b;
+        margin: 2px 0 0 0;
+    }
+
+    .edu-active-campus-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #334155;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    /* 3. Modern Colorful Campus Cards (Inspired by Image 1) */
+    .edu-branch-card {
+        border-radius: 18px;
+        color: #ffffff;
+        padding: 20px 18px 16px 18px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        position: relative;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+        user-select: none;
+        overflow: hidden;
+    }
+
+    .edu-branch-card:hover {
+        transform: translateY(-4px);
+    }
+
+    /* 4 Distinct Vibrant Education Palettes */
+    .edu-card-theme-0 {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    .edu-card-theme-0:hover {
+        box-shadow: 0 12px 26px rgba(99, 102, 241, 0.38);
+    }
+
+    .edu-card-theme-1 {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    .edu-card-theme-1:hover {
+        box-shadow: 0 12px 26px rgba(245, 158, 11, 0.38);
+    }
+
+    .edu-card-theme-2 {
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    }
+    .edu-card-theme-2:hover {
+        box-shadow: 0 12px 26px rgba(249, 115, 22, 0.38);
+    }
+
+    .edu-card-theme-3 {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    }
+    .edu-card-theme-3:hover {
+        box-shadow: 0 12px 26px rgba(14, 165, 233, 0.38);
+    }
+
+    /* Active Selected State */
+    .edu-branch-card.active-branch {
+        border-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6), 0 14px 30px rgba(0, 0, 0, 0.22) !important;
+        transform: translateY(-3px);
+    }
+
+    /* Card Top Bar (Icon + Switch) */
+    .edu-card-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+    }
+
+    .edu-card-icon-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.22);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Switch Style Toggle Pill (Directly from Image 1) */
+    .edu-card-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.18);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        transition: all 0.2s ease;
+    }
+
+    .edu-toggle-switch {
+        width: 30px;
+        height: 16px;
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 10px;
+        position: relative;
+        transition: background 0.2s ease;
+    }
+
+    .edu-toggle-knob {
+        width: 12px;
+        height: 12px;
+        background: #ffffff;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    }
+
+    /* When Card is Active, Switch is ON */
+    .edu-branch-card.active-branch .edu-card-toggle {
+        background: #ffffff;
+        color: #059669;
+        border-color: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .edu-branch-card.active-branch .edu-toggle-switch {
+        background: #10b981;
+    }
+
+    .edu-branch-card.active-branch .edu-toggle-knob {
+        transform: translateX(14px);
+    }
+
+    /* Card Details */
+    .edu-card-code-chip {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        background: rgba(255, 255, 255, 0.22);
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-bottom: 6px;
+    }
+
+    .edu-card-title {
+        font-size: 15.5px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        color: #ffffff;
+        line-height: 1.35;
+        min-height: 42px;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        text-transform: uppercase;
+    }
+
+    .edu-card-head {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.92);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 4px;
+        min-height: 20px;
+        text-transform: uppercase;
+    }
+
+    .edu-card-location {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 12px;
+    }
+
+    /* Frosted Metric Box */
+    .edu-card-metric {
+        background: rgba(0, 0, 0, 0.14);
+        border-radius: 10px;
+        padding: 7px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .edu-metric-label {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .edu-metric-val {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    /* Bottom Action Button */
+    .edu-card-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.22);
+        color: #ffffff;
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 7px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .edu-card-btn:hover {
+        background: rgba(255, 255, 255, 0.35);
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .edu-branch-card.active-branch .edu-card-btn {
+        background: #ffffff;
+        color: #1e293b;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: #ffffff;
+    }
+</style>
+
+<div id="pnlAdminDashboard" style="@(isAdmin ? "" : "display:none;")">
+    
+    <!-- 1. Warm Education Welcome Banner (Inspired by Image 1) -->
+    <div class="edu-welcome-banner">
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-7 col-12">
+                <div class="edu-welcome-title" id="lblWelcomeHeading">Hello, Administrator!</div>
+                <div class="edu-welcome-subtitle">
+                    Welcome to B.C. Tech Education ERP! Manage campuses, monitor student enrollments, and switch active learning branches seamlessly.
+                </div>
+                <div class="edu-stat-chips">
+                    <div class="edu-stat-chip">
+                        <i class="ri-government-line"></i>
+                        <span id="lblCampusCount">4 Learning Campuses</span>
+                    </div>
+                    <div class="edu-stat-chip">
+                        <i class="ri-graduation-cap-line"></i>
+                        <span id="lblTotalStudentsEnrolled">10,000+ Students Enrolled</span>
+                    </div>
+                    <div class="edu-stat-chip">
+                        <i class="ri-shield-check-line"></i>
+                        <span>Multi-Branch Unified Portal</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-5 col-12 text-center text-md-end mt-3 mt-md-0 d-none d-md-block">
+                <img src="~/Content/Admin/assets/Images/welcome2.png" alt="Education Illustration" class="edu-banner-img" onerror="this.onerror=null; this.src='/Content/Admin/assets/Images/starter.png';" />
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Campus Centers Section Header -->
+    <div class="edu-section-header">
+        <div>
+            <h3 class="edu-section-title">
+                <i class="ri-building-4-line text-primary"></i>
+                Learning Centers & Campuses
+            </h3>
+            <p class="edu-section-subtitle">Click on any campus card to switch active workspace and filter student data</p>
         </div>
         <div>
+            <div class="edu-active-campus-pill">
+                <i class="ri-checkbox-circle-fill text-success fs-15"></i>
+                <span>Active: <strong id="lblActiveBranchDisplay">Loading...</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Dynamic Colorful Branch Cards Grid -->
+    <div class="row g-3" id="divBranchCards">
+        <!-- Loaded via AJAX -->
+    </div>
+</div>
+
+<div id="pnlWelcomeDashboard" style="@(!isAdmin ? "" : "display:none;")">
+    <div class="card bg-white rounded-10 border border-white p-20 mb-4 text-center" style="padding-top: 100px; padding-bottom: 1px;">
+        <div>
+            <img src="~/Content/Admin/assets/Images/starter.png" alt="starter" />
         </div>
     </div>
 </div>
+
 @section Scripts{
     <script>
-        //window.onload = function () {
-        //    document.getElementById("preloader").style.display = "none";
-        //};
+        $(document).ready(function () {
+            // Set User Greeting
+            var userName = getCookie("UserName") || "Administrator";
+            $("#lblWelcomeHeading").text("Hello, " + userName + "!");
+
+            LoadDashboardBranches();
+        });
+
+        function getCookie(name) {
+            var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            if (match) return decodeURIComponent(match[2]);
+            return null;
+        }
+
+        function LoadDashboardBranches() {
+            $.ajax({
+                url: '/bctechadmin/GetDashboardBranchList',
+                type: 'GET',
+                dataType: 'json',
+                success: function (res) {
+                    if (res && res.Status == 1) {
+                        if (res.IsAdmin) {
+                            $("#pnlAdminDashboard").show();
+                            $("#pnlWelcomeDashboard").hide();
+
+                            var activeBranchId = parseInt(res.CurrentBranchID) || parseInt(getCookie("BranchID")) || 0;
+                            var grandTotalStudents = 0;
+                            var activeBranchName = "";
+
+                            if (res.Data && res.Data.length > 0) {
+                                $("#lblCampusCount").text(res.Data.length + " Learning Campuses");
+                                var html = '';
+
+                                // Distinct education icons for cards
+                                var icons = [
+                                    "ri-macbook-line",
+                                    "ri-school-line",
+                                    "ri-building-line",
+                                    "ri-graduation-cap-line"
+                                ];
+
+                                $.each(res.Data, function (i, item) {
+                                    var branchId = item.BranchID;
+                                    var branchCode = item.BranchCode || ('BR-' + branchId);
+                                    var branchName = (item.BranchName || '').toUpperCase();
+                                    var headName = (item.BranchHeadName || '').toUpperCase();
+                                    var city = item.City ? (item.City + (item.State ? ', ' + item.State : '')) : 'Surat, GUJARAT';
+                                    var students = Number(item.TotalStudents || 0);
+                                    grandTotalStudents += students;
+                                    var totalStudentsFormatted = students.toLocaleString();
+
+                                    var isSelected = (activeBranchId > 0 && activeBranchId === branchId);
+                                    if (isSelected) {
+                                        activeBranchName = item.BranchName || '';
+                                    }
+
+                                    var themeIndex = i % 4;
+                                    var cardIcon = icons[i % icons.length];
+                                    var escapedName = (item.BranchName || '').replace(/'/g, "\\'");
+
+                                    html += '<div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-12">';
+                                    html += '  <div class="edu-branch-card edu-card-theme-' + themeIndex + ' ' + (isSelected ? 'active-branch' : '') + '" id="card_branch_' + branchId + '" onclick="SelectBranch(' + branchId + ', \'' + escapedName + '\')">';
+                                    
+                                    // Top Bar
+                                    html += '    <div>';
+                                    html += '      <div class="edu-card-topbar">';
+                                    html += '        <div class="edu-card-icon-box"><i class="' + cardIcon + '"></i></div>';
+                                    html += '        <div class="edu-card-toggle">';
+                                    html += '          <span class="edu-toggle-text">' + (isSelected ? 'ON' : 'OFF') + '</span>';
+                                    html += '          <div class="edu-toggle-switch"><div class="edu-toggle-knob"></div></div>';
+                                    html += '        </div>';
+                                    html += '      </div>';
+
+                                    // Content
+                                    html += '      <span class="edu-card-code-chip">' + branchCode + '</span>';
+                                    html += '      <div class="edu-card-title">' + branchName + '</div>';
+                                    html += '      <div class="edu-card-head"><i class="ri-user-star-line"></i> ' + headName + '</div>';
+                                    html += '      <div class="edu-card-location"><i class="ri-map-pin-2-line"></i> ' + city + '</div>';
+                                    html += '    </div>';
+
+                                    // Metric Box & Action
+                                    html += '    <div>';
+                                    html += '      <div class="edu-card-metric">';
+                                    html += '        <div class="edu-metric-label"><i class="ri-team-line"></i> Total Students</div>';
+                                    html += '        <div class="edu-metric-val">' + totalStudentsFormatted + '</div>';
+                                    html += '      </div>';
+                                    html += '      <a href="javascript:void(0);" class="edu-card-btn" onclick="event.stopPropagation(); SelectBranch(' + branchId + ', \'' + escapedName + '\')">';
+                                    html += '        <span>View Details</span> <i class="ri-arrow-right-line"></i>';
+                                    html += '      </a>';
+                                    html += '    </div>';
+
+                                    html += '  </div>';
+                                    html += '</div>';
+                                });
+
+                                $('#divBranchCards').html(html);
+                                $('#lblTotalStudentsEnrolled').text(grandTotalStudents.toLocaleString() + "+ Students Enrolled");
+                                $('#lblActiveBranchDisplay').text(activeBranchName || "Select a Campus");
+                                if (activeBranchName) {
+                                    $('#hdrActiveBranchName').text(activeBranchName);
+                                }
+
+                            } else {
+                                $('#divBranchCards').html('<div class="col-12 text-center text-muted py-5">No campuses found.</div>');
+                            }
+                        } else {
+                            $("#pnlAdminDashboard").hide();
+                            $("#pnlWelcomeDashboard").show();
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error loading dashboard campuses:", error);
+                }
+            });
+        }
+
+        function SelectBranch(branchId, branchName) {
+            if (!branchId) return;
+
+            // Set cookie in browser immediately
+            document.cookie = "BranchID=" + branchId + "; path=/; max-age=2592000; SameSite=Lax";
+            document.cookie = "BranchName=" + encodeURIComponent(branchName || '') + "; path=/; max-age=2592000; SameSite=Lax";
+
+            // Update UI selection immediately
+            $(".edu-branch-card").removeClass("active-branch");
+            $(".edu-branch-card .edu-toggle-text").text("OFF");
+
+            var $activeCard = $("#card_branch_" + branchId);
+            $activeCard.addClass("active-branch");
+            $activeCard.find(".edu-toggle-text").text("ON");
+
+            $("#lblActiveBranchDisplay").text(branchName || ("Campus " + branchId));
+            $("#hdrActiveBranchName").text(branchName || ("Campus " + branchId));
+
+            // Inform server to update Response.Cookies and Session
+            $.ajax({
+                url: '/bctechadmin/SetCurrentBranch',
+                type: 'POST',
+                data: { branchId: branchId },
+                dataType: 'json',
+                success: function (res) {
+                    if (typeof toastr !== "undefined") {
+                        toastr.success("Active Campus set to: " + (branchName || ("Campus " + branchId)));
+                    }
+                },
+                error: function () {
+                    if (typeof toastr !== "undefined") {
+                        toastr.success("Active Campus set to: " + (branchName || ("Campus " + branchId)));
+                    }
+                }
+            });
+        }
     </script>
-    }
+}
